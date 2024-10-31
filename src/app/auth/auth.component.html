@@ -1,7 +1,11 @@
 <div class="min-h-screen items-center">
   @if (isLogin) {
   <app-login />
-  }@else if(!isLogin){
+  }
+  @if(isRegister){
   <app-register />
+  }
+  @if(isRegisterSpecialist){
+  <app-register-specialist />
   }
 </div>

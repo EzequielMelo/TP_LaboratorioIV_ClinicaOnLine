@@ -21,4 +21,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
   },
+  {
+    path: 'register-specialist',
+    loadComponent: () =>
+      import('./auth/auth.component').then((c) => c.AuthComponent),
+  },
 ];
