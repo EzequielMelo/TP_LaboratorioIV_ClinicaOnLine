@@ -34,4 +34,28 @@ export class DatabaseService {
       })
     );
   }
+
+  getPatientData(uid: string): Observable<Patient | null> {
+    const userDocRef = doc(this.fire, `users/${uid}`);
+    return from(
+      getDoc(userDocRef).then((docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          return new Patient(
+            uid,
+            data['name'],
+            data['lastName'],
+            data['email'],
+            data['age'],
+            data['dni'],
+            data['healthCareSystem'],
+            data['profilePicture'],
+            data['coverPicture'],
+            data['userType']
+          );
+        }
+        return null;
+      })
+    );
+  }
 }

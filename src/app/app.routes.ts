@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { emailVerifiedGuard } from './guards/email-verified.guard';
 
 export const routes: Routes = [
   {
@@ -22,8 +23,28 @@ export const routes: Routes = [
       import('./auth/auth.component').then((c) => c.AuthComponent),
   },
   {
+    path: 'login-specialist',
+    loadComponent: () =>
+      import('./auth/auth.component').then((c) => c.AuthComponent),
+  },
+  {
     path: 'register-specialist',
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
+  },
+  {
+    path: 'verify-email',
+    loadComponent: () =>
+      import('./pages/verify-email/verify-email.component').then(
+        (c) => c.VerifyEmailComponent
+      ),
+  },
+  {
+    path: 'user-profile',
+    loadComponent: () =>
+      import('./pages/user-profile/user-profile.component').then(
+        (c) => c.UserProfileComponent
+      ),
+    canActivate: [emailVerifiedGuard],
   },
 ];
