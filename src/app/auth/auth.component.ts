@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { RegisterSpecialistComponent } from './register-specialist/register-specialist.component';
 import { LoginSpecialistComponent } from './login-specialist/login-specialist.component';
+import { LoginAdminComponent } from './login-admin/login-admin.component';
 
 @Component({
   selector: 'app-auth',
@@ -13,6 +14,7 @@ import { LoginSpecialistComponent } from './login-specialist/login-specialist.co
     RegisterComponent,
     LoginSpecialistComponent,
     RegisterSpecialistComponent,
+    LoginAdminComponent,
   ],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
@@ -22,6 +24,7 @@ export class AuthComponent implements OnInit {
   isRegister: boolean = false;
   isLoginSpecialist: boolean = false;
   isRegisterSpecialist: boolean = false;
+  isLoginAdmin: boolean = false;
   isComponentSelected: boolean = false; // Nueva variable
 
   constructor(private route: ActivatedRoute, private router: Router) {}
@@ -31,9 +34,10 @@ export class AuthComponent implements OnInit {
       const path = url[0].path;
       this.resetStates();
       if (path === 'login') this.showLogin();
-      else if (path === 'register') this.showRegister();
-      else if (path === 'login-specialist') this.showLoginSpecialist();
-      else if (path === 'register-specialist') this.showRegisterSpecialist();
+      if (path === 'register') this.showRegister();
+      if (path === 'login-specialist') this.showLoginSpecialist();
+      if (path === 'register-specialist') this.showRegisterSpecialist();
+      if (path === 'login-admin') this.showLoginAdmin();
     });
   }
 
@@ -46,6 +50,7 @@ export class AuthComponent implements OnInit {
     this.isRegister = false;
     this.isLoginSpecialist = false;
     this.isRegisterSpecialist = false;
+    this.isLoginAdmin = false;
     this.isComponentSelected = false;
   }
 
@@ -70,6 +75,12 @@ export class AuthComponent implements OnInit {
   showRegisterSpecialist(): void {
     this.resetStates();
     this.isRegisterSpecialist = true;
+    this.isComponentSelected = true;
+  }
+
+  showLoginAdmin(): void {
+    this.resetStates();
+    this.isLoginAdmin = true;
     this.isComponentSelected = true;
   }
 }

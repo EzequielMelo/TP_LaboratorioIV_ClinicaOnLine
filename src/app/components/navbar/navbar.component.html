@@ -29,6 +29,9 @@
         <div class="px-4 py-3">
           <span class="block text-sm text-gray-900">{{user?.name}}</span>
           <span class="block text-sm  text-gray-500 truncate">{{user?.lastName}}</span>
+          @if (user?.userType === 'admin') {
+          <span class="block text-xs  text-gray-500 truncate">{{user?.userType}}</span>
+          }
         </div>
         <ul class="py-2" aria-labelledby="user-menu-button">
           <li>
@@ -38,6 +41,10 @@
             @if (user?.userType === 'specialist') {
             <a routerLink="/specialist-profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi
               perfil</a>
+            }
+            @if (user?.userType === 'admin') {
+            <a routerLink="/admin-dashboard" class=" block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Panel de
+              control</a>
             }
           </li>
           <li>

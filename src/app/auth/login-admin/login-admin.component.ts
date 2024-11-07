@@ -1,6 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { AuthService } from '../../services/auth/auth.service';
 import {
   FormBuilder,
   FormGroup,
@@ -8,15 +6,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { AuthService } from '../../services/auth/auth.service';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-admin',
   standalone: true,
   imports: [FormsModule, RouterLink, RouterOutlet, ReactiveFormsModule],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  templateUrl: './login-admin.component.html',
+  styleUrl: './login-admin.component.css',
 })
-export class LoginComponent {
+export class LoginAdminComponent {
   loginForm: FormGroup;
   errorMessage = '';
 
