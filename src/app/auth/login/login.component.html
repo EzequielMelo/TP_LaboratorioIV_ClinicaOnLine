@@ -2,21 +2,41 @@
   <div class="w-full rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700">
     <div class="p-4 space-y-4 md:space-y-6 sm:p-8">
       <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
-        Ingresar
+        Ingreso Pacientes
       </h1>
-      <form class="max-w-md mx-auto">
+      <form class="max-w-md mx-auto" [formGroup]="loginForm">
         <div class="mb-5">
           <label for="email" class="block mb-2 text-sm font-medium text-gray-50">Tu email</label>
-          <input type="email" id="email"
+          <input type="email" id="email" formControlName="email"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="usuario@email.com" required />
+          <div class="h-[10px]">
+            @if (loginForm.controls['email'].errors !== null && loginForm.controls['email'].touched) {
+            @if (loginForm.controls['email'].errors!['required']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="email">Campo requerido</label>
+            }
+            @if (loginForm.controls['email'].errors!['email']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="email">Ingrese email valido</label>
+            }
+            }
+          </div>
         </div>
         <div class="mb-5">
           <label for="password" class="block mb-2 text-sm font-medium text-gray-50">Tu
             contraseña</label>
-          <input type="password" id="password"
+          <input type="password" id="password" formControlName="password"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required />
+          <div class="h-[10px]">
+            @if (loginForm.controls['password'].errors !== null && loginForm.controls['password'].touched) {
+            @if (loginForm.controls['password'].errors!['required']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="password">Campo requerido</label>
+            }
+            @if (loginForm.controls['password'].errors!['minlength']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
+            }
+            }
+          </div>
         </div>
         <div class="flex items-start mb-5">
           <p class="text-sm font-light text-gray-50"> ¿Primera vez qué
@@ -24,7 +44,7 @@
               class="font-bold text-primary-600 hover:underline text-primary-500">Registrate acá</a>
           </p>
         </div>
-        <button type="submit"
+        <button (click)="login()"
           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Ingresar</button>
       </form>
     </div>

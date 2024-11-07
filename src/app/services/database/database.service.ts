@@ -9,6 +9,9 @@ import {
   getDoc,
   runTransaction,
 } from '@angular/fire/firestore';
+import { Admin } from '../../classes/admin.class';
+import { Specialist } from '../../classes/specialist.class';
+import { User } from '../../classes/user';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +28,7 @@ export class DatabaseService {
       .pipe(map((snapshot) => !snapshot.empty));
   }
 
-  addPatient(patient: Partial<Patient>, colID: string): Observable<void> {
+  addUser(patient: Partial<Patient>, colID: string): Observable<void> {
     const userDocRef = doc(this.fire, `users/${colID}`);
     return from(setDoc(userDocRef, patient)).pipe(
       catchError((error) => {
@@ -35,26 +38,55 @@ export class DatabaseService {
     );
   }
 
-  getPatientData(uid: string): Observable<Patient | null> {
+  getUserData(uid: string): Observable<User | null> {
     const userDocRef = doc(this.fire, `users/${uid}`);
     return from(
       getDoc(userDocRef).then((docSnapshot) => {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data();
-          return new Patient(
-            uid,
-            data['name'],
-            data['lastName'],
-            data['email'],
-            data['age'],
-            data['dni'],
-            data['healthCareSystem'],
-            data['profilePicture'],
-            data['coverPicture'],
-            data['userType']
-          );
+          const userType = data['userType'];
+
+          // Según el tipo de usuario, creamos la instancia correspondiente
+          if (userType === 'patient') {
+            return new Patient(
+              uid,
+              data['name'],
+              data['lastName'],
+              data['email'],
+              data['age'],
+              data['dni'],
+              data['healthCareSystem'],
+              data['profilePicture'],
+              data['coverPicture'],
+              userType
+            );
+          } else if (userType === 'specialist') {
+            return new Specialist(
+              uid,
+              data['name'],
+              data['lastName'],
+              data['email'],
+              data['age'],
+              data['dni'],
+              data['specialty'], // Solo presente en Specialist
+              data['profilePicture'],
+              data['accountConfirmed'],
+              userType
+            );
+          } else if (userType === 'admin') {
+            return new Admin(
+              uid,
+              data['name'],
+              data['lastName'],
+              data['email'],
+              data['age'],
+              data['dni'],
+              data['profilePicture'],
+              userType
+            );
+          }
         }
-        return null;
+        return null; // Si no existe, devolvemos null
       })
     );
   }

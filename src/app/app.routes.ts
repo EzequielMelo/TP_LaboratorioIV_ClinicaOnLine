@@ -13,6 +13,11 @@ export const routes: Routes = [
       import('./pages/home/home.component').then((c) => c.HomeComponent),
   },
   {
+    path: 'select-login',
+    loadComponent: () =>
+      import('./auth/auth.component').then((c) => c.AuthComponent),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
@@ -44,6 +49,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/user-profile/user-profile.component').then(
         (c) => c.UserProfileComponent
+      ),
+    canActivate: [emailVerifiedGuard],
+  },
+  {
+    path: 'specialist-profile',
+    loadComponent: () =>
+      import('./pages/specialist-profile/specialist-profile.component').then(
+        (c) => c.SpecialistProfileComponent
       ),
     canActivate: [emailVerifiedGuard],
   },

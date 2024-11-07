@@ -6,50 +6,49 @@
     </a>
     <div class="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
 
-      <button type="button" routerLink="/login"
-        class="text-white bg-green-800 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Iniciar
-        Sesion
+
+      <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
+        id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
+        data-dropdown-placement="bottom">
+        @if (auth) {
+        <span class="sr-only">Abrir menu</span>
+        <img class="w-8 h-8 rounded-full" src="{{user?.profilePicture}}" alt="user photo">
+        }
+        @if (!auth) {
+        <a routerLink="/select-login"
+          class="text-white bg-green-800 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Iniciar
+          Sesion
+        </a>
+        }
       </button>
 
-      <button type="button" (click)="logOut()"
-        class="text-white bg-green-800 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Cerrar
-        sesion
-      </button>
-
-
-      <!--
-    <button type="button" class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300"
-      id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
-      data-dropdown-placement="bottom">
-      <span class="sr-only">Open user menu</span>
-      <img class="w-8 h-8 rounded-full"
-        src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user photo">
-    </button>
-    
-    <div
-      class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-      id="user-dropdown">
-      <div class="px-4 py-3">
-        <span class="block text-sm text-gray-900">Ezequiel Melo</span>
-        <span class="block text-sm  text-gray-500 truncate">ezequiel&#64;hotmail.com</span>
+      <div
+        class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+        id="user-dropdown">
+        @if (auth) {
+        <div class="px-4 py-3">
+          <span class="block text-sm text-gray-900">{{user?.name}}</span>
+          <span class="block text-sm  text-gray-500 truncate">{{user?.lastName}}</span>
+        </div>
+        <ul class="py-2" aria-labelledby="user-menu-button">
+          <li>
+            @if (user?.userType === 'patient') {
+            <a routerLink="/user-profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi perfil</a>
+            }
+            @if (user?.userType === 'specialist') {
+            <a routerLink="/specialist-profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi
+              perfil</a>
+            }
+          </li>
+          <li>
+            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">Turnos</a>
+          </li>
+          <li (click)="logOut()">
+            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar sesión</a>
+          </li>
+        </ul>
+        }
       </div>
-      <ul class="py-2" aria-labelledby="user-menu-button">
-        <li>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Dashboard</a>
-        </li>
-        <li>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">Settings</a>
-        </li>
-        <li>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Earnings</a>
-        </li>
-        <li>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign
-            out</a>
-        </li>
-      </ul>
-    </div>
-    -->
       <button data-collapse-toggle="navbar-user" type="button"
         class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
         aria-controls="navbar-user" aria-expanded="false">
@@ -64,24 +63,23 @@
       <ul
         class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent">
         <li>
-          <a href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Home</a>
+          <a
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Servicios
+            y prestaciones</a>
         </li>
         <li>
-          <a href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">About</a>
+          <a
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Sobre
+            nosotros</a>
         </li>
         <li>
-          <a href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Services</a>
+          <a
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Contacto</a>
         </li>
         <li>
-          <a href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Pricing</a>
-        </li>
-        <li>
-          <a href="#"
-            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Contact</a>
+          <a
+            class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:p-0 md:text-white md:hover:text-gray-700">Preguntas
+            frecuentes</a>
         </li>
       </ul>
     </div>

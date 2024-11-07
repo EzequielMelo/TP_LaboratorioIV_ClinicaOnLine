@@ -1,12 +1,9 @@
 import { User } from './user';
 
 export class Patient extends User {
-  lastName: string;
-  age: string;
-  dni: string;
   healthCareSystem: string;
-  profilePicture: string;
   coverPicture: string;
+  userData: any;
 
   constructor(
     id: string,
@@ -20,12 +17,11 @@ export class Patient extends User {
     coverPicture: string,
     userType: string
   ) {
-    super(id, name, email, userType);
+    super(id, name, lastName, email, age, dni, profilePicture, userType);
     this.lastName = lastName;
     this.age = age;
     this.dni = dni;
     this.healthCareSystem = healthCareSystem;
-    this.profilePicture = profilePicture;
     this.coverPicture = coverPicture;
   }
 }

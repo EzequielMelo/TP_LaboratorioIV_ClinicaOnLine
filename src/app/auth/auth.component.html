@@ -1,11 +1,43 @@
-<div class="min-h-screen items-center">
-  @if (isLogin) {
-  <app-login />
-  }
-  @if(isRegister){
-  <app-register />
-  }
-  @if(isRegisterSpecialist){
-  <app-register-specialist />
+<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+  <!-- Botones para seleccionar el componente (se muestran solo si no se ha seleccionado uno) -->
+  @if(!isComponentSelected) {
+  <div
+    class="w-full flex my-12 items-center justify-center rounded-lg shadow sm:max-w-lg xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700">
+    <div class="p-4 space-y-4 md:space-y-6 sm:p-8">
+      <div
+        class="w-72 h-72 rounded-full bg-cover bg-center cursor-pointer border-4 border-gray-300 shadow-lg hover:shadow-xl"
+        style="background-image: url('card-01.jpg');" (click)="navigateToLogin('login')">
+        <div class="flex items-center justify-center h-full">
+          <span class="text-white font-semibold bg-black bg-opacity-50 p-2 rounded-lg">Paciente</span>
+        </div>
+      </div>
+
+
+      <div
+        class="w-72 h-72 rounded-full bg-cover bg-center cursor-pointer border-4 border-gray-300 shadow-lg hover:shadow-xl"
+        style="background-image: url('card-02.jpg');">
+        <div class="flex items-center justify-center h-full" (click)="navigateToLogin('login-specialist')">
+          <span class="text-white font-semibold bg-black bg-opacity-50 p-2 rounded-lg">Especialista</span>
+        </div>
+      </div>
+    </div>
+  </div>
   }
 </div>
+
+
+<!-- Cargar el componente según el estado -->
+
+@if(isLogin){
+<app-login></app-login>
+}
+@if(isRegister){
+<app-register></app-register>
+}
+@if(isLoginSpecialist){
+<app-login-specialist></app-login-specialist>
+}
+
+@if(isRegisterSpecialist){
+<app-register-specialist></app-register-specialist>
+}
