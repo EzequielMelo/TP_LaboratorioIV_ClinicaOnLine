@@ -47,11 +47,13 @@
               control</a>
             }
           </li>
+          @if (user?.userType !== 'admin') {
           <li>
-            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 ">Turnos</a>
+            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Turnos</a>
           </li>
+          }
           <li (click)="logOut()">
-            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar sesión</a>
+            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Cerrar sesión</a>
           </li>
         </ul>
         }

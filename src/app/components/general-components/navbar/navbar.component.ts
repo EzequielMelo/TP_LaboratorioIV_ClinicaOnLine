@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth/auth.service';
-import { UserTypes } from '../../models/user-types';
+import { AuthService } from '../../../services/auth/auth.service';
+import { UserTypes } from '../../../models/user-types';
 import { Subscription } from 'rxjs';
 
 @Component({

@@ -1,0 +1,38 @@
+<div class="relative">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+      <tr>
+        <th scope="col" class="px-6 py-3 bg-gray-100">
+          Nombre
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Apellido
+        </th>
+        <th scope="col" class="px-6 py-3 bg-gray-100">
+          DNI
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Obra Social
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (patient of data; track $index) {
+      <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
+        <th scope="row" class="px-6 py-4 bg-gray-100 font-medium whitespace-nowrap">
+          {{patient.name}}
+        </th>
+        <td class="px-6 py-4">
+          {{patient.lastName}}
+        </td>
+        <td class="px-6 py-4 bg-gray-100">
+          {{patient.dni}}
+        </td>
+        <td class="px-6 py-4">
+          {{patient.healthCareSystem}}
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

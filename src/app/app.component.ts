@@ -1,7 +1,7 @@
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { NavbarComponent } from './components/general-components/navbar/navbar.component';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FooterComponent } from './components/footer/footer.component';
+import { FooterComponent } from './components/general-components/footer/footer.component';
 import { initFlowbite } from 'flowbite';
 
 @Component({

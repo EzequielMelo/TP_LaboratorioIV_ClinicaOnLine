@@ -80,9 +80,16 @@ export const routes: Routes = [
   {
     path: 'admin-dashboard',
     loadComponent: () =>
-      import('./pages/specialist-profile/specialist-profile.component').then(
-        (c) => c.SpecialistProfileComponent
+      import('./pages/admin-dashboard/admin-dashboard.component').then(
+        (c) => c.AdminDashboardComponent
       ),
-    canActivate: [authGuard, adminGuard],
+    /*canActivate: [authGuard, adminGuard],*/
+  },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then(
+        (c) => c.NotFoundComponent
+      ),
   },
 ];

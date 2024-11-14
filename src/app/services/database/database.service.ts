@@ -90,4 +90,57 @@ export class DatabaseService {
       })
     );
   }
+
+  getSpecialists(): Observable<Specialist[]> {
+    const usersColl = this.firestore.collection('users', (ref) =>
+      ref.where('userType', '==', 'specialist')
+    );
+
+    return usersColl.snapshotChanges().pipe(
+      map((actions) =>
+        actions.map((a) => {
+          const data = a.payload.doc.data() as Specialist;
+          const id = a.payload.doc.id;
+          return { ...data, id };
+        })
+      )
+    );
+  }
+
+  getPatients(): Observable<Patient[]> {
+    const usersColl = this.firestore.collection<Patient>('users', (ref) =>
+      ref.where('userType', '==', 'patient')
+    );
+    return usersColl.snapshotChanges().pipe(
+      map((actions) =>
+        actions.map((a) => {
+          const data = a.payload.doc.data() as Patient;
+          const id = a.payload.doc.id;
+          return { ...data, id };
+        })
+      )
+    );
+  }
+
+  getAdmins(): Observable<Admin[]> {
+    const usersColl = this.firestore.collection<Admin>('users', (ref) =>
+      ref.where('userType', '==', 'admin')
+    );
+    return usersColl.snapshotChanges().pipe(
+      map((actions) =>
+        actions.map((a) => {
+          const data = a.payload.doc.data() as Admin;
+          const id = a.payload.doc.id;
+          return { ...data, id };
+        })
+      )
+    );
+  }
+
+  updateAccountConfirmed(userId: string, isConfirmed: boolean): Promise<void> {
+    return this.firestore
+      .collection('users')
+      .doc(userId)
+      .update({ accountConfirmed: isConfirmed });
+  }
 }
