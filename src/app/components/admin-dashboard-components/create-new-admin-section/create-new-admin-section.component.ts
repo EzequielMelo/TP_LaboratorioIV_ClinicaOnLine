@@ -6,18 +6,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '../../services/auth/auth.service';
-import { dniValidator } from '../../shared/validators/custom-validators';
-import { numericValidator } from '../../shared/validators/custom-validators';
+import { AuthService } from '../../../services/auth/auth.service';
+import {
+  dniValidator,
+  numericValidator,
+} from '../../../shared/validators/custom-validators';
 
 @Component({
-  selector: 'app-register-specialist',
+  selector: 'app-create-new-admin-section',
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule],
-  templateUrl: './register-specialist.component.html',
-  styleUrl: './register-specialist.component.css',
+  templateUrl: './create-new-admin-section.component.html',
+  styleUrl: './create-new-admin-section.component.css',
 })
-export class RegisterSpecialistComponent {
+export class CreateNewAdminSectionComponent {
   registerForm: FormGroup;
   selectedUserAvatar: Blob | null = null;
   selectedUserAvatarName: string | null = null;
@@ -56,7 +58,6 @@ export class RegisterSpecialistComponent {
         ],
       ],
       dni: ['', [Validators.required, dniValidator()]],
-      medical_specialty: ['', Validators.required],
       user_avatar: ['', [Validators.required]],
     });
   }
@@ -71,15 +72,14 @@ export class RegisterSpecialistComponent {
     }
 
     this.auth
-      .registerSpecialist(
+      .registerAdmin(
         formValues.name,
         formValues.last_name,
         formValues.email,
         formValues.password,
         formValues.age,
         formValues.dni,
-        formValues.medical_specialty,
-        'specialist',
+        'admin',
         profilePicture
       )
       .subscribe({

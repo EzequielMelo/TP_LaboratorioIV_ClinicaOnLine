@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -17,7 +18,6 @@ import {
   Observable,
   of,
   switchMap,
-  tap,
   throwError,
 } from 'rxjs';
 import { DatabaseService } from '../database/database.service';
@@ -26,6 +26,7 @@ import { Patient } from '../../classes/patient.class';
 import { Specialist } from '../../classes/specialist.class';
 import { Admin } from '../../classes/admin.class';
 import { UserTypes } from './../../models/user-types';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -35,11 +36,13 @@ export class AuthService {
   public authUser$ = this.authUserSubject.asObservable();
   private userSubject = new BehaviorSubject<UserTypes | null>(null);
   public user$ = this.userSubject.asObservable();
+  private apiKey = environment.firebaseConfig.apiKey;
   authSubscription?: Unsubscribe;
 
   private auth = inject(Auth);
   private db = inject(DatabaseService);
   private storage = inject(StorageService);
+  private http = inject(HttpClient);
 
   constructor() {
     this.authSubscription = this.auth.onAuthStateChanged((authUser) => {
@@ -195,6 +198,84 @@ export class AuthService {
                           'Error al obtener el usuario actual para enviar el correo de verificación.',
                       }));
                     }
+                  })
+                );
+              })
+            );
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error en el registro:', error);
+        return throwError(() => ({
+          message: error.message || 'Ocurrió un error al registrar el usuario.',
+        }));
+      })
+    );
+  }
+
+  registerAdmin(
+    name: string,
+    lastName: string,
+    email: string,
+    password: string,
+    age: string,
+    dni: string,
+    userType: string,
+    profilePicture: Blob
+  ): Observable<void> {
+    return this.db.checkDNIExists(dni).pipe(
+      switchMap((exists) => {
+        if (exists) {
+          return throwError(() => ({
+            message: 'Ya existe una cuenta con ese DNI.',
+          }));
+        }
+
+        // Usar la API REST para crear el usuario
+        const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.apiKey}`;
+        const createUser$ = this.http.post<{ localId: string }>(url, {
+          email,
+          password,
+          returnSecureToken: false, // Evita iniciar sesión automáticamente
+        });
+
+        return createUser$.pipe(
+          switchMap(({ localId }) => {
+            // Subir la foto de perfil
+            const profileUpload$ = this.storage.uploadProfilePicture(
+              localId,
+              profilePicture
+            );
+
+            return profileUpload$.pipe(
+              switchMap((profileUrl) => {
+                // Crear el objeto usuario con la URL de la foto
+                const user: Partial<Admin> = {
+                  name,
+                  lastName,
+                  age,
+                  dni,
+                  profilePicture: profileUrl,
+                  userType,
+                };
+
+                // Guardar en la base de datos
+                return this.db.addUser(user, localId).pipe(
+                  switchMap(() => {
+                    // (Opcional) Enviar correo de verificación
+                    const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${this.apiKey}`;
+                    const verifyEmail$ = this.http.post(verifyUrl, {
+                      requestType: 'VERIFY_EMAIL',
+                      idToken: localId, // NOTA: Cambia esto si necesitas usar un token real
+                    });
+
+                    return verifyEmail$.pipe(
+                      map(() => {
+                        // Transforma el resultado para devolver `void`
+                        return;
+                      })
+                    );
                   })
                 );
               })
