@@ -49,4 +49,55 @@
       </form>
     </div>
   </div>
+
+  <div data-dial-init class="fixed bottom-6 start-6 group">
+    <div id="speed-dial-menu-bottom-left" class="flex-col items-center hidden mb-4 space-y-2">
+      <button (click)="usuarioPrueba1()" type="button" data-tooltip-target="tooltip-user1" data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2F1GTwDBThWkfD1rg9M8hc3KUS2f93%2FprofilePicture.jpg?alt=media&token=a02d229e-6f17-4f9b-8b04-2e75d52c3fb3" />
+        <span class="sr-only">Ezequiel Melo</span>
+      </button>
+      <div id="tooltip-user1" role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        Ezequiel Melo
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+
+      <button (click)="usuarioPrueba2()" type="button" data-tooltip-target="tooltip-user2" data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FXmpGwnVT2yWKZDQngy62l8evRD53%2FprofilePicture.jpg?alt=media&token=ebd0bedd-21f5-4b7c-a289-e76ee846100a" />
+        <span class="sr-only">Amelia Rodriguez</span>
+      </button>
+      <div id="tooltip-user2" role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        Amelia Rodrigez
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+
+      <button (click)="usuarioPrueba3()" type="button" data-tooltip-target="tooltip-user3" data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
+        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2Facxz2bXR0QOdwJUMfJInlnWApFi2%2FprofilePicture.jpg?alt=media&token=20df241e-a20f-4fd2-8c1e-1aa9c3b25947" />
+        <span class="sr-only">Ana Rosa Borrego</span>
+      </button>
+      <div id="tooltip-user3" role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+        Ana Rosa Borrego
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+    </div>
+    <button type="button" data-dial-toggle="speed-dial-menu-bottom-left" aria-controls="speed-dial-menu-bottom-left"
+      aria-expanded="false"
+      class="flex items-center justify-center text-white bg-blue-700 rounded-full w-14 h-14 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
+      <svg class="w-5 h-5 transition-transform group-hover:rotate-45" aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 1v16M1 9h16" />
+      </svg>
+      <span class="sr-only">Open actions menu</span>
+    </button>
+  </div>
+
 </div>

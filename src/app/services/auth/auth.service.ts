@@ -145,7 +145,7 @@ export class AuthService {
     password: string,
     age: string,
     dni: string,
-    specialty: string,
+    specialty: string[],
     userType: string,
     profilePicture: Blob
   ): Observable<void> {
@@ -260,7 +260,6 @@ export class AuthService {
                   userType,
                 };
 
-                // Guardar en la base de datos
                 return this.db.addUser(user, localId).pipe(
                   switchMap(() => {
                     // (Opcional) Enviar correo de verificación

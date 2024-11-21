@@ -7,13 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { Patient } from '../../classes/patient.class';
+import { Router, RouterLink } from '@angular/router';
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-login-specialist',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterOutlet, ReactiveFormsModule],
+  imports: [FormsModule, RouterLink, ReactiveFormsModule],
   templateUrl: './login-specialist.component.html',
   styleUrl: './login-specialist.component.css',
 })
@@ -37,6 +37,10 @@ export class LoginSpecialistComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    initFlowbite();
+  }
+
   login() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
@@ -50,5 +54,12 @@ export class LoginSpecialistComponent {
       });
     }
     console.log();
+  }
+
+  usuarioPrueba1() {
+    this.loginForm.patchValue({
+      email: 'nogos24666@merotx.com',
+      password: '123456',
+    });
   }
 }

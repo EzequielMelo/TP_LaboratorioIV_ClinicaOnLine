@@ -19,6 +19,8 @@ import { numericValidator } from '../../shared/validators/custom-validators';
 })
 export class RegisterSpecialistComponent {
   registerForm: FormGroup;
+  specialties: string[] = ['Cardiología', 'Dermatología', 'Pediatría'];
+  otherSpecialty: string = '';
   selectedUserAvatar: Blob | null = null;
   selectedUserAvatarName: string | null = null;
 
@@ -56,7 +58,7 @@ export class RegisterSpecialistComponent {
         ],
       ],
       dni: ['', [Validators.required, dniValidator()]],
-      medical_specialty: ['', Validators.required],
+      medical_specialty: [[], Validators.required],
       user_avatar: ['', [Validators.required]],
     });
   }
@@ -86,6 +88,13 @@ export class RegisterSpecialistComponent {
         next: () => console.log('Usuario registrado con éxito'),
         error: (error) => console.error('Error en el registro:', error.message),
       });
+  }
+
+  addSpecialty() {
+    if (this.otherSpecialty.trim() !== '') {
+      this.specialties.push(this.otherSpecialty.trim());
+      this.otherSpecialty = '';
+    }
   }
 
   onFileChange(event: Event, controlName: string) {

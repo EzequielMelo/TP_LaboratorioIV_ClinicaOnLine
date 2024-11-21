@@ -1,7 +1,7 @@
 import { User } from './user';
 
 export class Specialist extends User {
-  specialty: string;
+  specialty: string[];
   accountConfirmed: boolean;
 
   constructor(
@@ -11,7 +11,7 @@ export class Specialist extends User {
     email: string,
     age: string,
     dni: string,
-    specialty: string,
+    specialty: string[],
     profilePicture: string,
     accountConfirmed: boolean,
     userType: string

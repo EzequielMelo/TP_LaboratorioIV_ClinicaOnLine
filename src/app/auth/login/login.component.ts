@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import {
   FormBuilder,
@@ -8,11 +8,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterOutlet, ReactiveFormsModule],
+  imports: [FormsModule, RouterLink, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -36,6 +37,10 @@ export class LoginComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    initFlowbite();
+  }
+
   login() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
@@ -49,5 +54,26 @@ export class LoginComponent {
       });
     }
     console.log();
+  }
+
+  usuarioPrueba1() {
+    this.loginForm.patchValue({
+      email: 'bocim96780@kazvi.com',
+      password: '123456',
+    });
+  }
+
+  usuarioPrueba2() {
+    this.loginForm.patchValue({
+      email: 'bovir78503@kimasoft.com',
+      password: '123456',
+    });
+  }
+
+  usuarioPrueba3() {
+    this.loginForm.patchValue({
+      email: 'tepadif169@nozamas.com',
+      password: '123456',
+    });
   }
 }

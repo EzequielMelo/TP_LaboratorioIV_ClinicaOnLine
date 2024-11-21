@@ -153,13 +153,12 @@
           <label for="medical_specialty" class="block mb-2 text-sm font-medium text-gray-400">Seleccione
             su especialidad</label>
           <select formControlName="medical_specialty" id="medical_specialty"
-            class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-
-            <option value="" selected disabled>Selecciona una especialidad</option>
-            <option>Pediatria</option>
-            <option>Oftalmologia</option>
-            <option>Odontologia</option>
-            <option>Cardiologia</option>
+            class="bg-gray-300 h-fit border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 overflow-auto"
+            multiple>
+            <option value="" selected disabled>Selecciona una o mas especialidades</option>
+            @for (specialty of specialties; track $index) {
+            <option value="{{specialty}}">{{specialty}}</option>
+            }
           </select>
           <div class="h-[10px]">
             @if (registerForm.controls['medical_specialty'].invalid &&
@@ -171,12 +170,15 @@
           </div>
         </div>
         <div class="relative z-0 w-full mb-5 group">
-          <input type="text" name="other-medical-specialty" id="other-medical-specialty" class=" block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white
+          <input type="text" name="other-medical-specialty" id="other-medical-specialty" [(ngModel)]="otherSpecialty"
+            [ngModelOptions]="{standalone: true}" class=" block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white
             border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer" placeholder=" " required />
           <label for="other-medical-specialty"
             class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Escriba
-            aca
-            en caso de no encontrar su especialidad</label>
+            aca en caso de no encontrar su especialidad</label>
+          <button (click)="addSpecialty()" type="button"
+            class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ">Añadir
+            especialidad</button>
         </div>
         <div class="relative z-0 w-full mb-5 group">
           <label class="block mb-2 text-sm font-medium text-gray-400" for="user_avatar">Imagen de

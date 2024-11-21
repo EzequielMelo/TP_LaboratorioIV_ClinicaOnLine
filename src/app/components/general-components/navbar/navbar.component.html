@@ -12,7 +12,7 @@
         data-dropdown-placement="bottom">
         @if (auth) {
         <span class="sr-only">Abrir menu</span>
-        <img class="w-8 h-8 rounded-full" src="{{user?.profilePicture}}" alt="user photo">
+        <img class="w-8 h-8 rounded-full object-cover" src="{{user?.profilePicture}}" alt="user photo">
         }
         @if (!auth) {
         <a routerLink="/select-login"

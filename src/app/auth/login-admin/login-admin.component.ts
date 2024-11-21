@@ -7,12 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
+import { initFlowbite } from 'flowbite';
 
 @Component({
   selector: 'app-login-admin',
   standalone: true,
-  imports: [FormsModule, RouterLink, RouterOutlet, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './login-admin.component.html',
   styleUrl: './login-admin.component.css',
 })
@@ -36,6 +37,10 @@ export class LoginAdminComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    initFlowbite();
+  }
+
   login() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
@@ -49,5 +54,12 @@ export class LoginAdminComponent {
       });
     }
     console.log();
+  }
+
+  usuarioPrueba1() {
+    this.loginForm.patchValue({
+      email: 'admin@admin.com',
+      password: '123456',
+    });
   }
 }
