@@ -12,6 +12,7 @@ import {
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   forkJoin,
   from,
   map,
@@ -27,6 +28,7 @@ import { Specialist } from '../../classes/specialist.class';
 import { Admin } from '../../classes/admin.class';
 import { UserTypes } from './../../models/user-types';
 import { environment } from '../../../environments/environment';
+import { LoadingService } from '../loading/loading.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +45,7 @@ export class AuthService {
   private db = inject(DatabaseService);
   private storage = inject(StorageService);
   private http = inject(HttpClient);
+  private loadingService = inject(LoadingService);
 
   constructor() {
     this.authSubscription = this.auth.onAuthStateChanged((authUser) => {
@@ -52,6 +55,7 @@ export class AuthService {
       } else {
         this.authUserSubject.next(null);
         this.userSubject.next(null);
+        this.loadingService.stopLoading(); // Deja de cargar si no hay usuario
       }
     });
   }
@@ -309,56 +313,64 @@ export class AuthService {
   }
 
   private loadUserData(uid: string): void {
-    this.db.getUserData(uid).subscribe((userData) => {
-      if (userData) {
-        let user: UserTypes;
+    this.loadingService.startLoading();
+    this.db.getUserData(uid).subscribe(
+      (userData) => {
+        if (userData) {
+          let user: UserTypes;
 
-        if (userData instanceof Patient) {
-          user = new Patient(
-            uid,
-            userData.name,
-            userData.lastName,
-            this.authUserSubject.getValue()?.email ?? '',
-            userData.age,
-            userData.dni,
-            userData.healthCareSystem,
-            userData.profilePicture,
-            userData.coverPicture,
-            userData.userType
-          );
-        } else if (userData instanceof Specialist) {
-          user = new Specialist(
-            uid,
-            userData.name,
-            userData.lastName,
-            this.authUserSubject.getValue()?.email ?? '',
-            userData.age,
-            userData.dni,
-            userData.specialty, // Propiedad específica de Specialist
-            userData.profilePicture,
-            userData.accountConfirmed,
-            userData.userType
-          );
-        } else if (userData instanceof Admin) {
-          user = new Admin(
-            uid,
-            userData.name,
-            userData.lastName,
-            this.authUserSubject.getValue()?.email ?? '',
-            userData.age,
-            userData.dni,
-            userData.profilePicture,
-            userData.userType
-          );
+          if (userData instanceof Patient) {
+            user = new Patient(
+              uid,
+              userData.name,
+              userData.lastName,
+              this.authUserSubject.getValue()?.email ?? '',
+              userData.age,
+              userData.dni,
+              userData.healthCareSystem,
+              userData.profilePicture,
+              userData.coverPicture,
+              userData.userType
+            );
+          } else if (userData instanceof Specialist) {
+            user = new Specialist(
+              uid,
+              userData.name,
+              userData.lastName,
+              this.authUserSubject.getValue()?.email ?? '',
+              userData.age,
+              userData.dni,
+              userData.specialty, // Propiedad específica de Specialist
+              userData.profilePicture,
+              userData.accountConfirmed,
+              userData.userType
+            );
+          } else if (userData instanceof Admin) {
+            user = new Admin(
+              uid,
+              userData.name,
+              userData.lastName,
+              this.authUserSubject.getValue()?.email ?? '',
+              userData.age,
+              userData.dni,
+              userData.profilePicture,
+              userData.userType
+            );
+          } else {
+            user = null;
+          }
+          this.userSubject.next(user);
         } else {
-          user = null;
+          this.userSubject.next(null);
         }
-
-        this.userSubject.next(user);
-      } else {
+        this.loadingService.stopLoading();
+      },
+      (error) => {
+        console.error('Error al cargar los datos del usuario:', error);
         this.userSubject.next(null);
+        this.loadingService.stopLoading(); // Detener la carga en caso de error
       }
-    });
+    );
   }
 
   logOut() {

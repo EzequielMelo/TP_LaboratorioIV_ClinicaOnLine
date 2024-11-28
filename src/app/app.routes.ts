@@ -5,6 +5,7 @@ import { patientGuard } from './guards/patient.guard';
 import { specialistGuard } from './guards/specialist.guard';
 import { authRedirectGuard } from './guards/auth-redirect.guard';
 import { adminGuard } from './guards/admin.guard';
+import { specialistAccountVerifiedGuard } from './guards/specialist-account-verified.guard';
 
 export const routes: Routes = [
   {
@@ -62,6 +63,14 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'verify-account',
+    loadComponent: () =>
+      import('./pages/verify-account/verify-account.component').then(
+        (c) => c.VerifyAccountComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: 'user-profile',
     loadComponent: () =>
       import('./pages/user-profile/user-profile.component').then(
@@ -75,7 +84,12 @@ export const routes: Routes = [
       import('./pages/specialist-profile/specialist-profile.component').then(
         (c) => c.SpecialistProfileComponent
       ),
-    canActivate: [authGuard, emailVerifiedGuard, specialistGuard],
+    canActivate: [
+      authGuard,
+      emailVerifiedGuard,
+      specialistGuard,
+      specialistAccountVerifiedGuard,
+    ],
   },
   {
     path: 'admin-dashboard',
@@ -83,7 +97,15 @@ export const routes: Routes = [
       import('./pages/admin-dashboard/admin-dashboard.component').then(
         (c) => c.AdminDashboardComponent
       ),
-    /*canActivate: [authGuard, adminGuard],*/
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'my-appointments',
+    loadComponent: () =>
+      import('./pages/my-appointments/my-appointments.component').then(
+        (c) => c.MyAppointmentsComponent
+      ),
+    canActivate: [authGuard /*, emailVerifiedGuard*/],
   },
   {
     path: '**',

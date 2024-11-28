@@ -17,8 +17,6 @@ export class VerifyEmailComponent {
     this.auth.checkEmailVerification().subscribe((isVerified) => {
       if (isVerified) {
         this.router.navigate(['/user-profile']);
-      } else {
-        alert('Por favor, verifica tu email antes de continuar.');
       }
     });
   }
