@@ -2,16 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { Patient } from '../../classes/patient.class';
-import {
-  Firestore,
-  doc,
-  setDoc,
-  getDoc,
-  runTransaction,
-} from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { Admin } from '../../classes/admin.class';
 import { Specialist } from '../../classes/specialist.class';
 import { User } from '../../classes/user';
+import { Appointment } from '../../classes/appointment';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +66,8 @@ export class DatabaseService {
               data['specialty'], // Solo presente en Specialist
               data['profilePicture'],
               data['accountConfirmed'],
+              data['workDays'],
+              data['workHours'],
               userType
             );
           } else if (userType === 'admin') {
@@ -135,6 +132,60 @@ export class DatabaseService {
         })
       )
     );
+  }
+
+  addAppointment(appointment: Partial<Appointment>): Observable<void> {
+    const userDocRef = doc(this.fire, `appointments`);
+    return from(setDoc(userDocRef, appointment)).pipe(
+      catchError((error) => {
+        console.error('Error al añadir el turno:', error);
+        return throwError(() => ({ message: 'Error al añadir turno.' }));
+      })
+    );
+  }
+
+  getAppointments(idPatient: string): Observable<Appointment[]> {
+    return this.firestore
+      .collection('appointments', (ref) =>
+        ref.where('idPatient', '==', idPatient)
+      )
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as Appointment;
+            const id = a.payload.doc.id;
+            return { ...data, id } as Appointment;
+          })
+        )
+      );
+  }
+
+  getSpecialtys() {
+    const specialtysColl = this.firestore.collection<{ specialty: string }>(
+      'specialtys'
+    );
+    return specialtysColl.get().pipe(
+      map((snapshot) => snapshot.docs.map((doc) => doc.data().specialty)) // Devuelve solo los nombres
+    );
+  }
+
+  getSpecialistsBySpecialty(selectedSpecialty: string) {
+    return this.firestore
+      .collection('users', (ref) =>
+        ref
+          .where('userType', '==', 'specialist')
+          .where('specialty', 'array-contains', selectedSpecialty)
+      )
+      .get()
+      .pipe(
+        map((snapshot) =>
+          snapshot.docs.map((doc) => {
+            const data = doc.data() as Specialist; // Datos del especialista
+            return { ...data, id: doc.id }; // Combinas los datos con el id
+          })
+        )
+      );
   }
 
   updateAccountConfirmed(userId: string, isConfirmed: boolean): Promise<void> {

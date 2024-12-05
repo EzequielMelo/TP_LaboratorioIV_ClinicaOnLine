@@ -343,6 +343,8 @@ export class AuthService {
               userData.specialty, // Propiedad específica de Specialist
               userData.profilePicture,
               userData.accountConfirmed,
+              userData.workDays,
+              userData.workHours,
               userData.userType
             );
           } else if (userData instanceof Admin) {

@@ -1,0 +1,80 @@
+<div class="relative">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+      <tr>
+        <th scope="col" class="px-3 py-2 bg-gray-100">
+          Fecha de la solicitud
+        </th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">
+          Mensaje
+        </th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">
+          Fecha del turno
+        </th>
+        <th scope="col" class="px-3 py-2">
+          Especialista asignado
+        </th>
+        <th scope="col" class="px-3 py-2">
+          Especialidad
+        </th>
+        <th scope="col" class="px-3 py-2">
+          Turno
+        </th>
+        <th scope="col" class="px-3 py-2">
+          Cancelar turno
+        </th>
+        <th scope="col" class="px-3 py-2">
+          Ver reseña
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (appointment of filteredAppointments; track $index) {
+      <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
+        <td class="px-3 py-2 bg-gray-100">
+          {{appointment.requestedDate ? (appointment.requestedDate.toDate() | date:'dd/MM/yyyy') : ''}}
+        </td>
+        <td class="px-3 py-2 bg-gray-100">
+          {{appointment.message}}
+        </td>
+        <td class="px-3 py-2">
+          @if (appointment.appointmentDate == null) {
+          Sin Asignar
+          }@else {
+          {{ appointment.appointmentDate ? (appointment.appointmentDate.toDate() | date:'dd/MM/yyyy HH:mm') : '' }}
+          }
+        </td>
+        <td class="px-3 py-2">
+          {{appointment.specialistName}}
+        </td>
+        <td class="px-3 py-2">
+          @if (appointment.speciality == null) {
+          Sin Asignar
+          }@else {
+          {{appointment.speciality}}
+          }
+        </td>
+        <td class="px-3 py-2">
+          {{appointment.appointmentStatus}}
+        </td>
+        <td class="px-3 py-2">
+          <button type="button" [disabled]="!appointment.isCancelable"
+            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400">Cancelar
+            turno</button>
+        </td>
+        <td class="px-3 py-2">
+          @if(appointment.appointmentStatus == 'Completado')
+          {
+          <button type="button"
+            class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Ver
+            reseña</button>
+          }@else {
+          Aún no disponible
+          }
+        </td>
+
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

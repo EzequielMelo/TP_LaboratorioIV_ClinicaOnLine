@@ -105,7 +105,9 @@ export const routes: Routes = [
       import('./pages/my-appointments/my-appointments.component').then(
         (c) => c.MyAppointmentsComponent
       ),
-    canActivate: [authGuard /*, emailVerifiedGuard*/],
+    canActivate: [
+      /*authGuard , emailVerifiedGuard*/
+    ],
   },
   {
     path: '**',

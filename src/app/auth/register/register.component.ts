@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { dniValidator } from '../../shared/validators/custom-validators';
 import { numericValidator } from '../../shared/validators/custom-validators';
 import { AuthService } from '../../services/auth/auth.service';
@@ -14,7 +13,7 @@ import { AuthService } from '../../services/auth/auth.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
