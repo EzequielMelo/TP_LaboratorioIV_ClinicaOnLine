@@ -1,1 +1,50 @@
-<p>specialist-profile works!</p>
+<div class="flex flex-row justify-center px-6 py-8 mx-auto lg:py-0">
+  @if(true) {
+  <div
+    class="w-full flex flex-row my-12 mt-[120px] justify-center rounded-lg shadow sm:max-w-5xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
+
+    <div class="w-[30%] flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-100px]">
+      <div class="w-64 h-64 rounded-full bg-cover bg-center border-4 border-gray-300 shadow-lg hover:shadow-xl"
+        style="background-image: url('{{user?.profilePicture}}');">
+      </div>
+      <div class="text-center font-semibold">
+        <span class="block text-3xl">{{user?.name}}</span>
+        <span class="block text-3xl">{{user?.lastName}}</span>
+      </div>
+    </div>
+
+    <div class="w-[70%] p-4 space-y-4 md:space-y-6 sm:p-8 rounded-lg">
+      <div class="mb-4">
+        <div class="flex flex-col rounded-md" role="group">
+          <div class="flex flex-col m-3">
+            <div class="flex flex-row">
+              <h3 class="text-2xl font-semibold">Horarios de atencion: </h3>
+              <svg class="w-6 h-6 text-gray-800 dark:text-white cursor-pointer" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28" />
+              </svg>
+
+            </div>
+            <ul>
+              @for (item of getSpecialistWorkDays(); track $index) {
+              <li class="font-medium">{{item}}</li>
+              }
+            </ul>
+          </div>
+          <div class="flex flex-col m-3">
+            <h3 class="text-2xl font-semibold">Especialidades: </h3>
+            <ul>
+              @for (item of getSpecialistSpecialtys(); track $index) {
+              <li class="font-medium">{{item}}</li>
+              }
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  }
+</div>

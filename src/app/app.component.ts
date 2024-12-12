@@ -3,17 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './components/general-components/footer/footer.component';
 import { initFlowbite } from 'flowbite';
-import { LoadingIndicatorComponent } from './components/general-components/loading-indicator/loading-indicator.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    NavbarComponent,
-    FooterComponent,
-    LoadingIndicatorComponent,
-  ],
+  imports: [RouterOutlet, NavbarComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

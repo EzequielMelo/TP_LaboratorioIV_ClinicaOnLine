@@ -2,28 +2,31 @@
   <table class="w-full text-sm text-left rtl:text-right text-gray-500">
     <thead class="text-xs uppercase bg-gray-50 text-gray-700">
       <tr>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
+        <th scope="col" class="px-3 py-2">
           Fecha de la solicitud
         </th>
         <th scope="col" class="px-3 py-2 bg-gray-100">
           Mensaje
         </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
+        <th scope="col" class="px-3 py-2">
           Fecha del turno
         </th>
-        <th scope="col" class="px-3 py-2">
-          Especialista asignado
+        <th scope="col" class="px-3 py-2 bg-gray-100">
+          Nombre del Paciente
+        </th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">
+          Nombre del Especialista
         </th>
         <th scope="col" class="px-3 py-2">
           Especialidad
         </th>
-        <th scope="col" class="px-3 py-2">
+        <th scope="col" class="px-3 py-2 bg-gray-100">
           Turno
         </th>
         <th scope="col" class="px-3 py-2">
-          Cancelar turno
+          opciones del turno
         </th>
-        <th scope="col" class="px-3 py-2">
+        <th scope="col" class="px-3 py-2 bg-gray-100">
           Ver reseña
         </th>
       </tr>
@@ -31,7 +34,7 @@
     <tbody>
       @for (appointment of filteredAppointments; track $index) {
       <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
-        <td class="px-3 py-2 bg-gray-100">
+        <td class="px-3 py-2">
           {{appointment.requestedDate ? (appointment.requestedDate.toDate() | date:'dd/MM/yyyy') : ''}}
         </td>
         <td class="px-3 py-2 bg-gray-100">
@@ -44,17 +47,20 @@
           {{ appointment.appointmentDate ? (appointment.appointmentDate.toDate() | date:'dd/MM/yyyy HH:mm') : '' }}
           }
         </td>
-        <td class="px-3 py-2">
+        <td class="px-3 py-2 bg-gray-100">
+          {{appointment.patientName}}
+        </td>
+        <td class="px-3 py-2 ">
           {{appointment.specialistName}}
         </td>
-        <td class="px-3 py-2">
+        <td class="px-3 py-2bg-gray-100">
           @if (appointment.speciality == null) {
           Sin Asignar
           }@else {
           {{appointment.speciality}}
           }
         </td>
-        <td class="px-3 py-2 bg-gray-100 font-bold" [ngClass]="{
+        <td class="px-3 py-2 font-bold" [ngClass]="{
           'text-green-700': appointment.appointmentStatus === 'Aceptado',
           'text-amber-700': appointment.appointmentStatus === 'Rechazado',
           'text-red-700': appointment.appointmentStatus === 'Cancelado',
@@ -62,14 +68,13 @@
         }">
           {{appointment.appointmentStatus}}
         </td>
-        <td class="px-3 py-2">
+        <td class="px-3 py-2 flex flex-col ali bg-gray-100">
           <button type="button" [disabled]="!appointment.isCancelable" (click)="cancelAppointment(appointment)"
-            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400">Cancelar
+            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-2 py-2 text-center me-4 mb-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400">Cancelar
             turno</button>
         </td>
-        <td class="px-3 py-2">
-          @if(appointment.appointmentStatus == 'Completado')
-          {
+        <td class="px-3 py-2 ">
+          @if(appointment.appointmentStatus == 'Realizado') {
           <button type="button"
             class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Ver
             reseña</button>
@@ -77,7 +82,6 @@
           Aún no disponible
           }
         </td>
-
       </tr>
       }
     </tbody>

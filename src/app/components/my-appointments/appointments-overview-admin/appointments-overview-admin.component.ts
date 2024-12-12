@@ -1,29 +1,34 @@
 import { Component, inject } from '@angular/core';
+import { Appointment } from '../../../classes/appointment';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { DatabaseService } from '../../../services/database/database.service';
+import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { User } from '../../../classes/user';
-import { Appointment } from '../../../classes/appointment';
 import { CommonModule } from '@angular/common';
-import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
+import { AppointmentsListSpecialistComponent } from '../appointments-list-specialist/appointments-list-specialist.component';
+import { AppointmentsListAdminComponent } from '../appointments-list-admin/appointments-list-admin.component';
 
 @Component({
-  selector: 'app-appointments-overview',
+  selector: 'app-appointments-overview-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppointmentsListComponent],
-  templateUrl: './appointments-overview.component.html',
-  styleUrl: './appointments-overview.component.css',
+  imports: [CommonModule, ReactiveFormsModule, AppointmentsListAdminComponent],
+  templateUrl: './appointments-overview-admin.component.html',
+  styleUrl: './appointments-overview-admin.component.css',
 })
-export class AppointmentsOverviewComponent {
+export class AppointmentsOverviewAdminComponent {
   userId: string | null = null;
-  searchForm: FormGroup;
   appointmentsNew: Appointment[] = [];
   appointmentsAccepted: Appointment[] = [];
+  appointmentsCompleted: Appointment[] = [];
+  appointmentsRejected: Appointment[] = [];
   appointmentsCanceled: Appointment[] = [];
   displayedAppointments: Appointment[] = [];
+  searchForm: FormGroup;
 
   protected authService = inject(AuthService);
   private db = inject(DatabaseService);
+  private appointmentService = inject(AppointmentsService);
 
   constructor(private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -42,20 +47,22 @@ export class AppointmentsOverviewComponent {
   }
 
   loadAppointments() {
-    this.db.getAppointments(this.userId!).subscribe({
+    this.appointmentService.getAllAppointments().subscribe({
       next: (appointments) => {
         this.appointmentsNew = appointments.filter(
           (a) => a.appointmentStatus === 'Sin Asignar'
         );
         this.appointmentsAccepted = appointments.filter(
-          (a) =>
-            a.appointmentStatus === 'Aceptado' ||
-            a.appointmentStatus === 'Realizado'
+          (a) => a.appointmentStatus === 'Aceptado'
+        );
+        this.appointmentsCompleted = appointments.filter(
+          (a) => a.appointmentStatus === 'Realizado'
+        );
+        this.appointmentsRejected = appointments.filter(
+          (a) => a.appointmentStatus === 'Rechazado'
         );
         this.appointmentsCanceled = appointments.filter(
-          (a) =>
-            a.appointmentStatus === 'Rechazado' ||
-            a.appointmentStatus === 'Cancelado'
+          (a) => a.appointmentStatus === 'Cancelado'
         );
         this.displayedAppointments = this.appointmentsNew;
       },
@@ -72,6 +79,12 @@ export class AppointmentsOverviewComponent {
         break;
       case 'Aceptado':
         this.displayedAppointments = this.appointmentsAccepted;
+        break;
+      case 'Realizado':
+        this.displayedAppointments = this.appointmentsCompleted;
+        break;
+      case 'Rechazado':
+        this.displayedAppointments = this.appointmentsRejected;
         break;
       case 'Cancelado':
         this.displayedAppointments = this.appointmentsCanceled;

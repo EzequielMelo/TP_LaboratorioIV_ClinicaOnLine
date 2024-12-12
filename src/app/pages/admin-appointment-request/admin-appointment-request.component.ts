@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,30 +6,41 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { DatabaseService } from '../../../services/database/database.service';
-import { AppointmentsService } from '../../../services/appointments/appointments.service';
-import { Specialist } from '../../../classes/specialist.class';
-import { Appointment } from '../../../classes/appointment';
-import { Timestamp } from '@angular/fire/firestore';
+import { DatabaseService } from '../../services/database/database.service';
+import { AppointmentsService } from '../../services/appointments/appointments.service';
+import { Specialist } from '../../classes/specialist.class';
+import { UserTypes } from '../../models/user-types';
+import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
-import { UserTypes } from '../../../models/user-types';
-import { AuthService } from '../../../services/auth/auth.service';
+import { Appointment } from '../../classes/appointment';
+import { Timestamp } from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
+import { PatientListComponent } from '../../components/admin-dashboard-components/patient-list/patient-list.component';
+import { Patient } from '../../classes/patient.class';
 
 @Component({
-  selector: 'app-appointment-request',
+  selector: 'app-admin-appointment-request',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './appointment-request.component.html',
-  styleUrl: './appointment-request.component.css',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PatientListComponent,
+  ],
+  templateUrl: './admin-appointment-request.component.html',
+  styleUrl: './admin-appointment-request.component.css',
 })
-export class AppointmentRequestComponent implements OnInit {
+export class AdminAppointmentRequestComponent {
   schedule: any[] = [];
   newAppointmentForm: FormGroup;
+  searchForm: FormGroup;
   specialtys: string[] = [];
   selectedSpecialist: Specialist | null = null;
   specialists: Specialist[] = [];
+  patients: Patient[] = [];
   selectedDaySlots: string[] = [];
   user: UserTypes | null = null;
+  patient: Patient | null = null;
 
   private formBuilder = inject(FormBuilder);
   private db = inject(DatabaseService);
@@ -44,10 +54,19 @@ export class AppointmentRequestComponent implements OnInit {
     });
 
     this.newAppointmentForm = this.formBuilder.group({
+      selectedPatient: ['', [Validators.required]],
       specialty: ['', Validators.required],
       specialistName: ['', Validators.required],
       selectedDay: ['', Validators.required],
       selectedSlot: ['', Validators.required],
+    });
+
+    this.db.getPatients().subscribe((data) => {
+      this.patients = data;
+    });
+
+    this.searchForm = this.formBuilder.group({
+      keyWord: [''],
     });
   }
 
@@ -180,8 +199,8 @@ export class AppointmentRequestComponent implements OnInit {
 
       // Crear el objeto de cita
       const appointment: Partial<Appointment> = {
-        idPatient: this.user?.id, // ID del paciente autenticado
-        patientName: `${this.user?.name} ${this.user?.lastName}`,
+        idPatient: this.patient?.id, // ID del paciente autenticado
+        patientName: `${this.patient?.name} ${this.patient?.lastName}`,
         idSpecialist: this.selectedSpecialist?.id,
         message: 'Se solicita un nuevo turno',
         speciality: formValues.specialty,
@@ -206,6 +225,35 @@ export class AppointmentRequestComponent implements OnInit {
       });
     } else {
       alert('Por favor completa todos los campos requeridos.');
+    }
+  }
+
+  receivePatient(selectedPatient: Patient): void {
+    this.patient = selectedPatient; // Actualizas la propiedad local.
+    this.newAppointmentForm.controls['selectedPatient'].setValue(
+      selectedPatient.id
+    ); // Asignas el ID al FormControl.
+  }
+
+  formatPatient(patient: Patient): string {
+    return `${patient.dni} - ${patient.name} ${patient.lastName}`;
+  }
+
+  onSearch() {
+    const keyWord = this.searchForm.get('keyWord')?.value;
+    console.log('Search submitted:', keyWord);
+
+    if (keyWord) {
+      this.patients = this.patients.filter(
+        (patients) =>
+          patients.name.toLowerCase().includes(keyWord.toLowerCase()) ||
+          patients.lastName.toLowerCase().includes(keyWord.toLowerCase()) ||
+          patients.dni.toLowerCase().includes(keyWord.toLowerCase())
+      );
+    } else {
+      this.db.getPatients().subscribe((data) => {
+        this.patients = data;
+      });
     }
   }
 }

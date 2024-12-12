@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Patient } from '../../../classes/patient.class';
 
 @Component({
@@ -10,4 +10,9 @@ import { Patient } from '../../../classes/patient.class';
 })
 export class PatientListComponent {
   @Input() data: Patient[] | null = null;
+  @Output() patientEvent: EventEmitter<any> = new EventEmitter<any>();
+
+  selectedPatient(patient: any) {
+    this.patientEvent.emit(patient);
+  }
 }

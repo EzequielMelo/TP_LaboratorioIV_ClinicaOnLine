@@ -7,6 +7,7 @@ import {
   Firestore,
   setDoc,
   Timestamp,
+  updateDoc,
 } from '@angular/fire/firestore';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { addDays, format } from 'date-fns';
@@ -130,5 +131,72 @@ export class AppointmentsService {
         return throwError(() => new Error('Error al añadir turno.'));
       })
     );
+  }
+
+  cancelAppointment(
+    appointmentId: string,
+    appointmentMessage: string
+  ): Promise<void> {
+    const appointmentRef = doc(this.fire, `appointments/${appointmentId}`);
+    return updateDoc(appointmentRef, {
+      isCancelable: false,
+      appointmentStatus: 'Cancelado',
+      message: appointmentMessage,
+    });
+  }
+
+  rejectAppointment(
+    appointmentId: string,
+    appointmentMessage: string
+  ): Promise<void> {
+    const appointmentRef = doc(this.fire, `appointments/${appointmentId}`);
+    return updateDoc(appointmentRef, {
+      isCancelable: false,
+      appointmentStatus: 'Rechazado',
+      message: appointmentMessage,
+    });
+  }
+
+  acceptAppointment(appointmentId: string): Promise<void> {
+    const appointmentRef = doc(this.fire, `appointments/${appointmentId}`);
+    return updateDoc(appointmentRef, {
+      isCancelable: false,
+      appointmentStatus: 'Aceptado',
+      message: 'Recuerde agendar el turno para asistir al mismo',
+    });
+  }
+
+  getSpecialistAppointments(specialistId: string): Observable<Appointment[]> {
+    return this.firestore
+      .collection('appointments', (ref) =>
+        ref
+          .where('idSpecialist', '==', specialistId)
+          .where('appointmentStatus', '!=', 'Cancelado')
+      )
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as Appointment;
+            const id = a.payload.doc.id;
+            return { ...data, id } as Appointment;
+          })
+        )
+      );
+  }
+
+  getAllAppointments(): Observable<Appointment[]> {
+    return this.firestore
+      .collection('appointments')
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data() as Appointment;
+            const id = a.payload.doc.id;
+            return { ...data, id } as Appointment;
+          })
+        )
+      );
   }
 }

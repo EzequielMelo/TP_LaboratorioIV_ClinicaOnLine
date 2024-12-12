@@ -1,17 +1,17 @@
-import { CommonModule, NgClass } from '@angular/common';
-import { Component, inject, Input, input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Appointment } from '../../../classes/appointment';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
+import { CommonModule, NgClass } from '@angular/common';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-appointments-list',
+  selector: 'app-appointments-list-admin',
   standalone: true,
   imports: [CommonModule, NgClass],
-  templateUrl: './appointments-list.component.html',
-  styleUrl: './appointments-list.component.css',
+  templateUrl: './appointments-list-admin.component.html',
+  styleUrl: './appointments-list-admin.component.css',
 })
-export class AppointmentsListComponent {
+export class AppointmentsListAdminComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
 
@@ -24,10 +24,8 @@ export class AppointmentsListComponent {
     const lowerCaseKeyWord = this.keyWord.trim().toLowerCase();
     return (this.appointments || []).filter(
       (appointment) =>
-        (appointment.specialistName &&
-          appointment.specialistName
-            .toLowerCase()
-            .includes(lowerCaseKeyWord)) ||
+        (appointment.patientName &&
+          appointment.patientName.toLowerCase().includes(lowerCaseKeyWord)) ||
         (appointment.speciality &&
           appointment.speciality.toLowerCase().includes(lowerCaseKeyWord))
     );

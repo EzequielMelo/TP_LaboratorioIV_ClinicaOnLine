@@ -105,9 +105,36 @@ export const routes: Routes = [
       import('./pages/my-appointments/my-appointments.component').then(
         (c) => c.MyAppointmentsComponent
       ),
+    canActivate: [authGuard, emailVerifiedGuard, patientGuard],
+  },
+  {
+    path: 'appointments',
+    loadComponent: () =>
+      import(
+        './pages/my-appointments-specialist/my-appointments-specialist.component'
+      ).then((c) => c.MyAppointmentsSpecialistComponent),
     canActivate: [
-      /*authGuard , emailVerifiedGuard*/
+      authGuard,
+      emailVerifiedGuard,
+      specialistGuard,
+      specialistAccountVerifiedGuard,
     ],
+  },
+  {
+    path: 'admin-appointments',
+    loadComponent: () =>
+      import('./pages/appointments-admin/appointments-admin.component').then(
+        (c) => c.AppointmentsAdminComponent
+      ),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'admin-appointment-request',
+    loadComponent: () =>
+      import(
+        './pages/admin-appointment-request/admin-appointment-request.component'
+      ).then((c) => c.AdminAppointmentRequestComponent),
+    canActivate: [authGuard, adminGuard],
   },
   {
     path: '**',

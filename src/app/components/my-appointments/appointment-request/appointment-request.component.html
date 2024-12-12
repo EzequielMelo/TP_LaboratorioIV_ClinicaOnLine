@@ -34,8 +34,8 @@
         @if (newAppointmentForm.controls['specialistName'].invalid &&
         newAppointmentForm.controls['specialistName'].touched)
         {
-        <label class="font-medium mt-1 text-xs text-red-700" for="specialistName">Por favor selecciona una
-          especialidad</label>
+        <label class="font-medium mt-1 text-xs text-red-700" for="specialistName">Por favor seleccione un
+          especialista</label>
         }
       </div>
     </div>
@@ -58,8 +58,7 @@
         @if (newAppointmentForm.controls['selectedDay'].invalid &&
         newAppointmentForm.controls['selectedDay'].touched)
         {
-        <label class="font-medium mt-1 text-xs text-red-700" for="selectedDay">Por favor selecciona una
-          especialidad</label>
+        <label class="font-medium mt-1 text-xs text-red-700" for="selectedDay">Por favor seleccione un dia</label>
         }
       </div>
     </div>
@@ -68,7 +67,7 @@
       <label for="selectedSlot" class="block mb-2 text-sm font-medium text-gray-400">
         Seleccione un horario
       </label>
-      <select id="selectedSlot" formControlName="selectedSlot" (change)="onDayChange($event)"
+      <select id="selectedSlot" formControlName="selectedSlot"
         class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
         <option value="" selected disabled>Seleccione un horario</option>
         @for (slot of selectedDaySlots; track $index) {
@@ -81,8 +80,7 @@
         @if (newAppointmentForm.controls['selectedSlot'].invalid &&
         newAppointmentForm.controls['selectedSlot'].touched)
         {
-        <label class="font-medium mt-1 text-xs text-red-700" for="selectedSlot">Por favor selecciona una
-          especialidad</label>
+        <label class="font-medium mt-1 text-xs text-red-700" for="selectedSlot">Por favor seleccione un horario</label>
         }
       </div>
     </div>

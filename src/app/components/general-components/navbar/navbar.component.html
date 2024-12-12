@@ -67,12 +67,25 @@
               control</a>
             }
           </li>
-          @if (user?.userType !== 'admin') {
           <li>
+            @if (user?.userType === 'patient') {
             <a routerLink="/my-appointments"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Mis Turnos</a>
+            }@else if (user?.userType === 'specialist'){
+            <a routerLink="/appointments"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Mis Turnos</a>
+            }
+            @else if (user?.userType === 'admin') {
+            <a routerLink="/admin-appointments"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Turnos</a>
+            }
           </li>
-          }
+          <li>
+            @if (user?.userType === 'admin') {
+            <a routerLink="/admin-appointment-request"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Solicitar turno</a>
+            }
+          </li>
           <li (click)="logOut()">
             <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Cerrar sesión</a>
           </li>

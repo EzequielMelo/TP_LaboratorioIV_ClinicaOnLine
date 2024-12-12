@@ -1,29 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Appointment } from '../../../classes/appointment';
 import { AuthService } from '../../../services/auth/auth.service';
 import { DatabaseService } from '../../../services/database/database.service';
 import { User } from '../../../classes/user';
-import { Appointment } from '../../../classes/appointment';
+import { AppointmentsService } from '../../../services/appointments/appointments.service';
+import { AppointmentsListSpecialistComponent } from '../appointments-list-specialist/appointments-list-specialist.component';
 import { CommonModule } from '@angular/common';
-import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 
 @Component({
-  selector: 'app-appointments-overview',
+  selector: 'app-appointments-overview-specialist',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppointmentsListComponent],
-  templateUrl: './appointments-overview.component.html',
-  styleUrl: './appointments-overview.component.css',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AppointmentsListSpecialistComponent,
+  ],
+  templateUrl: './appointments-overview-specialist.component.html',
+  styleUrl: './appointments-overview-specialist.component.css',
 })
-export class AppointmentsOverviewComponent {
+export class AppointmentsOverviewSpecialistComponent {
   userId: string | null = null;
-  searchForm: FormGroup;
   appointmentsNew: Appointment[] = [];
   appointmentsAccepted: Appointment[] = [];
-  appointmentsCanceled: Appointment[] = [];
+  appointmentsCompleted: Appointment[] = [];
   displayedAppointments: Appointment[] = [];
+  searchForm: FormGroup;
 
   protected authService = inject(AuthService);
   private db = inject(DatabaseService);
+  private appointmentService = inject(AppointmentsService);
 
   constructor(private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -42,20 +48,16 @@ export class AppointmentsOverviewComponent {
   }
 
   loadAppointments() {
-    this.db.getAppointments(this.userId!).subscribe({
+    this.appointmentService.getSpecialistAppointments(this.userId!).subscribe({
       next: (appointments) => {
         this.appointmentsNew = appointments.filter(
           (a) => a.appointmentStatus === 'Sin Asignar'
         );
         this.appointmentsAccepted = appointments.filter(
-          (a) =>
-            a.appointmentStatus === 'Aceptado' ||
-            a.appointmentStatus === 'Realizado'
+          (a) => a.appointmentStatus === 'Aceptado'
         );
-        this.appointmentsCanceled = appointments.filter(
-          (a) =>
-            a.appointmentStatus === 'Rechazado' ||
-            a.appointmentStatus === 'Cancelado'
+        this.appointmentsCompleted = appointments.filter(
+          (a) => a.appointmentStatus === 'Realizado'
         );
         this.displayedAppointments = this.appointmentsNew;
       },
@@ -73,8 +75,8 @@ export class AppointmentsOverviewComponent {
       case 'Aceptado':
         this.displayedAppointments = this.appointmentsAccepted;
         break;
-      case 'Cancelado':
-        this.displayedAppointments = this.appointmentsCanceled;
+      case 'Realizado':
+        this.displayedAppointments = this.appointmentsCompleted;
         break;
     }
   }

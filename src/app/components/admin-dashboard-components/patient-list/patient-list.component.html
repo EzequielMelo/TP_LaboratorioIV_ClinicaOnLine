@@ -18,7 +18,8 @@
     </thead>
     <tbody>
       @for (patient of data; track $index) {
-      <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
+      <tr (click)="selectedPatient(patient)"
+        class="border-b bg-gray-50 border-gray-200 text-gray-900 hover:border-green-600 hover:scale-105 transition duration-500 cursor-pointer">
         <th scope="row" class="px-6 py-4 bg-gray-100 font-medium whitespace-nowrap">
           {{patient.name}}
         </th>

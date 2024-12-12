@@ -3,6 +3,7 @@ import { Timestamp } from '@angular/fire/firestore';
 export class Appointment {
   id: string;
   idPatient: string;
+  patientName: string;
   idSpecialist: string | null;
   message: string;
   speciality: string;
@@ -16,6 +17,7 @@ export class Appointment {
   constructor(
     id: string,
     idPatient: string,
+    patientName: string,
     idSpecialist: string | null,
     message: string,
     speciality: string,
@@ -28,6 +30,7 @@ export class Appointment {
   ) {
     this.id = id;
     this.idPatient = idPatient;
+    this.patientName = patientName;
     this.idSpecialist = idSpecialist;
     this.message = message;
     this.speciality = speciality;
