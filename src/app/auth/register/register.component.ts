@@ -9,11 +9,12 @@ import {
 import { dniValidator } from '../../shared/validators/custom-validators';
 import { numericValidator } from '../../shared/validators/custom-validators';
 import { AuthService } from '../../services/auth/auth.service';
+import { NgxCaptchaModule } from 'ngx-captcha';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, NgxCaptchaModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -23,6 +24,7 @@ export class RegisterComponent {
   selectedUserAvatarName: string | null = null;
   selectedUserCover: Blob | null = null;
   selectedUserCoverName: string | null = null;
+  siteKey = '6LeqB9QqAAAAALMr8SZOctATmbR9P8e1pvU3pBuY';
 
   private formBuilder = inject(FormBuilder);
   private auth = inject(AuthService);
@@ -61,7 +63,12 @@ export class RegisterComponent {
       healthcare_system: ['', Validators.required],
       user_avatar: ['', [Validators.required]],
       user_cover: ['', [Validators.required]],
+      recaptcha: ['', Validators.required],
     });
+  }
+
+  handleSuccess($event: string) {
+    console.log($event);
   }
 
   register() {
