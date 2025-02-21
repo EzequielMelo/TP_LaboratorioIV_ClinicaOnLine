@@ -203,8 +203,24 @@
             }
           </div>
         </div>
-        <button (click)="register()"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ">Registrarse</button>
+
+        <div class="flex flex-col items-center justify-around h-auto sm:flex-row">
+          <div class="flex flex-col mb-6 md:mb-0">
+            <ngx-recaptcha2 class="" #captchaElem [siteKey]="siteKey" (success)="handleSuccess($event)"
+              [useGlobalDomain]="false" formControlName="recaptcha">
+            </ngx-recaptcha2>
+            <div class="h-[10px]">
+              @if (registerForm.controls['recaptcha'].errors !== null &&
+              registerForm.controls['recaptcha'].touched) {
+              @if (registerForm.controls['recaptcha'].errors!['required']) {
+              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Marque la casilla</label>
+              }
+              }
+            </div>
+          </div>
+          <button (click)="register()"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none mt-0 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrarse</button>
+        </div>
       </form>
     </div>
   </div>

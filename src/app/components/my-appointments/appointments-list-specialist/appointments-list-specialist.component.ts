@@ -98,4 +98,6 @@ export class AppointmentsListSpecialistComponent {
         });
     }
   }
+
+  openReviewModal(appointment: Appointment) {}
 }

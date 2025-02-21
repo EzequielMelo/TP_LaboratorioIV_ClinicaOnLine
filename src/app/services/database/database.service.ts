@@ -181,8 +181,8 @@ export class DatabaseService {
       .pipe(
         map((snapshot) =>
           snapshot.docs.map((doc) => {
-            const data = doc.data() as Specialist; // Datos del especialista
-            return { ...data, id: doc.id }; // Combinas los datos con el id
+            const data = doc.data() as Specialist;
+            return { ...data, id: doc.id };
           })
         )
       );
@@ -193,5 +193,16 @@ export class DatabaseService {
       .collection('users')
       .doc(userId)
       .update({ accountConfirmed: isConfirmed });
+  }
+
+  updateSpecialistData(
+    userId: string,
+    workDays: string[],
+    workHours: { start: string; end: string }
+  ): Promise<void> {
+    return this.firestore.collection('users').doc(userId).update({
+      workDays,
+      workHours,
+    });
   }
 }

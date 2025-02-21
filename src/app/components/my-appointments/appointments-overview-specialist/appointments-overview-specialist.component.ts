@@ -57,7 +57,7 @@ export class AppointmentsOverviewSpecialistComponent {
           (a) => a.appointmentStatus === 'Aceptado'
         );
         this.appointmentsCompleted = appointments.filter(
-          (a) => a.appointmentStatus === 'Realizado'
+          (a) => a.appointmentStatus === 'Completado'
         );
         this.displayedAppointments = this.appointmentsNew;
       },

@@ -9,11 +9,12 @@ import {
 import { AuthService } from '../../services/auth/auth.service';
 import { dniValidator } from '../../shared/validators/custom-validators';
 import { numericValidator } from '../../shared/validators/custom-validators';
+import { NgxCaptchaModule } from 'ngx-captcha';
 
 @Component({
   selector: 'app-register-specialist',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, NgxCaptchaModule],
   templateUrl: './register-specialist.component.html',
   styleUrl: './register-specialist.component.css',
 })
@@ -23,6 +24,7 @@ export class RegisterSpecialistComponent {
   otherSpecialty: string = '';
   selectedUserAvatar: Blob | null = null;
   selectedUserAvatarName: string | null = null;
+  siteKey = '6LeqB9QqAAAAALMr8SZOctATmbR9P8e1pvU3pBuY';
 
   private formBuilder = inject(FormBuilder);
   private auth = inject(AuthService);
@@ -60,10 +62,23 @@ export class RegisterSpecialistComponent {
       dni: ['', [Validators.required, dniValidator()]],
       medical_specialty: [[], Validators.required],
       user_avatar: ['', [Validators.required]],
+      recaptcha: ['', Validators.required],
     });
   }
 
+  handleSuccess($event: string) {
+    console.log($event);
+  }
+
   register() {
+    // Verificar si el formulario es válido
+    if (this.registerForm.invalid) {
+      console.error('Formulario no válido, por favor verifica los campos.');
+      // Opcionalmente, puedes marcar todos los campos como "tocados" para mostrar los errores
+      this.registerForm.markAllAsTouched();
+      return; // Salir de la función si el formulario no es válido
+    }
+
     const formValues = this.registerForm.value;
     const profilePicture = this.selectedUserAvatar; // Blob de la imagen de perfil
 

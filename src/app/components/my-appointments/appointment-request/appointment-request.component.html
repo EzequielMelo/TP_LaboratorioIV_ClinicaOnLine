@@ -50,7 +50,7 @@
         <option value="" selected disabled>Seleccione un día</option>
         @for (day of schedule; track $index) {
         <option [value]="$index">
-          {{ day.date | date: 'fullDate' }}
+          {{ day.date.toString() | date: 'fullDate' }}
         </option>
         }
       </select>

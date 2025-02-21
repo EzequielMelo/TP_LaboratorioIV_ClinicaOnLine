@@ -1,21 +1,27 @@
+import { HealthRecord } from './../../../classes/health-record';
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, inject, Input, input } from '@angular/core';
 import { Appointment } from '../../../classes/appointment';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import Swal from 'sweetalert2';
+import { HealthRecordService } from '../../../services/health-record/health-record.service';
+import { HealthRecordOverviewComponent } from '../../health-record/health-record-overview/health-record-overview.component';
 
 @Component({
   selector: 'app-appointments-list',
   standalone: true,
-  imports: [CommonModule, NgClass],
+  imports: [CommonModule, NgClass, HealthRecordOverviewComponent],
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css',
 })
 export class AppointmentsListComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
+  healthRecord: HealthRecord | null = null;
 
   private appointmentService = inject(AppointmentsService);
+  private healthRecordService = inject(HealthRecordService);
+  isEditModalOpen: boolean = false;
 
   get filteredAppointments(): Appointment[] {
     if (!this.keyWord || this.keyWord.trim() === '') {
@@ -58,5 +64,20 @@ export class AppointmentsListComponent {
           alert('Hubo un problema al cancelar el turno');
         });
     }
+  }
+
+  showReviewModal(HealthRecordId: string | null) {
+    if (HealthRecordId) {
+      this.healthRecordService.getHealthRecord(HealthRecordId).subscribe({
+        next: (healthRecord) => {
+          this.healthRecord = healthRecord;
+        },
+      });
+    }
+    this.isEditModalOpen = true;
+  }
+
+  closeModal(data: { event: boolean }) {
+    this.isEditModalOpen = data.event;
   }
 }

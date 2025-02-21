@@ -1,4 +1,8 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideZoneChangeDetection,
+  LOCALE_ID,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -9,6 +13,10 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
+registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +29,6 @@ export const appConfig: ApplicationConfig = {
     provideStorage(() => getStorage()),
     provideHttpClient(withFetch()),
     { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
+    { provide: LOCALE_ID, useValue: 'es' },
   ],
 };

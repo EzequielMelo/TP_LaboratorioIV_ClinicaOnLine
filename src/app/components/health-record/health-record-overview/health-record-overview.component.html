@@ -1,0 +1,34 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+    <h3 class="text-2xl font-semibold mb-4">Registro de la cita</h3>
+
+    <div class="mb-4 flex flex-col">
+      <div class="grid grid-cols-2 gap-4">
+        <label for="height">Altura:</label>
+        <input type="text" [value]="healthRecord?.height" class="mr-2" id="height" readonly />
+
+        <label for="weight">Peso:</label>
+        <input type="text" [value]="healthRecord?.weight" class="mr-2" id="weight" readonly />
+
+        <label for="temperature">Temperatura:</label>
+        <input type="text" [value]="healthRecord?.temperature" class="mr-2" id="temperature" readonly />
+
+        <label for="bloodPressure">Presion Arterial:</label>
+        <input type="text" [value]="healthRecord?.bloodPressure" class="mr-2" id="bloodPressure" readonly />
+
+        @if(healthRecord?.dynamicData){
+        <ng-container *ngFor=" let key of healthRecord?.dynamicData | keyvalue">
+          <label [for]="key.key">{{ key.key }}:</label>
+          <input type="text" [value]="key.value" class="mr-2" [id]="key.key" readonly />
+        </ng-container>
+        }
+
+      </div>
+    </div>
+
+
+    <div class="flex justify-around mt-4">
+      <button (click)="closeModal()" class="px-4 py-2 bg-gray-400 text-white rounded">Cerrar</button>
+    </div>
+  </div>
+</div>

@@ -50,7 +50,7 @@ export class AppointmentsOverviewComponent {
         this.appointmentsAccepted = appointments.filter(
           (a) =>
             a.appointmentStatus === 'Aceptado' ||
-            a.appointmentStatus === 'Realizado'
+            a.appointmentStatus === 'Completado'
         );
         this.appointmentsCanceled = appointments.filter(
           (a) =>

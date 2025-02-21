@@ -11,20 +11,20 @@ export class HealthRecordService {
   private firestore = inject(AngularFirestore);
   private fire = inject(Firestore);
 
-  getAppointmentsByPatient(patientId: string): Observable<HealthRecord[]> {
+  getHealthRecord(healthRecordId: string): Observable<HealthRecord> {
     return this.firestore
-      .collection('healthRecords', (ref) =>
-        ref.where('idPatient', '==', patientId)
-      )
+      .collection('healthRecords')
+      .doc(healthRecordId)
       .snapshotChanges()
       .pipe(
-        map((actions) =>
-          actions.map((a) => {
-            const data = a.payload.doc.data() as HealthRecord;
-            const id = a.payload.doc.id;
+        map((snapshot) => {
+          if (snapshot.payload.exists) {
+            const data = snapshot.payload.data() as HealthRecord;
+            const id = snapshot.payload.id;
             return { ...data, id } as HealthRecord;
-          })
-        )
+          }
+          throw new Error('No HealthRecord found for the given ID');
+        })
       );
   }
 }

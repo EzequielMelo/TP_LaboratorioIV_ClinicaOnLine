@@ -72,15 +72,25 @@ export class RegisterComponent {
   }
 
   register() {
+    // Verificar si el formulario es válido
+    if (this.registerForm.invalid) {
+      console.error('Formulario no válido, por favor verifica los campos.');
+      // Opcionalmente, puedes marcar todos los campos como "tocados" para mostrar los errores
+      this.registerForm.markAllAsTouched();
+      return; // Salir de la función si el formulario no es válido
+    }
+
     const formValues = this.registerForm.value;
     const profilePicture = this.selectedUserAvatar; // Blob de la imagen de perfil
     const coverPicture = this.selectedUserCover; // Blob de la imagen de portada
 
+    // Verificar si las imágenes están disponibles
     if (!profilePicture || !coverPicture) {
       console.error('Ambas imágenes son necesarias para el registro.');
       return; // Salir de la función si alguna es nula
     }
 
+    // Ejecutar el registro
     this.auth
       .register(
         formValues.name,
