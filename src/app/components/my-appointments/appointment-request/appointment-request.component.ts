@@ -145,7 +145,7 @@ export class AppointmentRequestComponent implements OnInit {
     }
   }
 
-  onSpecialistChange(event: Event): void {
+  onSpecialistChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedSpecialistId = selectElement.value;
 
@@ -156,9 +156,6 @@ export class AppointmentRequestComponent implements OnInit {
 
     if (selectedSpecialist) {
       this.selectedSpecialist = selectedSpecialist; // Actualizamos la variable con el especialista seleccionado
-      // Juntar nombre y apellido y actualizar el formulario
-      const fullName = `${selectedSpecialist.name} ${selectedSpecialist.lastName}`;
-      this.newAppointmentForm.patchValue({ specialistName: fullName });
     }
   }
 
@@ -189,8 +186,10 @@ export class AppointmentRequestComponent implements OnInit {
         appointmentDate: Timestamp.fromDate(appointmentDate), // La fecha y hora combinadas
         appointmentStatus: 'Sin Asignar',
         isCancelable: true,
-        specialistName: formValues.specialistName,
+        specialistName: `${this.selectedSpecialist?.name} ${this.selectedSpecialist?.lastName}`,
         idMedicalReport: null,
+        idReviewForPatient: null,
+        idReviewForSpecialist: null,
       };
 
       // Llamar al servicio para agregar el turno

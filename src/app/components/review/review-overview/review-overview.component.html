@@ -1,0 +1,29 @@
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+>
+  <div
+    class="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-auto"
+  >
+    <h3 class="text-2xl font-semibold mb-6 text-center">Reseña de la cita</h3>
+
+    <div class="mb-6">
+      <label for="review" class="block text-lg font-medium mb-2">Reseña</label>
+      <textarea
+        id="review"
+        [value]="review?.review"
+        readonly
+        class="w-full border border-gray-300 rounded p-3 text-gray-800 resize-none"
+        rows="6"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-center">
+      <button
+        (click)="closeModal()"
+        class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+</div>

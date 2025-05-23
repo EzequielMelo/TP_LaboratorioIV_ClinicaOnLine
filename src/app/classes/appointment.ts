@@ -13,6 +13,8 @@ export class Appointment {
   isCancelable: boolean;
   specialistName: string;
   idMedicalReport: string | null;
+  idReviewForPatient: string | null;
+  idReviewForSpecialist: string | null;
 
   constructor(
     id: string,
@@ -26,7 +28,9 @@ export class Appointment {
     appointmentStatus: string,
     isCancelable: boolean,
     specialistName: string,
-    idMedicalReport: string | null
+    idMedicalReport: string | null,
+    idReviewForPatient: string | null,
+    idReviewForSpecialist: string | null
   ) {
     this.id = id;
     this.idPatient = idPatient;
@@ -40,5 +44,7 @@ export class Appointment {
     this.isCancelable = isCancelable;
     this.specialistName = specialistName;
     this.idMedicalReport = idMedicalReport;
+    this.idReviewForPatient = idReviewForPatient;
+    this.idReviewForSpecialist = idReviewForSpecialist;
   }
 }

@@ -6,11 +6,19 @@ import { AppointmentsService } from '../../../services/appointments/appointments
 import Swal from 'sweetalert2';
 import { HealthRecordService } from '../../../services/health-record/health-record.service';
 import { HealthRecordOverviewComponent } from '../../health-record/health-record-overview/health-record-overview.component';
+import { ReviewService } from '../../../services/review/review.service';
+import { Review } from '../../../classes/reviewForPatient';
+import { ReviewOverviewComponent } from '../../review/review-overview/review-overview.component';
 
 @Component({
   selector: 'app-appointments-list',
   standalone: true,
-  imports: [CommonModule, NgClass, HealthRecordOverviewComponent],
+  imports: [
+    CommonModule,
+    NgClass,
+    HealthRecordOverviewComponent,
+    ReviewOverviewComponent,
+  ],
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css',
 })
@@ -18,9 +26,11 @@ export class AppointmentsListComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
   healthRecord: HealthRecord | null = null;
+  review: Review | null = null;
 
   private appointmentService = inject(AppointmentsService);
   private healthRecordService = inject(HealthRecordService);
+  private reviewService = inject(ReviewService);
   isEditModalOpen: boolean = false;
 
   get filteredAppointments(): Appointment[] {
@@ -66,11 +76,11 @@ export class AppointmentsListComponent {
     }
   }
 
-  showReviewModal(HealthRecordId: string | null) {
-    if (HealthRecordId) {
-      this.healthRecordService.getHealthRecord(HealthRecordId).subscribe({
-        next: (healthRecord) => {
-          this.healthRecord = healthRecord;
+  showReviewModal(ReviewdId: string | null) {
+    if (ReviewdId) {
+      this.reviewService.getReviewForPatient(ReviewdId).subscribe({
+        next: (review) => {
+          this.review = review;
         },
       });
     }
