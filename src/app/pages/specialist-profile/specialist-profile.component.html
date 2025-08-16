@@ -1,72 +1,134 @@
-<div class="flex flex-row justify-center px-6 py-8 mx-auto lg:py-0">
-  @if(true) {
+<div
+  class="content-wrapper mb- h-full flex flex-col justify-center items-center min-h-screen px-4 sm:px-6 lg:px-8"
+>
   <div
-    class="w-full flex flex-row my-12 mt-[120px] justify-center rounded-lg shadow sm:max-w-5xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
-
-    <div class="w-[30%] flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-100px]">
-      <div class="w-64 h-64 rounded-full bg-cover bg-center border-4 border-gray-300 shadow-lg hover:shadow-xl"
-        style="background-image: url('{{user?.profilePicture}}');">
-      </div>
-      <div class="text-center font-semibold">
-        <span class="block text-3xl">{{user?.name}}</span>
-        <span class="block text-3xl">{{user?.lastName}}</span>
-      </div>
-    </div>
-
-    <div class="w-[70%] p-4 space-y-4 md:space-y-6 sm:p-8 rounded-lg">
-      <div class="mb-4">
-        <div class="flex flex-col rounded-md" role="group">
-          <div class="flex flex-col m-3">
-            <div class="flex flex-row">
-              <h3 class="text-2xl font-semibold">Horarios de atención: </h3>
-              <svg (click)="editWorkDays()"
-                class="w-6 h-6 text-gray-800 dark:text-white cursor-pointer hover:text-blue-700" aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28" />
-              </svg>
-
-            </div>
-            <div class="flex flex-row">
-              @for (item of getSpecialistWorkDays(); track $index) {
-              @if ($index !== 0) {
-              <p class="font-medium mr-1">-{{ item | dayToSpanish }}</p>
-              }@else {
-              <p class="font-medium mr-2">{{ item | dayToSpanish }}</p>
-              }
-              }
-            </div>
-            <div class="flex flex-row">
-              <p class="font-medium mr-2">De:</p>
-              @for (item of getSpecialistWorkHours(); track $index) {
-              @if ($index === 0) {
-              <p class="font-medium mr-2"> {{ item }} a </p>
-              } @else {
-              <p class="font-medium"> {{ item }} hs </p>
-              }
-              }
-            </div>
-
-          </div>
-          <div class="flex flex-col m-3">
-            <h3 class="text-2xl font-semibold">Especialidades: </h3>
-            <ul>
-              @for (item of getSpecialistSpecialtys(); track $index) {
-              <li class="font-medium">{{item}}</li>
-              }
-            </ul>
-          </div>
-
+    class="flex flex-col mt-[60px] mb-[20px] md:flex-col justify-center w-full max-w-5xl py-8"
+  >
+    @if(true) {
+    <div
+      class="flex flex-col md:flex-row justify-center rounded-2xl shadow-lg w-full bg-white/60 backdrop-blur-md border border-gray-200"
+    >
+      <!-- Columna Izquierda -->
+      <div
+        class="flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-80px] md:mt-[-100px] md:w-[320px]"
+      >
+        <div
+          class="w-[220px] h-[220px] md:w-[250px] md:h-[250px] rounded-full bg-cover bg-center border-[6px] border-white shadow-2xl hover:scale-105 hover:shadow-3xl transition-transform duration-300"
+          style="background-image: url('{{ user?.profilePicture }}');"
+        ></div>
+        <div class="text-center font-semibold px-2">
+          <span class="block text-3xl md:text-4xl text-gray-900">{{
+            user?.name
+          }}</span>
+          <span class="block text-3xl md:text-4xl text-gray-900">{{
+            user?.lastName
+          }}</span>
         </div>
       </div>
+      <!-- Columna Derecha -->
+      <div class="flex-1 p-6 flex flex-col gap-6 sm:p-8 rounded-lg w-full">
+        <!-- Info rápida -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
+          <!-- Horarios de atención -->
+          <div class="bg-white rounded-xl shadow p-5 border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-semibold flex items-center gap-2">
+                🕒 Horarios de atención
+              </h3>
+              <button
+                (click)="editWorkDays()"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                ✏️
+              </button>
+            </div>
 
+            <!-- Días -->
+            <div class="flex flex-wrap gap-2 mb-3">
+              @for (day of getSpecialistWorkDays(); track $index) {
+              <span
+                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+              >
+                {{ day | dayToSpanish }}
+              </span>
+              }
+            </div>
+
+            <!-- Horas -->
+            <div class="text-gray-800 font-medium">
+              {{ getSpecialistWorkHours()?.[0] }} -
+              {{ getSpecialistWorkHours()?.[1] }} hs
+            </div>
+          </div>
+
+          <!-- Especialidades -->
+          <div class="bg-white rounded-xl shadow p-5 border border-gray-100">
+            <h3 class="text-xl font-semibold flex items-center gap-2 mb-4">
+              🩺 Especialidades
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              @for (item of getSpecialistSpecialtys(); track $index) {
+              <span
+                class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"
+              >
+                {{ item }}
+              </span>
+              }
+            </div>
+          </div>
+
+          <!-- Botones de navegación -->
+          <button
+            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
+          >
+            📅 <span class="text-lg">Turnos</span>
+          </button>
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
+          >
+            📜 Historial Clínico
+          </button>
+          <button
+            class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
+          >
+            🧾 Facturación
+          </button>
+          <button
+            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
+          >
+            ⚙️ Configuración
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-5xl">
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Próximo turno</p>
+        <p class="text-gray-600">20/08/2025 - 14:00hs</p>
+      </div>
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Última consulta</p>
+        <p class="text-gray-600">05/07/2025</p>
+      </div>
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Recordatorios</p>
+        <p class="text-gray-600">2 pendientes</p>
+      </div>
     </div>
   </div>
-  }
 </div>
 
 @if (isEditModalOpen) {
-<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+>
   <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
     <h3 class="text-2xl font-semibold mb-4">Editar Horarios de Atención</h3>
 
@@ -76,8 +138,13 @@
       <div class="grid grid-cols-2 gap-4">
         @for (day of daysOfTheWeek; track $index) {
         <label for="">
-          <input type="checkbox" [ngModel]="specialistWorkDays.includes(day)"
-            (ngModelChange)="onDaySelectionChange(day, $event)" [value]="day" class="mr-2" />
+          <input
+            type="checkbox"
+            [ngModel]="specialistWorkDays.includes(day)"
+            (ngModelChange)="onDaySelectionChange(day, $event)"
+            [value]="day"
+            class="mr-2"
+          />
           {{ day | dayToSpanish }}
         </label>
         }
@@ -88,21 +155,38 @@
     <div class="flex flex-row justify-around">
       <div class="mb-4">
         <label class="block font-medium mb-2">Horario de inicio:</label>
-        @if (specialistWorkHours.start != null)
-        {
-        <input [(ngModel)]="specialistWorkHours.start" type="time" class="p-2 border border-gray-300 rounded" />
+        @if (specialistWorkHours.start != null) {
+        <input
+          [(ngModel)]="specialistWorkHours.start"
+          type="time"
+          class="p-2 border border-gray-300 rounded"
+        />
         }
       </div>
 
       <div class="mb-4">
         <label class="block font-medium mb-2">Horario de fin:</label>
-        <input [(ngModel)]="specialistWorkHours.end" type="time" class="p-2 border border-gray-300 rounded" />
+        <input
+          [(ngModel)]="specialistWorkHours.end"
+          type="time"
+          class="p-2 border border-gray-300 rounded"
+        />
       </div>
     </div>
 
     <div class="flex justify-around mt-4">
-      <button (click)="closeModal()" class="px-4 py-2 bg-gray-400 text-white rounded">Cancelar</button>
-      <button (click)="saveWorkDays()" class="px-4 py-2 bg-blue-600 text-white rounded">Guardar</button>
+      <button
+        (click)="closeModal()"
+        class="px-4 py-2 bg-gray-400 text-white rounded"
+      >
+        Cancelar
+      </button>
+      <button
+        (click)="saveWorkDays()"
+        class="px-4 py-2 bg-blue-600 text-white rounded"
+      >
+        Guardar
+      </button>
     </div>
   </div>
 </div>

@@ -3,11 +3,12 @@ import { AuthService } from '../../services/auth/auth.service';
 import { Subscription } from 'rxjs';
 import { UserTypes } from '../../models/user-types';
 import { Patient } from '../../classes/patient.class';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
 })
@@ -26,6 +27,13 @@ export class UserProfileComponent {
   getCoverPicture(): string | null {
     if (this.user instanceof Patient) {
       return this.user.coverPicture; // Ahora puedes acceder a coverPicture si el usuario es de tipo Patient
+    }
+    return null; // O algún valor por defecto si no es un paciente
+  }
+
+  getHealthCareSystem(): string | null {
+    if (this.user instanceof Patient) {
+      return this.user.healthCareSystem; // Ahora puedes acceder a coverPicture si el usuario es de tipo Patient
     }
     return null; // O algún valor por defecto si no es un paciente
   }

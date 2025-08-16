@@ -4,18 +4,24 @@ import { Subscription } from 'rxjs';
 import { UserTypes } from '../../models/user-types';
 import { UsersSectionComponent } from '../../components/admin-dashboard-components/users-section/users-section.component';
 import { CreateNewAdminSectionComponent } from '../../components/admin-dashboard-components/create-new-admin-section/create-new-admin-section.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [UsersSectionComponent, CreateNewAdminSectionComponent],
+  imports: [
+    UsersSectionComponent,
+    CreateNewAdminSectionComponent,
+    CommonModule,
+  ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',
 })
 export class AdminDashboardComponent {
   user: UserTypes | null = null;
   auth: boolean = false;
-  currentSection: 'users' | 'addAdmin' | null = null;
+  currentSection: 'users' | 'addAdmin' | 'appointments' | 'settings' | null =
+    null;
 
   protected authService = inject(AuthService);
   private userSubscription: Subscription;
@@ -33,7 +39,7 @@ export class AdminDashboardComponent {
     });
   }
 
-  sectionSelector(section: 'users' | 'addAdmin' | null) {
+  sectionSelector(section: 'users' | 'addAdmin' | 'appointments' | 'settings') {
     this.currentSection = section;
   }
 }

@@ -227,68 +227,52 @@ export class AuthService {
     dni: string,
     userType: string,
     profilePicture: Blob
-  ): Observable<void> {
+  ): Observable<{ success: boolean; message: string }> {
     return this.db.checkDNIExists(dni).pipe(
       switchMap((exists) => {
         if (exists) {
           return throwError(() => ({
+            success: false,
             message: 'Ya existe una cuenta con ese DNI.',
           }));
         }
 
-        // Usar la API REST para crear el usuario
+        // Crear usuario sin iniciar sesión
         const url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.apiKey}`;
-        const createUser$ = this.http.post<{ localId: string }>(url, {
-          email,
-          password,
-          returnSecureToken: false, // Evita iniciar sesión automáticamente
-        });
-
-        return createUser$.pipe(
-          switchMap(({ localId }) => {
-            // Subir la foto de perfil
-            const profileUpload$ = this.storage.uploadProfilePicture(
-              localId,
-              profilePicture
-            );
-
-            return profileUpload$.pipe(
-              switchMap((profileUrl) => {
-                // Crear el objeto usuario con la URL de la foto
-                const user: Partial<Admin> = {
-                  name,
-                  lastName,
-                  age,
-                  dni,
-                  profilePicture: profileUrl,
-                  userType,
-                };
-
-                return this.db.addUser(user, localId).pipe(
-                  switchMap(() => {
-                    // (Opcional) Enviar correo de verificación
-                    const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${this.apiKey}`;
-                    const verifyEmail$ = this.http.post(verifyUrl, {
-                      requestType: 'VERIFY_EMAIL',
-                      idToken: localId, // NOTA: Cambia esto si necesitas usar un token real
-                    });
-
-                    return verifyEmail$.pipe(
-                      map(() => {
-                        // Transforma el resultado para devolver `void`
-                        return;
-                      })
-                    );
-                  })
-                );
-              })
-            );
+        return this.http
+          .post<{ localId: string }>(url, {
+            email,
+            password,
+            returnSecureToken: false,
           })
-        );
+          .pipe(
+            switchMap(({ localId }) =>
+              this.storage.uploadProfilePicture(localId, profilePicture).pipe(
+                switchMap((profileUrl) => {
+                  const user: Partial<Admin> = {
+                    name,
+                    lastName,
+                    age,
+                    dni,
+                    profilePicture: profileUrl,
+                    userType,
+                  };
+
+                  return this.db.addUser(user, localId).pipe(
+                    map(() => ({
+                      success: true,
+                      message: 'Administrador creado correctamente.',
+                    }))
+                  );
+                })
+              )
+            )
+          );
       }),
       catchError((error) => {
         console.error('Error en el registro:', error);
         return throwError(() => ({
+          success: false,
           message: error.message || 'Ocurrió un error al registrar el usuario.',
         }));
       })

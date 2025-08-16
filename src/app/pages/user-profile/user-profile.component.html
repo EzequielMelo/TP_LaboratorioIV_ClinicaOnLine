@@ -1,40 +1,114 @@
 <div class="banner-container">
+  <!-- Banner -->
   <div class="banner-fondo">
-    @if(getCoverPicture()){
-    <img src="{{getCoverPicture()}}" alt="portada-anime">
+    @if(getCoverPicture()) {
+    <img
+      src="{{ getCoverPicture() }}"
+      alt="portada-anime"
+      class="w-full h-[240px] object-cover"
+    />
     }
   </div>
-  <div class="content-wrapper">
-    <div class="flex flex-row mt-[-340px] justify-center px-6 bg-opacity-100 py-8 mx-auto lg:py-0">
+
+  <!-- Contenido principal -->
+  <div
+    class="content-wrapper mt-[-400px] mb-[50px] md:mb-[0px] md:mt-[-520px] mb- h-full flex flex-col justify-center items-center min-h-screen px-4 sm:px-6 lg:px-8"
+  >
+    <div class="flex flex-col md:flex-row justify-center w-full max-w-5xl">
       @if(true) {
       <div
-        class="w-full flex flex-row my-12 justify-center rounded-lg shadow sm:max-w-5xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
-        <div class="w-[30%] flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-100px]">
-          <div class="w-64 h-64 rounded-full bg-cover bg-center border-4 border-gray-300 shadow-lg hover:shadow-xl"
-            style="background-image: url('{{user?.profilePicture}}');">
-          </div>
-          <div class="text-center font-semibold">
-            <span class="block text-3xl">{{user?.name}}</span>
-            <span class="block text-3xl">{{user?.lastName}}</span>
+        class="flex flex-col md:flex-row justify-center rounded-2xl shadow-lg w-full bg-white/60 backdrop-blur-md border border-gray-200"
+      >
+        <!-- Columna Izquierda -->
+        <div
+          class="flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-80px] md:mt-[-100px] md:w-[320px]"
+        >
+          <div
+            class="w-[220px] h-[220px] md:w-[250px] md:h-[250px] rounded-full bg-cover bg-center border-[6px] border-white shadow-2xl hover:scale-105 hover:shadow-3xl transition-transform duration-300"
+            style="background-image: url('{{ user?.profilePicture }}');"
+          ></div>
+          <div class="text-center font-semibold px-2">
+            <span class="block text-3xl md:text-4xl text-gray-900">{{
+              user?.name
+            }}</span>
+            <span class="block text-3xl md:text-4xl text-gray-900">{{
+              user?.lastName
+            }}</span>
           </div>
         </div>
-        <div class="w-[70%] p-4 space-y-4 md:space-y-6 sm:p-8 rounded-lg">
-          <div class="mb-4">
-            <div class="inline-flex rounded-md shadow-sm" role="group">
-              <button type="button"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-                <svg class="w-3 h-3 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                  viewBox="0 0 20 20">
-                  <path
-                    d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z" />
-                </svg>
-                Historia Clinica
-              </button>
+
+        <!-- Columna Derecha -->
+        <div class="flex-1 p-6 flex flex-col gap-6 sm:p-8 rounded-lg w-full">
+          <!-- Info rápida -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+            <div>
+              <p class="text-gray-500 text-md">Email</p>
+              <p class="text-gray-800">{{ user?.email }}</p>
             </div>
+            <div>
+              <p class="text-gray-500 text-md">DNI</p>
+              <p class="text-gray-800">{{ user?.dni }}</p>
+            </div>
+            <div>
+              <p class="text-gray-500 text-md">Edad</p>
+              <p class="text-gray-800">{{ user?.age }}</p>
+            </div>
+            <div>
+              <p class="text-gray-500 text-md">Obra Social</p>
+              <p class="text-gray-800">{{ getHealthCareSystem() }}</p>
+            </div>
+          </div>
+
+          <!-- Botones de navegación -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <button
+              routerLink="/my-appointments"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-105"
+            >
+              📅 <span class="text-lg">Turnos</span>
+            </button>
+            <button
+              routerLink="/my-medical-records"
+              class="bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-105"
+            >
+              📜 Historial Clínico
+            </button>
+            <button
+              class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-105"
+            >
+              🧾 Facturación
+            </button>
+            <button
+              class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform transform hover:scale-105"
+            >
+              ⚙️ Configuración
+            </button>
           </div>
         </div>
       </div>
       }
+    </div>
+
+    <!-- Accesos rápidos -->
+    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-5xl">
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Próximo turno</p>
+        <p class="text-gray-600">20/08/2025 - 14:00hs</p>
+      </div>
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Última consulta</p>
+        <p class="text-gray-600">05/07/2025</p>
+      </div>
+      <div
+        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
+      >
+        <p class="font-semibold">Recordatorios</p>
+        <p class="text-gray-600">2 pendientes</p>
+      </div>
     </div>
   </div>
 </div>

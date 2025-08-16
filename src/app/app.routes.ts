@@ -108,6 +108,14 @@ export const routes: Routes = [
     canActivate: [authGuard, emailVerifiedGuard, patientGuard],
   },
   {
+    path: 'my-medical-records',
+    loadComponent: () =>
+      import('./pages/my-medical-records/my-medical-records.component').then(
+        (c) => c.MyMedicalRecordsComponent
+      ),
+    canActivate: [authGuard, emailVerifiedGuard, patientGuard],
+  },
+  {
     path: 'appointments',
     loadComponent: () =>
       import(

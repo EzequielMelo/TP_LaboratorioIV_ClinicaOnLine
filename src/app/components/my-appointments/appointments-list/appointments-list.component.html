@@ -1,32 +1,36 @@
-<div class="relative max-h-[600px] overflow-auto">
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+<div class="relative max-h-[600px] overflow-auto rounded-xl shadow-lg">
+  <table class="w-full text-sm text-left text-gray-700">
     <thead class="text-xs uppercase bg-gray-50 text-gray-700">
       <tr>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Fecha de la solicitud</th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Mensaje</th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Fecha del turno</th>
-        <th scope="col" class="px-3 py-2">Especialista asignado</th>
-        <th scope="col" class="px-3 py-2">Especialidad</th>
-        <th scope="col" class="px-3 py-2">Estado del Turno</th>
-        <th scope="col" class="px-3 py-2">Modificar turno</th>
-        <th scope="col" class="px-3 py-2">Reseña</th>
+        <th class="px-3 py-2">Fecha de la solicitud</th>
+        <th class="px-3 py-2 bg-gray-100">Mensaje</th>
+        <th class="px-3 py-2">Fecha del turno</th>
+        <th class="px-3 py-2 bg-gray-100">Especialista asignado</th>
+        <th class="px-3 py-2">Especialidad</th>
+        <th class="px-3 py-2 bg-gray-100">Estado del turno</th>
+        <th class="px-3 py-2">Modificar turno</th>
+        <th class="px-3 py-2 bg-gray-100">Reseña</th>
       </tr>
     </thead>
+
     <tbody>
       @for (appointment of filteredAppointments; track $index) {
       <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
-        <td class="px-3 py-2 bg-gray-100">
+        <!-- Fecha solicitud -->
+        <td class="px-3 py-2">
           {{
             appointment.requestedDate
               ? (appointment.requestedDate.toDate() | date : "dd/MM/yyyy")
               : ""
           }}
         </td>
-        <td class="px-3 py-2 bg-gray-100">
-          {{ appointment.message }}
-        </td>
+
+        <!-- Mensaje -->
+        <td class="px-3 py-2 bg-gray-100">{{ appointment.message }}</td>
+
+        <!-- Fecha turno -->
         <td class="px-3 py-2">
-          @if (appointment.appointmentDate == null) { Sin Asignar }@else {
+          @if (appointment.appointmentDate == null) { Sin Asignar } @else {
           {{
             appointment.appointmentDate
               ? (appointment.appointmentDate.toDate()
@@ -35,53 +39,71 @@
           }}
           }
         </td>
+
+        <!-- Especialista -->
+        <td class="px-3 py-2 bg-gray-100">{{ appointment.specialistName }}</td>
+
+        <!-- Especialidad -->
         <td class="px-3 py-2">
-          {{ appointment.specialistName }}
-        </td>
-        <td class="px-3 py-2">
-          @if (appointment.speciality == null) { Sin Asignar }@else {
+          @if (appointment.speciality == null) { Sin Asignar } @else {
           {{ appointment.speciality }}
           }
         </td>
-        <td
-          class="px-3 py-2 bg-gray-100 font-bold"
-          [ngClass]="{
-            'text-green-700': appointment.appointmentStatus === 'Aceptado',
-            'text-amber-700': appointment.appointmentStatus === 'Rechazado',
-            'text-red-700': appointment.appointmentStatus === 'Cancelado',
-            'text-blue-700': appointment.appointmentStatus === 'Finalizado'
-          }"
-        >
-          {{ appointment.appointmentStatus }}
+
+        <!-- Estado del turno -->
+        <td class="px-3 py-2 bg-gray-100">
+          <span
+            [ngClass]="{
+              'bg-green-100 text-green-800':
+                appointment.appointmentStatus === 'Aceptado',
+              'bg-yellow-100 text-yellow-800':
+                appointment.appointmentStatus === 'Rechazado',
+              'bg-red-100 text-red-800':
+                appointment.appointmentStatus === 'Cancelado',
+              'bg-blue-100 text-blue-800':
+                appointment.appointmentStatus === 'Finalizado'
+            }"
+            class="px-3 py-1 rounded-full text-xs font-semibold"
+          >
+            {{ appointment.appointmentStatus }}
+          </span>
         </td>
+
+        <!-- Modificar turno -->
         <td class="px-3 py-2">
           <button
             type="button"
             [disabled]="!appointment.isCancelable"
             (click)="cancelAppointment(appointment)"
-            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+            class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-full text-sm px-3 py-2 transition disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
           >
-            Cancelar turno
+            Cancelar
           </button>
         </td>
-        <td class="px-3 py-2 flex flex-col ali">
+
+        <!-- Reseñas -->
+        <td class="px-3 py-2 flex flex-col gap-2 bg-gray-100">
           @if(appointment.appointmentStatus == 'Completado') {
           <button
             type="button"
             (click)="showReviewModal(appointment.idReviewForPatient)"
-            class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-2 py-2 text-center me-2 mb-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+            class="bg-green-600 hover:bg-green-700 text-white font-medium rounded-full text-sm px-3 py-2 transition"
           >
             Ver reseña
           </button>
+
           @if(appointment.idReviewForSpecialist == null) {
           <button
             type="button"
-            (click)="showReviewModal(appointment.idReviewForSpecialist)"
-            class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-2 py-2 text-center me-2 mb-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+            (click)="
+              showCreateReviewModal(appointment.id, appointment.idPatient)
+            "
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full text-sm px-3 py-2 transition"
           >
             Dejar reseña
           </button>
-          } }@else { Aún no disponible }
+          } } @else {
+          <span class="text-gray-400 text-sm">Aún no disponible</span> }
         </td>
       </tr>
       }
@@ -89,9 +111,16 @@
   </table>
 </div>
 
-@if (isEditModalOpen) {
+<!-- Modales -->
+@if (isReviewModalOpen) {
 <app-review-overview
   [review]="review"
-  (eventCloseModal)="closeModal($event)"
+  (eventCloseModal)="closeReviewModal($event)"
 ></app-review-overview>
+} @if (isCreateReviewModalOpen) {
+<app-review-create
+  [appointmentId]="appointmentId"
+  [patientId]="patientId"
+  (eventCloseModal)="closeCreateReviewModal($event)"
+></app-review-create>
 }

@@ -8,6 +8,13 @@ import { AppointmentsService } from '../../../services/appointments/appointments
 import { AppointmentsListSpecialistComponent } from '../appointments-list-specialist/appointments-list-specialist.component';
 import { CommonModule } from '@angular/common';
 
+interface AppointmentStatus {
+  label: string;
+  value: string;
+  color: string; // para Tailwind o estilos inline
+  icon: string;
+}
+
 @Component({
   selector: 'app-appointments-overview-specialist',
   standalone: true,
@@ -26,10 +33,32 @@ export class AppointmentsOverviewSpecialistComponent {
   appointmentsCompleted: Appointment[] = [];
   displayedAppointments: Appointment[] = [];
   searchForm: FormGroup;
+  selectedStatus: string = 'Sin Asignar'; // Estado seleccionado para mostrar los turnos
 
   protected authService = inject(AuthService);
   private db = inject(DatabaseService);
   private appointmentService = inject(AppointmentsService);
+
+  appointmentStatuses: AppointmentStatus[] = [
+    {
+      label: 'Turnos nuevos',
+      value: 'Sin Asignar',
+      color: 'bg-yellow-500',
+      icon: '📅',
+    },
+    {
+      label: 'Turnos aceptados',
+      value: 'Aceptado',
+      color: 'bg-green-500',
+      icon: '✅',
+    },
+    {
+      label: 'Turnos completados',
+      value: 'Completado',
+      color: 'bg-red-500',
+      icon: '✔️',
+    },
+  ];
 
   constructor(private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -68,6 +97,7 @@ export class AppointmentsOverviewSpecialistComponent {
   }
 
   showAppointments(status: string) {
+    this.selectedStatus = status; // <-- guarda el estado seleccionado para el estilo
     switch (status) {
       case 'Sin Asignar':
         this.displayedAppointments = this.appointmentsNew;
@@ -75,7 +105,7 @@ export class AppointmentsOverviewSpecialistComponent {
       case 'Aceptado':
         this.displayedAppointments = this.appointmentsAccepted;
         break;
-      case 'Realizado':
+      case 'Completado':
         this.displayedAppointments = this.appointmentsCompleted;
         break;
     }

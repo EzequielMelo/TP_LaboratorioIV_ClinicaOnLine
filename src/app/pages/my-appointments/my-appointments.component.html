@@ -1,26 +1,42 @@
-<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
-  <h1 class="text-center mt-[20px] text-5xl font-semibold text-white">Mis Turnos</h1>
+<div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
+  <h1 class="text-center mt-5 text-5xl font-semibold text-white">Mis Turnos</h1>
 
-  <div class="inline-flex rounded-md mt-[10px] shadow-sm" role="group">
-    <!-- Botón para mostrar "Pedir turno" -->
-    <button type="button"
-      class="px-4 py-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-      (click)="toggleView('overview')">
+  <!-- Tabs -->
+  <div
+    class="flex space-x-2 mt-4 bg-white bg-opacity-80 p-1 rounded-lg shadow-lg"
+  >
+    <button
+      type="button"
+      [class.bg-blue-600]="activeView === 'overview'"
+      [class.text-white]="activeView === 'overview'"
+      [class.bg-transparent]="activeView !== 'overview'"
+      [class.text-gray-800]="activeView !== 'overview'"
+      class="px-5 py-2 rounded-md font-medium transition-all duration-200 hover:bg-blue-500 hover:text-white"
+      (click)="toggleView('overview')"
+      (click)="setActiveView('overview')"
+    >
       Pedir turno
     </button>
 
-    <!-- Botón para mostrar "Ver turnos" -->
-    <button type="button"
-      class="px-4 py-1 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white"
-      (click)="toggleView('request')">
+    <button
+      type="button"
+      [class.bg-blue-600]="activeView === 'request'"
+      [class.text-white]="activeView === 'request'"
+      [class.bg-transparent]="activeView !== 'request'"
+      [class.text-gray-800]="activeView !== 'request'"
+      class="px-5 py-2 rounded-md font-medium transition-all duration-200 hover:bg-blue-500 hover:text-white"
+      (click)="toggleView('request')"
+      (click)="setActiveView('request')"
+    >
       Ver turnos
     </button>
   </div>
 
+  <!-- Contenedor -->
   <div
-    class="w-full flex flex-row my-12 mt-[10px] justify-center rounded-lg shadow sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
-    <div class="p-4 w-full space-y-4 md:space-y-6 sm:p-8 min-h-[30rem] rounded-lg">
-      <!-- Usando @if() para decidir cuál componente mostrar -->
+    class="w-full flex flex-row mt-6 mb-10 justify-center rounded-lg shadow-lg sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border border-gray-300"
+  >
+    <div class="p-6 w-full space-y-4 min-h-[30rem] rounded-lg">
       @if (showAppointmentRequest) {
       <app-appointments-overview />
       } @else {

@@ -1,147 +1,243 @@
-<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
-  <h1 class="text-center mt-[20px] text-5xl font-semibold text-white">Nuevo Turno</h1>
+<div
+  class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0"
+>
+  <h1 class="text-center mt-5 text-5xl font-semibold text-white">
+    Nuevo Turno
+  </h1>
 
   <div
-    class="w-full flex flex-row my-12 mt-[10px] justify-center rounded-lg shadow sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
-    <div class="p-4 w-full space-y-4 md:space-y-6 sm:p-8 min-h-[30rem] rounded-lg">
-      <!-- Usando @if() para decidir cuál componente mostrar -->
+    class="w-full flex flex-row my-12 justify-center rounded-xl shadow-lg sm:max-w-6xl bg-white bg-opacity-55 border border-gray-300"
+  >
+    <div class="p-6 w-full min-h-[30rem] rounded-lg">
+      <div class="space-y-6">
+        <h2 class="text-3xl font-semibold text-black text-center">
+          Asignar turno a paciente
+        </h2>
 
-      <div class="mb-4 flex flex-col justify-center">
-        <h1 class="text-center mt-2 text-3xl font-semibold text-black">Pedir nuevo turno</h1>
-        <form [formGroup]="newAppointmentForm" (ngSubmit)="onSubmit()">
-          <div class="flex flex-row mt-3">
+        <!-- Formulario principal -->
+        <form
+          [formGroup]="newAppointmentForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Columna izquierda: Buscar paciente -->
+            <div class="md:w-1/2 flex flex-col gap-4">
+              <label
+                for="searchPatient"
+                class="block text-sm font-semibold text-gray-700"
+              >
+                Buscar paciente
+              </label>
 
-            <div class="flex flex-col w-[60%] m-3 mr-6 mt-5">
-              <form class="w-[100%] mb-2" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-                <div class="relative">
-                  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+              <!-- Formulario de búsqueda -->
+              <form
+                [formGroup]="searchForm"
+                (ngSubmit)="onSearch()"
+                class="flex gap-2"
+              >
+                <div class="relative flex-1">
+                  <input
+                    type="search"
+                    id="searchPatient"
+                    formControlName="keyWord"
+                    placeholder="Ingrese nombre o email"
+                    class="w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 transition"
+                  />
+                  <div
+                    class="absolute inset-y-0 left-3 flex items-center pointer-events-none"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-4.35-4.35M9 17a8 8 0 100-16 8 8 0 000 16z"
+                      />
                     </svg>
                   </div>
-                  <input type="search" id="default-search" formControlName="keyWord"
-                    class="w-full p-4 ps-9 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Buscar paciente" required />
-                  <button type="submit"
-                    class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
                 </div>
+                <button
+                  type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-4 py-2 text-sm transition"
+                >
+                  Buscar
+                </button>
               </form>
-              <app-patient-list class="max-h-[250px] overflow-y-scroll overflow-x-hidden" [data]="patients"
-                (patientEvent)="receivePatient($event)"></app-patient-list>
-              <div class="col-12 flex flex-col">
-                <label for="selectedPatient" class="form-label">Paciente seleccionado</label>
-                <input [value]="patient ? formatPatient(patient) : ''" type="text" class="rounded-lg"
-                  id="selectedPatient" formControlName="selectedPatient" required readonly>
-                <div class="h-[10px]">
-                  @if (newAppointmentForm.controls['selectedPatient'].invalid &&
-                  newAppointmentForm.controls['selectedPatient'].touched) {
-                  <label class="font-medium mt-1 text-xs text-red-700" for="selectedPatient">Por favor seleccione un
-                    paciente</label>
-                  }
-                </div>
-                @if (newAppointmentForm.controls['specialistName'].invalid &&
-                newAppointmentForm.controls['specialistName'].touched)
-                {
-                <label class="font-medium mt-1 text-xs text-red-700" for="specialistName">Por favor seleccione un
-                  especialista</label>
-                }
+
+              <!-- Lista de pacientes -->
+              <app-patient-list
+                class="max-h-[250px] overflow-y-auto overflow-x-hidden rounded-lg border border-gray-200"
+                [data]="patients"
+                (patientEvent)="receivePatient($event)"
+              ></app-patient-list>
+
+              <!-- Paciente seleccionado -->
+              <div>
+                <label
+                  for="selectedPatient"
+                  class="block text-sm font-semibold text-gray-700"
+                >
+                  Paciente seleccionado
+                </label>
+                <input
+                  [value]="patient ? formatPatient(patient) : ''"
+                  type="text"
+                  id="selectedPatient"
+                  readonly
+                  class="w-full p-3 text-sm rounded-lg border border-gray-300 bg-gray-50"
+                  formControlName="selectedPatient"
+                />
+                <p
+                  *ngIf="
+                    newAppointmentForm.controls['selectedPatient'].invalid &&
+                    newAppointmentForm.controls['selectedPatient'].touched
+                  "
+                  class="text-xs text-red-600 mt-1"
+                >
+                  Por favor seleccione un paciente
+                </p>
               </div>
             </div>
-            <div class=" w-[40%]">
-              <div class="max-w-md flex flex-col mx-auto">
-                <div class="relative z-0 w-full mb-5 group">
-                  <label for="healthcare-system" class="block mb-2 text-sm font-medium text-gray-400">Seleccione
-                    especialidad</label>
-                  <select formControlName="specialty" id="specialty"
-                    class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" selected disabled>Selecciona una especialidad</option>
-                    @for (specialty of specialtys; track $index) {
-                    <option value="{{specialty}}">{{specialty}}</option>
-                    }
-                  </select>
-                  <div class="h-[10px]">
-                    @if (newAppointmentForm.controls['specialty'].invalid &&
-                    newAppointmentForm.controls['specialty'].touched)
-                    {
-                    <label class="font-medium mt-1 text-xs text-red-700" for="specialty">Por favor selecciona una
-                      especialidad</label>
-                    }
-                  </div>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                  <label for="specialistName" class="block mb-2 text-sm font-medium text-gray-400">Seleccione un
-                    profesional</label>
-                  <select formControlName="specialistName" id="specialistName" (change)="onSpecialistChange($event)"
-                    class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" selected disabled>Selecciona al profesional</option>
-                    @for (specialist of specialists; track $index) {
-                    <option class="text-black" value="{{specialist.id}}">{{ specialist.name }} {{ specialist.lastName }}
-                    </option>
-                    }
-                  </select>
-                  <div class="h-[10px]">
-                    @if (newAppointmentForm.controls['specialistName'].invalid &&
-                    newAppointmentForm.controls['specialistName'].touched)
-                    {
-                    <label class="font-medium mt-1 text-xs text-red-700" for="specialistName">Por favor seleccione un
-                      especialista</label>
-                    }
-                  </div>
-                </div>
 
-
-                <div class="relative z-0 w-full mb-5 group">
-                  <label for="availableDays" class="block mb-2 text-sm font-medium text-gray-400">
-                    Seleccione un día disponible
-                  </label>
-                  <select id="availableDays" formControlName="selectedDay" (change)="onDayChange($event)"
-                    class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" selected disabled>Seleccione un día</option>
-                    @for (day of schedule; track $index) {
-                    <option [value]="$index">
-                      {{ day.date | date: 'fullDate' }}
-                    </option>
-                    }
-                  </select>
-                  <div class="h-[10px]">
-                    @if (newAppointmentForm.controls['selectedDay'].invalid &&
-                    newAppointmentForm.controls['selectedDay'].touched)
-                    {
-                    <label class="font-medium mt-1 text-xs text-red-700" for="selectedDay">Por favor seleccione un
-                      dia</label>
-                    }
-                  </div>
-                </div>
-
-                <div class="relative z-0 w-full mb-5 group">
-                  <label for="selectedSlot" class="block mb-2 text-sm font-medium text-gray-400">
-                    Seleccione un horario
-                  </label>
-                  <select id="selectedSlot" formControlName="selectedSlot"
-                    class="bg-gray-300 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="" selected disabled>Seleccione un horario</option>
-                    @for (slot of selectedDaySlots; track $index) {
-                    <option [value]="$index">
-                      <li>{{ slot }}</li>
-                    </option>
-                    }
-                  </select>
-                  <div class="h-[10px]">
-                    @if (newAppointmentForm.controls['selectedSlot'].invalid &&
-                    newAppointmentForm.controls['selectedSlot'].touched)
-                    {
-                    <label class="font-medium mt-1 text-xs text-red-700" for="selectedSlot">Por favor seleccione un
-                      horario</label>
-                    }
-                  </div>
-                </div>
-
-                <button type="submit"
-                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Solicitar
-                  turno</button>
+            <!-- Columna derecha: Selección de turno -->
+            <div class="md:w-1/2 flex flex-col gap-4">
+              <!-- Especialidad -->
+              <div>
+                <label
+                  for="specialty"
+                  class="block text-sm font-semibold text-gray-700"
+                  >Especialidad</label
+                >
+                <select
+                  formControlName="specialty"
+                  id="specialty"
+                  class="w-full p-3 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 transition"
+                >
+                  <option value="" disabled selected>
+                    Seleccione especialidad
+                  </option>
+                  @for (specialty of specialtys; track $index) {
+                  <option value="{{ specialty }}">{{ specialty }}</option>
+                  }
+                </select>
+                <p
+                  *ngIf="
+                    newAppointmentForm.controls['specialty'].invalid &&
+                    newAppointmentForm.controls['specialty'].touched
+                  "
+                  class="text-xs text-red-600 mt-1"
+                >
+                  Por favor seleccione una especialidad
+                </p>
               </div>
+
+              <!-- Profesional -->
+              <div>
+                <label
+                  for="specialistName"
+                  class="block text-sm font-semibold text-gray-700"
+                  >Profesional</label
+                >
+                <select
+                  formControlName="specialistName"
+                  id="specialistName"
+                  (change)="onSpecialistChange($event)"
+                  class="w-full p-3 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 transition"
+                >
+                  <option value="" disabled selected>
+                    Seleccione profesional
+                  </option>
+                  @for (specialist of specialists; track $index) {
+                  <option value="{{ specialist.id }}">
+                    {{ specialist.name }} {{ specialist.lastName }}
+                  </option>
+                  }
+                </select>
+                <p
+                  *ngIf="
+                    newAppointmentForm.controls['specialistName'].invalid &&
+                    newAppointmentForm.controls['specialistName'].touched
+                  "
+                  class="text-xs text-red-600 mt-1"
+                >
+                  Por favor seleccione un especialista
+                </p>
+              </div>
+
+              <!-- Día disponible -->
+              <div>
+                <label
+                  for="selectedDay"
+                  class="block text-sm font-semibold text-gray-700"
+                  >Día disponible</label
+                >
+                <select
+                  formControlName="selectedDay"
+                  id="selectedDay"
+                  (change)="onDayChange($event)"
+                  class="w-full p-3 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 transition"
+                >
+                  <option value="" disabled selected>Seleccione un día</option>
+                  @for (day of schedule; track $index) {
+                  <option [value]="$index">
+                    {{ day.date | date : "fullDate" }}
+                  </option>
+                  }
+                </select>
+                <p
+                  *ngIf="
+                    newAppointmentForm.controls['selectedDay'].invalid &&
+                    newAppointmentForm.controls['selectedDay'].touched
+                  "
+                  class="text-xs text-red-600 mt-1"
+                >
+                  Por favor seleccione un día
+                </p>
+              </div>
+
+              <!-- Horario -->
+              <div>
+                <label
+                  for="selectedSlot"
+                  class="block text-sm font-semibold text-gray-700"
+                  >Horario</label
+                >
+                <select
+                  formControlName="selectedSlot"
+                  id="selectedSlot"
+                  class="w-full p-3 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 transition"
+                >
+                  <option value="" disabled selected>
+                    Seleccione un horario
+                  </option>
+                  @for (slot of selectedDaySlots; track $index) {
+                  <option [value]="$index">{{ slot }}</option>
+                  }
+                </select>
+                <p
+                  *ngIf="
+                    newAppointmentForm.controls['selectedSlot'].invalid &&
+                    newAppointmentForm.controls['selectedSlot'].touched
+                  "
+                  class="text-xs text-red-600 mt-1"
+                >
+                  Por favor seleccione un horario
+                </p>
+              </div>
+
+              <!-- Botón enviar -->
+              <button
+                type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition mt-4"
+              >
+                Solicitar turno
+              </button>
             </div>
           </div>
         </form>

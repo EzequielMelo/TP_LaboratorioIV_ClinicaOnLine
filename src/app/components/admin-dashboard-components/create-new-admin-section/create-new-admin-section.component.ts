@@ -68,7 +68,7 @@ export class CreateNewAdminSectionComponent {
 
     if (!profilePicture) {
       console.error('La imagen es necesaria para registrarse');
-      return; // Salir de la función si alguna es nula
+      return;
     }
 
     this.auth
@@ -83,8 +83,19 @@ export class CreateNewAdminSectionComponent {
         profilePicture
       )
       .subscribe({
-        next: () => console.log('Usuario registrado con éxito'),
-        error: (error) => console.error('Error en el registro:', error.message),
+        next: (res) => {
+          if (res.success) {
+            console.log(res.message);
+            alert(res.message); // Mostrar al usuario
+            this.registerForm.reset(); // Opcional: limpiar formulario
+          } else {
+            console.warn(res.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error en el registro:', error.message);
+          alert(error.message);
+        },
       });
   }
 

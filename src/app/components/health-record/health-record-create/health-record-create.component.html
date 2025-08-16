@@ -1,1 +1,105 @@
-<p>health-record-create works!</p>
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+>
+  <div
+    class="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-y-auto"
+  >
+    <h3 class="text-2xl font-semibold mb-4">Registrar Cita Médica</h3>
+
+    <!-- Datos básicos -->
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <label for="height">Altura:</label>
+      <input
+        id="height"
+        type="text"
+        [(ngModel)]="height"
+        class="border p-1 rounded"
+      />
+
+      <label for="weight">Peso:</label>
+      <input
+        id="weight"
+        type="text"
+        [(ngModel)]="weight"
+        class="border p-1 rounded"
+      />
+
+      <label for="temperature">Temperatura:</label>
+      <input
+        id="temperature"
+        type="text"
+        [(ngModel)]="temperature"
+        class="border p-1 rounded"
+      />
+
+      <label for="bloodPressure">Presión Arterial:</label>
+      <input
+        id="bloodPressure"
+        type="text"
+        [(ngModel)]="bloodPressure"
+        class="border p-1 rounded"
+      />
+    </div>
+
+    <!-- Campos dinámicos -->
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-semibold">Datos adicionales</span>
+        <button
+          type="button"
+          (click)="addDynamicField()"
+          [disabled]="dynamicData.length >= maxDynamicFields"
+          class="bg-green-500 text-white px-2 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          +
+        </button>
+      </div>
+
+      <div
+        *ngFor="let field of dynamicData; let i = index"
+        class="grid grid-cols-2 gap-2 mb-2"
+      >
+        <input
+          type="text"
+          placeholder="Clave (ej: Dolor)"
+          [(ngModel)]="field.key"
+          class="border p-1 rounded"
+        />
+        <input
+          type="text"
+          placeholder="Valor (ej: Leve)"
+          [(ngModel)]="field.value"
+          class="border p-1 rounded"
+        />
+      </div>
+    </div>
+
+    <!-- Reseña -->
+    <div class="mb-4">
+      <label for="review" class="block mb-1">Reseña del Turno:</label>
+      <textarea
+        id="review"
+        [(ngModel)]="review"
+        class="border p-2 w-full rounded resize-none"
+        rows="4"
+        placeholder="Ej: Se le recomendó al paciente tomar un descanso..."
+      ></textarea>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end gap-4 mt-4">
+      <button
+        (click)="closeModal()"
+        class="px-4 py-2 bg-gray-400 text-white rounded"
+      >
+        Cerrar
+      </button>
+      <button
+        (click)="submitRecord()"
+        class="px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Completar Turno
+      </button>
+    </div>
+  </div>
+</div>

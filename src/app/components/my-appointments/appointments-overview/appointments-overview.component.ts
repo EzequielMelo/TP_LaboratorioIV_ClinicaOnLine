@@ -7,6 +7,13 @@ import { Appointment } from '../../../classes/appointment';
 import { CommonModule } from '@angular/common';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 
+interface AppointmentStatus {
+  label: string;
+  value: string;
+  color: string; // para Tailwind o estilos inline
+  icon: string;
+}
+
 @Component({
   selector: 'app-appointments-overview',
   standalone: true,
@@ -21,9 +28,31 @@ export class AppointmentsOverviewComponent {
   appointmentsAccepted: Appointment[] = [];
   appointmentsCanceled: Appointment[] = [];
   displayedAppointments: Appointment[] = [];
+  selectedStatus: string = 'Sin Asignar'; // Estado seleccionado para mostrar los turnos
 
   protected authService = inject(AuthService);
   private db = inject(DatabaseService);
+
+  appointmentStatuses: AppointmentStatus[] = [
+    {
+      label: 'Turnos en proceso',
+      value: 'Sin Asignar',
+      color: 'bg-yellow-500',
+      icon: '📅',
+    },
+    {
+      label: 'Turnos completados',
+      value: 'Aceptado',
+      color: 'bg-green-500',
+      icon: '✅',
+    },
+    {
+      label: 'Turnos rechazados/cancelados',
+      value: 'Cancelado',
+      color: 'bg-red-500',
+      icon: '✔️',
+    },
+  ];
 
   constructor(private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -66,6 +95,7 @@ export class AppointmentsOverviewComponent {
   }
 
   showAppointments(status: string) {
+    this.selectedStatus = status; // <-- guarda el estado seleccionado para el estilo
     switch (status) {
       case 'Sin Asignar':
         this.displayedAppointments = this.appointmentsNew;

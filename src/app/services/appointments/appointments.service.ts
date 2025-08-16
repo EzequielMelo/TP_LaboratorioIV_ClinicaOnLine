@@ -199,4 +199,8 @@ export class AppointmentsService {
         )
       );
   }
+
+  updateAppointment(id: string, data: Partial<Appointment>): Observable<void> {
+    return from(this.firestore.collection('appointments').doc(id).update(data));
+  }
 }

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Review } from '../../../classes/reviewForPatient';
+import { ReviewForPatient } from '../../../classes/reviewForPatient';
+import { ReviewForSpecialist } from '../../../classes/reviewForSpecialist';
 
 @Component({
   selector: 'app-review-overview',
@@ -9,7 +10,7 @@ import { Review } from '../../../classes/reviewForPatient';
   styleUrl: './review-overview.component.css',
 })
 export class ReviewOverviewComponent {
-  @Input() review: Review | null = null;
+  @Input() review: string | null = null;
   @Output() eventCloseModal = new EventEmitter<{
     event: boolean;
   }>();

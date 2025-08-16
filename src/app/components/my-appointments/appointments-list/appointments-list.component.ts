@@ -4,11 +4,10 @@ import { Component, inject, Input, input } from '@angular/core';
 import { Appointment } from '../../../classes/appointment';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import Swal from 'sweetalert2';
-import { HealthRecordService } from '../../../services/health-record/health-record.service';
-import { HealthRecordOverviewComponent } from '../../health-record/health-record-overview/health-record-overview.component';
 import { ReviewService } from '../../../services/review/review.service';
-import { Review } from '../../../classes/reviewForPatient';
+import { ReviewForPatient } from '../../../classes/reviewForPatient';
 import { ReviewOverviewComponent } from '../../review/review-overview/review-overview.component';
+import { ReviewCreateComponent } from '../../review/review-create/review-create.component';
 
 @Component({
   selector: 'app-appointments-list',
@@ -16,8 +15,8 @@ import { ReviewOverviewComponent } from '../../review/review-overview/review-ove
   imports: [
     CommonModule,
     NgClass,
-    HealthRecordOverviewComponent,
     ReviewOverviewComponent,
+    ReviewCreateComponent,
   ],
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css',
@@ -26,12 +25,14 @@ export class AppointmentsListComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
   healthRecord: HealthRecord | null = null;
-  review: Review | null = null;
+  review: string | null = null;
+  appointmentId: string | null = null;
+  patientId: string | null = null;
 
   private appointmentService = inject(AppointmentsService);
-  private healthRecordService = inject(HealthRecordService);
   private reviewService = inject(ReviewService);
-  isEditModalOpen: boolean = false;
+  isReviewModalOpen: boolean = false;
+  isCreateReviewModalOpen: boolean = false;
 
   get filteredAppointments(): Appointment[] {
     if (!this.keyWord || this.keyWord.trim() === '') {
@@ -76,18 +77,33 @@ export class AppointmentsListComponent {
     }
   }
 
+  showCreateReviewModal(
+    appointmentId: string | null,
+    patientId: string | null
+  ) {
+    if (appointmentId) {
+      this.appointmentId = appointmentId;
+      this.patientId = patientId;
+    }
+    this.isCreateReviewModalOpen = true;
+  }
+
+  closeCreateReviewModal(data: { event: boolean }) {
+    this.isCreateReviewModalOpen = data.event;
+  }
+
   showReviewModal(ReviewdId: string | null) {
     if (ReviewdId) {
       this.reviewService.getReviewForPatient(ReviewdId).subscribe({
         next: (review) => {
-          this.review = review;
+          this.review = review.review;
         },
       });
     }
-    this.isEditModalOpen = true;
+    this.isReviewModalOpen = true;
   }
 
-  closeModal(data: { event: boolean }) {
-    this.isEditModalOpen = data.event;
+  closeReviewModal(data: { event: boolean }) {
+    this.isReviewModalOpen = data.event;
   }
 }

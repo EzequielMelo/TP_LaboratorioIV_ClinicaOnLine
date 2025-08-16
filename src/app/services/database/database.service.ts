@@ -146,8 +146,12 @@ export class DatabaseService {
 
   getAppointments(idPatient: string): Observable<Appointment[]> {
     return this.firestore
-      .collection('appointments', (ref) =>
-        ref.where('idPatient', '==', idPatient)
+      .collection<Appointment>(
+        'appointments',
+        (ref) =>
+          ref
+            .where('idPatient', '==', idPatient)
+            .orderBy('appointmentDate', 'desc') // orden ascendente por fecha
       )
       .snapshotChanges()
       .pipe(
@@ -155,7 +159,7 @@ export class DatabaseService {
           actions.map((a) => {
             const data = a.payload.doc.data() as Appointment;
             const id = a.payload.doc.id;
-            return { ...data, id } as Appointment;
+            return { ...data, id };
           })
         )
       );

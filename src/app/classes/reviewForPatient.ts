@@ -1,4 +1,4 @@
-export class Review {
+export class ReviewForPatient {
   healthRecordId: string | null;
   review: string;
   constructor(healthRecordId: string | null, review: string) {

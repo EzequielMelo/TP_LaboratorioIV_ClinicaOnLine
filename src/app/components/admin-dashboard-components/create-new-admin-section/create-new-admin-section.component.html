@@ -1,173 +1,245 @@
-<section class="bg-gray-50 min-h-96 dark:bg-gray-900 flex flex-col items-start justify-start rounded-lg">
-  <form class="max-w-md mx-auto my-8" [formGroup]="registerForm">
-    <div class="relative z-0 w-full mb-5 group">
-      <input formControlName="email" type="email" name="floating_email" id="floating_email"
-        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-gray-900 border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-        placeholder=" " required />
-      <label for="floating_email"
-        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
-      <div class="h-[10px]">
-        @if (registerForm.controls['email'].errors !== null && registerForm.controls['email'].touched) {
-        @if (registerForm.controls['email'].errors!['required']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="email">Campo requerido</label>
-        }
-        @if (registerForm.controls['email'].errors!['email']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="email">Ingrese email valido</label>
-        }
-        }
+<section
+  class="bg-gray-50 min-h-96 dark:bg-gray-900 flex flex-col items-center justify-start rounded-lg p-6"
+>
+  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
+    Crear nuevo administrador
+  </h2>
+
+  <form class="w-full max-w-md" [formGroup]="registerForm">
+    <!-- Email -->
+    <div class="relative z-0 w-full mb-6 group">
+      <input
+        formControlName="email"
+        type="email"
+        id="floating_email"
+        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_email"
+        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+        >Email</label
+      >
+      <div class="min-h-[1rem]">
+        @if (registerForm.controls['email'].errors &&
+        registerForm.controls['email'].touched) { @if
+        (registerForm.controls['email'].errors['required']) {
+        <p class="text-xs text-red-700">Campo requerido</p>
+        } @if (registerForm.controls['email'].errors['email']) {
+        <p class="text-xs text-red-700">Ingrese email válido</p>
+        } }
       </div>
     </div>
-    <div class="relative z-0 w-full mb-5 group">
-      <input formControlName="password" type="password" name="floating_password" id="floating_password"
-        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-gray-900 border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-        placeholder=" " required />
-      <label for="floating_password"
-        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contraseña</label>
-      <div class="h-[10px]">
-        @if (registerForm.controls['password'].errors !== null && registerForm.controls['password'].touched) {
-        @if (registerForm.controls['password'].errors!['required']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-        }
-        @if (registerForm.controls['password'].errors!['minlength']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-        }
-        }
+
+    <!-- Contraseña -->
+    <div class="relative z-0 w-full mb-6 group">
+      <input
+        formControlName="password"
+        type="password"
+        id="floating_password"
+        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_password"
+        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+        >Contraseña</label
+      >
+      <div class="min-h-[1rem]">
+        @if (registerForm.controls['password'].errors &&
+        registerForm.controls['password'].touched) { @if
+        (registerForm.controls['password'].errors['required']) {
+        <p class="text-xs text-red-700">Campo requerido</p>
+        } @if (registerForm.controls['password'].errors['minlength']) {
+        <p class="text-xs text-red-700">Ingrese mínimo 6 caracteres</p>
+        } }
       </div>
     </div>
-    <div class="relative z-0 w-full mb-5 group">
-      <input formControlName="repeat_password" type="password" name="repeat_password" id="floating_repeat_password"
-        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-black border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-        placeholder=" " required />
-      <label for="floating_repeat_password"
-        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Confirmar
-        contraseña</label>
-      <div class="h-[10px]">
-        @if (registerForm.controls['repeat_password'].errors !== null &&
-        registerForm.controls['repeat_password'].touched) {
-        @if (registerForm.controls['repeat_password'].errors!['required']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-        }
-        @if (registerForm.controls['repeat_password'].errors!['minlength']) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-        }
-        }
+
+    <!-- Confirmar contraseña -->
+    <div class="relative z-0 w-full mb-6 group">
+      <input
+        formControlName="repeat_password"
+        type="password"
+        id="floating_repeat_password"
+        class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+        placeholder=" "
+        required
+      />
+      <label
+        for="floating_repeat_password"
+        class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+        >Confirmar contraseña</label
+      >
+      <div class="min-h-[1rem]">
+        @if (registerForm.controls['repeat_password'].errors &&
+        registerForm.controls['repeat_password'].touched) { @if
+        (registerForm.controls['repeat_password'].errors['required']) {
+        <p class="text-xs text-red-700">Campo requerido</p>
+        } @if (registerForm.controls['repeat_password'].errors['minlength']) {
+        <p class="text-xs text-red-700">Ingrese mínimo 6 caracteres</p>
+        } }
       </div>
     </div>
+
+    <!-- Nombre y Apellido -->
     <div class="grid md:grid-cols-2 md:gap-6">
-      <div class="relative z-0 w-full mb-5 group">
-        <input formControlName="name" type="text" name="floating_first_name" id="floating_first_name"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required />
-        <label for="floating_first_name"
-          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
-        <div class="h-[10px]">
-          @if (registerForm.controls['name'].errors !== null &&
-          registerForm.controls['name'].touched) {
-          @if (registerForm.controls['name'].errors!['required']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-          }
-          @if (registerForm.controls['name'].errors!['minlength']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-          }
-          @if (registerForm.controls['name'].errors!['maxlength']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">El campo es demasiado largo</label>
-          }
-          }
+      <!-- Nombre -->
+      <div class="relative z-0 w-full mb-6 group">
+        <input
+          formControlName="name"
+          type="text"
+          id="floating_first_name"
+          class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+          placeholder=" "
+          required
+        />
+        <label
+          for="floating_first_name"
+          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+          >Nombre</label
+        >
+        <div class="min-h-[1rem]">
+          @if (registerForm.controls['name'].errors &&
+          registerForm.controls['name'].touched) { @if
+          (registerForm.controls['name'].errors['required']) {
+          <p class="text-xs text-red-700">Campo requerido</p>
+          } @if (registerForm.controls['name'].errors['minlength']) {
+          <p class="text-xs text-red-700">Ingrese mínimo 6 caracteres</p>
+          } @if (registerForm.controls['name'].errors['maxlength']) {
+          <p class="text-xs text-red-700">El campo es demasiado largo</p>
+          } }
         </div>
       </div>
-      <div class="relative z-0 w-full mb-5 group">
-        <input formControlName="last_name" type="text" name="floating_last_name" id="floating_last_name"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required />
-        <label for="floating_last_name"
-          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Apellido</label>
-        <div class="h-[10px]">
-          @if (registerForm.controls['last_name'].errors !== null &&
-          registerForm.controls['last_name'].touched) {
-          @if (registerForm.controls['last_name'].errors!['required']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-          }
-          @if (registerForm.controls['last_name'].errors!['minlength']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-          }
-          @if (registerForm.controls['last_name'].errors!['maxlength']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="password">El campo es demasiado largo</label>
-          }
-          }
+
+      <!-- Apellido -->
+      <div class="relative z-0 w-full mb-6 group">
+        <input
+          formControlName="last_name"
+          type="text"
+          id="floating_last_name"
+          class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+          placeholder=" "
+          required
+        />
+        <label
+          for="floating_last_name"
+          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+          >Apellido</label
+        >
+        <div class="min-h-[1rem]">
+          @if (registerForm.controls['last_name'].errors &&
+          registerForm.controls['last_name'].touched) { @if
+          (registerForm.controls['last_name'].errors['required']) {
+          <p class="text-xs text-red-700">Campo requerido</p>
+          } @if (registerForm.controls['last_name'].errors['minlength']) {
+          <p class="text-xs text-red-700">Ingrese mínimo 6 caracteres</p>
+          } @if (registerForm.controls['last_name'].errors['maxlength']) {
+          <p class="text-xs text-red-700">El campo es demasiado largo</p>
+          } }
         </div>
       </div>
     </div>
+
+    <!-- Edad y DNI -->
     <div class="grid md:grid-cols-2 md:gap-6">
-      <div class="relative z-0 w-full mb-5 group">
-        <input formControlName="age" type="text" name="floating_age" id="floating_age"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required />
-        <label for="floating_age"
-          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Edad</label>
-        <div class="h-[10px]">
-          @if (registerForm.controls['age'].errors !== null &&
-          registerForm.controls['age'].touched) {
-          @if (registerForm.controls['age'].errors!['required']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Campo requerido</label>
-          }
-          @if (registerForm.controls['age'].errors!['min']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Ingrese una edad minima
-            valida</label>
-          }
-          @if (registerForm.controls['age'].errors!['max']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Ingrese una edad maxima
-            valida</label>
-          }
-          @if (registerForm.controls['age'].errors!['nonNumeric']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age"> Ingrese solo numeros</label>
-          }
-          }
+      <!-- Edad -->
+      <div class="relative z-0 w-full mb-6 group">
+        <input
+          formControlName="age"
+          type="text"
+          id="floating_age"
+          class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+          placeholder=" "
+          required
+        />
+        <label
+          for="floating_age"
+          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+          >Edad</label
+        >
+        <div class="min-h-[1rem]">
+          @if (registerForm.controls['age'].errors &&
+          registerForm.controls['age'].touched) { @if
+          (registerForm.controls['age'].errors['required']) {
+          <p class="text-xs text-red-700">Campo requerido</p>
+          } @if (registerForm.controls['age'].errors['min']) {
+          <p class="text-xs text-red-700">Ingrese una edad mínima válida</p>
+          } @if (registerForm.controls['age'].errors['max']) {
+          <p class="text-xs text-red-700">Ingrese una edad máxima válida</p>
+          } @if (registerForm.controls['age'].errors['nonNumeric']) {
+          <p class="text-xs text-red-700">Ingrese solo números</p>
+          } }
         </div>
       </div>
-      <div class="relative z-0 w-full mb-5 group">
-        <input formControlName="dni" type="text" name="floating_dni" id="floating_dni"
-          class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-          placeholder=" " required />
-        <label for="floating_dni"
-          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">DNI
-          (44.444.444)</label>
-        <div class="h-[10px]">
-          @if (registerForm.controls['dni'].errors !== null &&
-          registerForm.controls['dni'].touched) {
-          @if (registerForm.controls['dni'].errors!['required']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Campo requerido</label>
-          }
-          @if (registerForm.controls['dni'].errors!['invalidDni']) {
-          <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">DNI inválido</label>
-          }
-          }
+
+      <!-- DNI -->
+      <div class="relative z-0 w-full mb-6 group">
+        <input
+          formControlName="dni"
+          type="text"
+          id="floating_dni"
+          class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+          placeholder=" "
+          required
+        />
+        <label
+          for="floating_dni"
+          class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-500"
+          >DNI (44.444.444)</label
+        >
+        <div class="min-h-[1rem]">
+          @if (registerForm.controls['dni'].errors &&
+          registerForm.controls['dni'].touched) { @if
+          (registerForm.controls['dni'].errors['required']) {
+          <p class="text-xs text-red-700">Campo requerido</p>
+          } @if (registerForm.controls['dni'].errors['invalidDni']) {
+          <p class="text-xs text-red-700">DNI inválido</p>
+          } }
         </div>
       </div>
     </div>
-    <div class="relative z-0 w-full mb-5 group">
-      <label class="block mb-2 text-sm font-medium text-gray-400" for="user_avatar">Imagen de
-        perfil</label>
-      <input (change)="onFileChange($event, 'user_avatar')"
-        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-300  focus:outline-none"
-        aria-describedby="user_avatar_help" id="user_avatar" type="file" formControlName="user_avatar">
-      <div class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="user_avatar_help">La imagen de perfil es util
-        para confirmar que se encuentra logueado</div>
-      <div class="h-[10px]">
+
+    <!-- Imagen de perfil -->
+    <div class="relative z-0 w-full mb-6 group">
+      <label
+        class="block mb-2 text-sm font-medium text-gray-400 dark:text-gray-300"
+        for="user_avatar"
+        >Imagen de perfil</label
+      >
+      <input
+        (change)="onFileChange($event, 'user_avatar')"
+        class="block w-full text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-300 dark:bg-gray-700 focus:outline-none"
+        aria-describedby="user_avatar_help"
+        id="user_avatar"
+        type="file"
+        formControlName="user_avatar"
+      />
+      <div
+        class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+        id="user_avatar_help"
+      >
+        La imagen de perfil es útil para confirmar que se encuentra logueado
+      </div>
+      <div class="min-h-[1rem]">
         @if (registerForm.get('user_avatar')?.errors?.['invalidFileType'] &&
         registerForm.get('user_avatar')?.touched) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="user_avatar">
-          Solo se permiten archivos JPG y PNG.
-        </label>
-        }
-
-        @if (registerForm.get('user_avatar')?.errors?.['required'] && registerForm.get('user_avatar')?.touched) {
-        <label class="font-medium mt-1 text-xs text-red-700" for="user_avatar">
-          Debes seleccionar un archivo.
-        </label>
+        <p class="text-xs text-red-700">Solo se permiten archivos JPG y PNG.</p>
+        } @if (registerForm.get('user_avatar')?.errors?.['required'] &&
+        registerForm.get('user_avatar')?.touched) {
+        <p class="text-xs text-red-700">Debes seleccionar un archivo.</p>
         }
       </div>
     </div>
-    <button (click)="register()"
-      class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ">Registrarse</button>
+
+    <!-- Botón de registro -->
+    <button
+      (click)="register()"
+      class="w-full px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+    >
+      Registrar nuevo administrador
+    </button>
   </form>
 </section>

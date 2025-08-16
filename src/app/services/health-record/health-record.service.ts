@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Firestore } from '@angular/fire/firestore';
-import { map, Observable } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import { HealthRecord } from '../../classes/health-record';
 
 @Injectable({
@@ -9,7 +8,13 @@ import { HealthRecord } from '../../classes/health-record';
 })
 export class HealthRecordService {
   private firestore = inject(AngularFirestore);
-  private fire = inject(Firestore);
+
+  createHealthRecord(record: Partial<HealthRecord>): Observable<string> {
+    const id = this.firestore.createId();
+    return from(
+      this.firestore.collection('healthRecords').doc(id).set(record)
+    ).pipe(map(() => id));
+  }
 
   getHealthRecord(healthRecordId: string): Observable<HealthRecord> {
     return this.firestore
