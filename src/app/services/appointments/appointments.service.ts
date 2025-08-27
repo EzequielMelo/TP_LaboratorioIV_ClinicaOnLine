@@ -9,11 +9,20 @@ import {
   Timestamp,
   updateDoc,
 } from '@angular/fire/firestore';
-import { catchError, from, map, Observable, throwError } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  from,
+  map,
+  Observable,
+  switchMap,
+  throwError,
+} from 'rxjs';
 import { addDays, format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { Specialist } from '../../classes/specialist.class';
 import { Appointment } from '../../classes/appointment';
+import { Patient } from '../../classes/patient.class';
 
 @Injectable({
   providedIn: 'root',
@@ -202,5 +211,44 @@ export class AppointmentsService {
 
   updateAppointment(id: string, data: Partial<Appointment>): Observable<void> {
     return from(this.firestore.collection('appointments').doc(id).update(data));
+  }
+
+  getPatientsAttendedBySpecialist(specialistId: string): Observable<Patient[]> {
+    return this.firestore
+      .collection<Appointment>('appointments', (ref) =>
+        ref
+          .where('idSpecialist', '==', specialistId)
+          .where('appointmentStatus', '==', 'Completado')
+      )
+
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        map((appointments) => {
+          // Obtener IDs únicos de pacientes
+          const uniquePatientIds = [
+            ...new Set(appointments.map((app) => app.idPatient)),
+          ];
+          return uniquePatientIds;
+        }),
+        switchMap((patientIds) => {
+          if (patientIds.length === 0) {
+            return [[]];
+          }
+
+          // Obtener los datos completos de cada paciente
+          const patientObservables = patientIds.map((patientId) =>
+            this.firestore
+              .collection<Patient>('users')
+              .doc(patientId)
+              .valueChanges({ idField: 'id' })
+          );
+
+          return combineLatest(patientObservables);
+        }),
+        map(
+          (patients) =>
+            patients.filter((patient) => patient !== undefined) as Patient[]
+        )
+      );
   }
 }

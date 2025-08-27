@@ -7,11 +7,12 @@ import { DayToSpanishPipe } from '../../pipes/day-to-spanish.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatabaseService } from '../../services/database/database.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-specialist-profile',
   standalone: true,
-  imports: [DayToSpanishPipe, CommonModule, FormsModule],
+  imports: [DayToSpanishPipe, CommonModule, FormsModule, RouterLink],
   templateUrl: './specialist-profile.component.html',
   styleUrl: './specialist-profile.component.css',
 })

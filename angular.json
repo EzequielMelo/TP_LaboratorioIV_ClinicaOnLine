@@ -16,10 +16,7 @@
             "outputPath": "dist/tp2-laboratorio-iv",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -28,7 +25,10 @@
               }
             ],
             "styles": ["src/styles.css"],
-            "scripts": []
+            "scripts": [
+              "node_modules/pdfmake/build/pdfmake.min.js",
+              "node_modules/pdfmake/build/vfs_fonts.js"
+            ]
           },
           "configurations": {
             "production": {

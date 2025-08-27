@@ -1,0 +1,96 @@
+<div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
+  <h1 class="text-center mt-5 text-5xl font-semibold text-white">
+    Datos de mis pacientes
+  </h1>
+
+  <!-- Contenedor -->
+  <div
+    class="w-full flex flex-row mt-6 mb-10 justify-center rounded-lg shadow-lg sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border border-gray-300"
+  >
+    <div class="p-6 w-full space-y-4 min-h-[30rem] rounded-lg">
+      <!-- Header cuando se muestran registros médicos -->
+      <div *ngIf="showMedicalRecords" class="mb-6">
+        <!-- Botón volver -->
+        <button
+          (click)="backToPatientList()"
+          class="inline-flex items-center px-4 py-2 mb-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-700 focus:z-10 focus:ring-4 focus:outline-none focus:ring-blue-200 focus:text-blue-700 transition-colors"
+        >
+          <svg
+            class="w-4 h-4 me-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Volver a la lista
+        </button>
+
+        <!-- Header de la historia clínica -->
+        <div
+          class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-md"
+        >
+          <div class="flex items-center space-x-4">
+            <!-- Avatar inicial -->
+            <div
+              class="w-12 h-12 bg-blue-300 rounded-full flex items-center justify-center"
+            >
+              <span class="text-lg font-bold text-blue-800">
+                {{
+                  getInitials(selectedPatient?.name, selectedPatient?.lastName)
+                }}
+              </span>
+            </div>
+
+            <!-- Información del paciente -->
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold mb-1">Historia Clínica</h2>
+              <p class="text-blue-100 text-lg">
+                {{ selectedPatient?.name }} {{ selectedPatient?.lastName }}
+              </p>
+              <p class="text-blue-200 text-sm mt-1">
+                ID: {{ selectedPatient?.id }} • {{ selectedPatient?.email }}
+              </p>
+            </div>
+
+            <!-- Ícono médico -->
+            <div class="hidden sm:block">
+              <svg
+                class="w-8 h-8 text-blue-200"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V8z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de pacientes -->
+      <app-patient-list
+        *ngIf="showPatientList"
+        [patients]="patients"
+        [keyWord]="searchForm.get('keyWord')?.value"
+        (patientSelected)="onPatientSelected($event)"
+      ></app-patient-list>
+
+      <!-- Registros médicos del paciente seleccionado -->
+      <app-patient-medical-records
+        *ngIf="showMedicalRecords && selectedPatient"
+        [patient]="selectedPatient"
+      ></app-patient-medical-records>
+    </div>
+  </div>
+</div>

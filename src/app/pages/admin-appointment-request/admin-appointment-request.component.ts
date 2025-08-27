@@ -256,4 +256,8 @@ export class AdminAppointmentRequestComponent {
       });
     }
   }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
 }

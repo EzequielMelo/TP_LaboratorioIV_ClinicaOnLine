@@ -129,6 +129,19 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'my-patients',
+    loadComponent: () =>
+      import(
+        './pages/my-patients-specialist/my-patients-specialist.component'
+      ).then((c) => c.MyPatientsSpecialistComponent),
+    canActivate: [
+      authGuard,
+      emailVerifiedGuard,
+      specialistGuard,
+      specialistAccountVerifiedGuard,
+    ],
+  },
+  {
     path: 'admin-appointments',
     loadComponent: () =>
       import('./pages/appointments-admin/appointments-admin.component').then(
