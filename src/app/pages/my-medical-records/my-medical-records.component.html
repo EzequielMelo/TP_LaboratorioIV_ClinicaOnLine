@@ -1,14 +1,45 @@
-<div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
-  <h1 class="text-center mt-5 text-5xl font-semibold text-white">
-    Historial Clinico
-  </h1>
+<div class="min-h-screen">
+  <div class="max-w-7xl items-center px-6 py-8 mx-auto lg:py-12">
+    <!-- Header mejorado -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full mb-6 shadow-lg"
+      >
+        <svg
+          class="w-10 h-10 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <h1 class="text-5xl font-bold text-white mb-2">Historial Clínico</h1>
+      <p class="text-xl text-blue-100">Consulte su historial médico completo</p>
+    </div>
 
-  <!-- Contenedor -->
-  <div
-    class="w-full flex flex-row mt-6 mb-10 justify-center rounded-lg shadow-lg sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border border-gray-300"
-  >
-    <div class="p-6 w-full space-y-4 min-h-[30rem] rounded-lg">
-      <app-medical-records-overview></app-medical-records-overview>
+    <!-- Contenedor principal mejorado -->
+    <div
+      class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100"
+    >
+      <!-- Barra decorativa -->
+      <div
+        class="h-1 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600"
+      ></div>
+
+      <div class="p-8">
+        <app-medical-records-overview></app-medical-records-overview>
+      </div>
+    </div>
+
+    <!-- Footer informativo -->
+    <div class="text-center mt-8 text-sm text-gray-500">
+      <p>
+        ¿Necesita ayuda con su historial? Contacte a nuestro equipo de soporte
+      </p>
     </div>
   </div>
 </div>

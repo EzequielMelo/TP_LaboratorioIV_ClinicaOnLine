@@ -4,14 +4,19 @@ import { AuthService } from '../../services/auth/auth.service';
 import { AppointmentsService } from '../../services/appointments/appointments.service';
 import { Patient } from '../../classes/patient.class';
 import { PatientListComponent } from '../../components/my-patients/patient-list/patient-list.component';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PatientMedicalRecordsComponent } from '../../components/my-patients/patient-medical-records/patient-medical-records.component';
 
 @Component({
   selector: 'app-my-patients-specialist',
   standalone: true,
-  imports: [PatientListComponent, PatientMedicalRecordsComponent, CommonModule],
+  imports: [
+    PatientListComponent,
+    PatientMedicalRecordsComponent,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './my-patients-specialist.component.html',
   styleUrl: './my-patients-specialist.component.css',
 })
@@ -114,5 +119,31 @@ export class MyPatientsSpecialistComponent {
     }
 
     return initials || 'N/A';
+  }
+
+  getTotalPatients(): number {
+    return this.patients?.length || 0;
+  }
+
+  // Método para obtener fecha y hora actual
+  getCurrentDateTime(): string {
+    return new Date().toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  clearSearch(): void {
+    this.searchForm.patchValue({ keyWord: '' });
+    this.onSearch(); // Refresh the list
+  }
+
+  onSearch(): void {
+    const keyWord = this.searchForm.get('keyWord')?.value || '';
+    this.loading = true;
+    this.appointmentService;
   }
 }

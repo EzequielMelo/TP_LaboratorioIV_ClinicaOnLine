@@ -5,6 +5,7 @@ import { UserTypes } from '../../models/user-types';
 import { UsersSectionComponent } from '../../components/admin-dashboard-components/users-section/users-section.component';
 import { CreateNewAdminSectionComponent } from '../../components/admin-dashboard-components/create-new-admin-section/create-new-admin-section.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
     UsersSectionComponent,
     CreateNewAdminSectionComponent,
     CommonModule,
+    RouterLink,
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css',

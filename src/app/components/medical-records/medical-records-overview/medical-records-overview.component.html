@@ -1,35 +1,65 @@
+<!-- Sección de búsqueda y filtros mejorada -->
 <div
-  class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 p-4 bg-white rounded-xl shadow-sm"
+  class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6 mb-8 border border-gray-200"
 >
-  <!-- Botones de estado -->
-  <div class="flex gap-2"></div>
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <!-- Filtros rápidos mejorados -->
+    <div class="flex flex-wrap gap-2">
+      <span class="text-sm font-semibold text-gray-700 mr-2 flex items-center">
+        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Filtros:
+      </span>
+      <button
+        class="px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-300 transition-all duration-200 shadow-sm"
+      >
+        Todos
+      </button>
+      <button
+        class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200 hover:bg-blue-200 transition-all duration-200"
+      >
+        Recientes
+      </button>
+    </div>
 
-  <!-- Buscador -->
-  <form class="relative" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-    <input
-      type="search"
-      formControlName="keyWord"
-      placeholder="Buscar especialidad o especialista..."
-      class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 w-full md:w-80"
-    />
-    <svg
-      class="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18.5a7.5 7.5 0 006.15-3.35z"
-      />
-    </svg>
-  </form>
+    <!-- Buscador mejorado -->
+    <form class="relative" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+      <div class="relative group">
+        <input
+          type="search"
+          formControlName="keyWord"
+          placeholder="Buscar especialidad o especialista..."
+          class="pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white w-full md:w-80 shadow-sm hover:shadow-md transition-all duration-200 group-focus-within:shadow-lg"
+        />
+        <div
+          class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+        >
+          <svg
+            class="w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18.5a7.5 7.5 0 006.15-3.35z"
+            />
+          </svg>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
-<div
-  class="bg-white rounded-xl shadow-sm max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300"
->
+
+<!-- Contenedor de la lista mejorado -->
+<div class="space-y-4">
   <app-medical-records-list
     [medicalRecords]="displayedRecords"
     [keyWord]="searchForm.get('keyWord')?.value"

@@ -1,195 +1,888 @@
-<div
-  class="content-wrapper mb- h-full flex flex-col justify-center items-center min-h-screen px-4 sm:px-6 lg:px-8"
->
-  <div
-    class="flex flex-col mt-[60px] mb-[20px] md:flex-col justify-center w-full max-w-5xl py-8"
-  >
-    @if(true) {
-    <div
-      class="flex flex-col md:flex-row justify-center rounded-2xl shadow-lg w-full bg-white/60 backdrop-blur-md border border-gray-200"
-    >
-      <!-- Columna Izquierda -->
-      <div
-        class="flex flex-col items-center p-4 space-y-4 md:space-y-6 mt-[-80px] md:mt-[-100px] md:w-[320px]"
-      >
-        <div
-          class="w-[220px] h-[220px] md:w-[250px] md:h-[250px] rounded-full bg-cover bg-center border-[6px] border-white shadow-2xl hover:scale-105 hover:shadow-3xl transition-transform duration-300"
-          style="background-image: url('{{ user?.profilePicture }}');"
-        ></div>
-        <div class="text-center font-semibold px-2">
-          <span class="block text-3xl md:text-4xl text-gray-900">{{
-            user?.name
-          }}</span>
-          <span class="block text-3xl md:text-4xl text-gray-900">{{
-            user?.lastName
-          }}</span>
+<!-- Contenedor principal -->
+<div class="min-h-screen relative overflow-hidden">
+  <!-- Contenido principal -->
+  <div class="relative z-10 pt-16 pb-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Foto de perfil flotante -->
+      <div class="flex justify-center relative z-20">
+        <div class="relative">
+          <div
+            class="w-36 h-36 md:w-44 md:h-44 rounded-full bg-cover bg-center border-[6px] border-white shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer group"
+            [style.background-image]="
+              'url(' +
+              (user?.profilePicture || '/assets/default-avatar.png') +
+              ')'
+            "
+          >
+            <!-- Overlay para cambiar foto -->
+            <div
+              class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+            >
+              <svg
+                class="w-10 h-10 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Badge profesional -->
+          <div
+            class="absolute -bottom-4 -right-4 w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 border-4 border-white rounded-full flex items-center justify-center shadow-xl"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
         </div>
       </div>
-      <!-- Columna Derecha -->
-      <div class="flex-1 p-6 flex flex-col gap-6 sm:p-8 rounded-lg w-full">
-        <!-- Info rápida -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
-          <!-- Horarios de atención -->
-          <div class="bg-white rounded-xl shadow p-5 border border-gray-100">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-semibold flex items-center gap-2">
-                🕒 Horarios de atención
-              </h3>
-              <button
-                (click)="editWorkDays()"
-                class="text-blue-600 hover:text-blue-800"
+
+      <!-- Card principal del perfil -->
+      <div
+        class="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden mb-8 -mt-20 md:-mt-24 pt-24 md:pt-28"
+      >
+        <div class="relative">
+          <!-- Header con información del especialista -->
+          <div
+            class="relative px-6 pb-8 bg-gradient-to-r from-blue-50 to-indigo-50"
+          >
+            <!-- Información del especialista centrada -->
+            <div class="flex flex-col items-center mb-6">
+              <!-- Nombre y título profesional -->
+              <div class="text-center mt-4">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                  Dr. {{ user?.name }} {{ user?.lastName }}
+                </h1>
+                <div
+                  class="flex items-center justify-center gap-2 text-gray-600 mb-4"
+                >
+                  <svg
+                    class="w-6 h-6 text-blue-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      d="M10 2L3 7v11a2 2 0 002 2h4v-6h2v6h4a2 2 0 002-2V7l-7-5z"
+                    />
+                  </svg>
+                  <span class="text-lg font-semibold">Especialista Médico</span>
+                </div>
+
+                <!-- Especialidades destacadas -->
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                  @for (item of getSpecialistSpecialtys(); track $index) {
+                  <span
+                    class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold border border-blue-200"
+                  >
+                    {{ item }}
+                  </span>
+                  }
+                </div>
+
+                <!-- Stats profesionales -->
+                <div class="flex items-center justify-center gap-8 text-sm">
+                  <div class="text-center">
+                    <div class="font-bold text-blue-600 text-2xl">150+</div>
+                    <div class="text-gray-500">Pacientes</div>
+                  </div>
+                  <div class="w-px h-8 bg-gray-300"></div>
+                  <div class="text-center">
+                    <div class="font-bold text-green-600 text-2xl">8</div>
+                    <div class="text-gray-500">Años experiencia</div>
+                  </div>
+                  <div class="w-px h-8 bg-gray-300"></div>
+                  <div class="text-center">
+                    <div class="font-bold text-purple-600 text-2xl">4.9</div>
+                    <div class="text-gray-500">Valoración</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información profesional y horarios -->
+          <div class="px-6 py-8">
+            <!-- Horarios y especialidades en grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <!-- Horarios de atención -->
+              <div
+                class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-2xl border border-blue-200 relative"
               >
-                ✏️
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-6 h-6 text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">
+                      Horarios de Atención
+                    </h3>
+                  </div>
+                  <button
+                    (click)="editWorkDays()"
+                    class="p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow group"
+                  >
+                    <svg
+                      class="w-5 h-5 text-gray-600 group-hover:text-blue-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Días de trabajo -->
+                <div class="mb-4">
+                  <p class="text-sm font-semibold text-gray-700 mb-2">
+                    Días disponibles:
+                  </p>
+                  <div class="flex flex-wrap gap-2">
+                    @for (day of getSpecialistWorkDays(); track $index) {
+                    <span
+                      class="px-3 py-1 bg-white text-blue-800 rounded-full text-sm font-medium shadow-sm"
+                    >
+                      {{ day | dayToSpanish }}
+                    </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Horarios -->
+                <div class="bg-white rounded-xl p-4 shadow-sm">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="w-3 h-3 bg-green-500 rounded-full animate-pulse"
+                      ></div>
+                      <span class="font-semibold text-gray-900"
+                        >Horario activo:</span
+                      >
+                    </div>
+                    <span class="text-lg font-bold text-gray-900">
+                      {{ getSpecialistWorkHours()?.[0] }} -
+                      {{ getSpecialistWorkHours()?.[1] }} hs
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Especialidades -->
+              <div
+                class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200"
+              >
+                <div class="flex items-center gap-3 mb-4">
+                  <div
+                    class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center"
+                  >
+                    <svg
+                      class="w-6 h-6 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold text-gray-900">
+                    Especialidades
+                  </h3>
+                </div>
+
+                <div class="space-y-3">
+                  @for (item of getSpecialistSpecialtys(); track $index) {
+                  <div class="bg-white rounded-xl p-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center"
+                      >
+                        <svg
+                          class="w-4 h-4 text-blue-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            d="M10 2L3 7v11a2 2 0 002 2h4v-6h2v6h4a2 2 0 002-2V7l-7-5z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-semibold text-gray-900">{{ item }}</p>
+                        <p class="text-sm text-gray-600">
+                          @if ($index == 0) { Especialidad 1aria } @else {
+                          Especialidad {{ $index + 1 }}aria }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones principales del especialista -->
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+            >
+              <button
+                routerLink="/appointments"
+                class="group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <div
+                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <svg
+                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-1">Mis Turnos</h3>
+                <p class="text-blue-100 text-sm">Agenda y citas</p>
+              </button>
+
+              <button
+                routerLink="/my-patients"
+                class="group bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <div
+                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      />
+                    </svg>
+                  </div>
+                  <svg
+                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-1">Mis Pacientes</h3>
+                <p class="text-green-100 text-sm">Historial y seguimiento</p>
+              </button>
+
+              <button
+                class="group bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <div
+                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zM14 6a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h6zM4 8a2 2 0 00-2 2v4a2 2 0 002 2h6a2 2 0 002-2v-4a2 2 0 00-2-2H4z"
+                      />
+                    </svg>
+                  </div>
+                  <svg
+                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-1">Facturación</h3>
+                <p class="text-purple-100 text-sm">Ingresos y reportes</p>
+              </button>
+
+              <button
+                class="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <div
+                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
+                  >
+                    <svg
+                      class="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <svg
+                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold mb-1">Configuración</h3>
+                <p class="text-gray-100 text-sm">Ajustes de perfil</p>
               </button>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- Días -->
-            <div class="flex flex-wrap gap-2 mb-3">
-              @for (day of getSpecialistWorkDays(); track $index) {
-              <span
-                class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium"
+      <!-- Dashboard Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Próximas citas -->
+        <div
+          class="lg:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+        >
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center"
               >
-                {{ day | dayToSpanish }}
-              </span>
-              }
+                <svg
+                  class="w-5 h-5 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <h2 class="text-2xl font-bold text-gray-900">Agenda del Día</h2>
+            </div>
+            <button
+              routerLink="/appointments"
+              class="text-blue-600 hover:text-blue-700 text-sm font-semibold hover:underline"
+            >
+              Ver agenda completa
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Cita 1 -->
+            <div
+              class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold"
+                  >
+                    14:00
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">
+                      María García - Control Cardiológico
+                    </h3>
+                    <p class="text-gray-600">
+                      Paciente de 45 años - Seguimiento hipertensión
+                    </p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800"
+                      >
+                        Confirmada
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <!-- Horas -->
-            <div class="text-gray-800 font-medium">
-              {{ getSpecialistWorkHours()?.[0] }} -
-              {{ getSpecialistWorkHours()?.[1] }} hs
+            <!-- Cita 2 -->
+            <div
+              class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white font-bold"
+                  >
+                    15:30
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-900">
+                      Juan Rodríguez - Primera Consulta
+                    </h3>
+                    <p class="text-gray-600">
+                      Paciente nuevo - Dolor en el pecho
+                    </p>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800"
+                      >
+                        Pendiente
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button class="text-gray-400 hover:text-gray-600">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Espacio libre -->
+            <div
+              class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-colors cursor-pointer group"
+            >
+              <div
+                class="flex items-center justify-center gap-3 text-gray-600 group-hover:text-blue-600"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <span class="font-medium">Espacio libre - 17:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel lateral -->
+        <div class="space-y-6">
+          <!-- Estadísticas del día -->
+          <div
+            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900">Hoy</h3>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600">Consultas programadas</span>
+                <span class="text-gray-900 font-bold text-lg">8</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600">Consultas completadas</span>
+                <span class="text-green-600 font-bold text-lg">5</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600">Pacientes nuevos</span>
+                <span class="text-blue-600 font-bold text-lg">2</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600">Tiempo disponible</span>
+                <span class="text-orange-600 font-bold text-lg">3h</span>
+              </div>
             </div>
           </div>
 
-          <!-- Especialidades -->
-          <div class="bg-white rounded-xl shadow p-5 border border-gray-100">
-            <h3 class="text-xl font-semibold flex items-center gap-2 mb-4">
-              🩺 Especialidades
-            </h3>
-            <div class="flex flex-wrap gap-2">
-              @for (item of getSpecialistSpecialtys(); track $index) {
-              <span
-                class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"
+          <!-- Notificaciones importantes -->
+          <div
+            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center"
               >
-                {{ item }}
-              </span>
-              }
+                <svg
+                  class="w-5 h-5 text-orange-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
+                  />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900">Notificaciones</h3>
+            </div>
+
+            <div class="space-y-3">
+              <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div class="flex items-start gap-3">
+                  <div
+                    class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"
+                  ></div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">
+                      Paciente urgente
+                    </p>
+                    <p class="text-xs text-gray-600">
+                      María García requiere atención prioritaria
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div class="flex items-start gap-3">
+                  <div
+                    class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"
+                  ></div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">
+                      Resultado de estudios
+                    </p>
+                    <p class="text-xs text-gray-600">
+                      3 estudios médicos listos para revisar
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <div class="flex items-start gap-3">
+                  <div
+                    class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"
+                  ></div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">
+                      Recordatorio
+                    </p>
+                    <p class="text-xs text-gray-600">
+                      Actualizar disponibilidad horaria
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Botones de navegación -->
-          <button
-            class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
-            routerLink="/appointments"
+          <!-- Estadísticas rápidas -->
+          <div
+            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
           >
-            📅 Turnos
-          </button>
-          <button
-            class="bg-green-500 hover:bg-green-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
-            routerLink="/my-patients"
-          >
-            🩺 Pacientes
-          </button>
-          <button
-            class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
-          >
-            🧾 Facturación
-          </button>
-          <button
-            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-4 rounded-xl shadow-md flex items-center justify-center gap-3 transition-transform hover:scale-105"
-          >
-            ⚙️ Configuración
-          </button>
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"
+              >
+                <svg
+                  class="w-5 h-5 text-purple-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-bold text-gray-900">Esta Semana</h3>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center p-3 bg-blue-50 rounded-lg">
+                <div class="text-2xl font-bold text-blue-600">42</div>
+                <div class="text-xs text-gray-600">Consultas</div>
+              </div>
+              <div class="text-center p-3 bg-green-50 rounded-lg">
+                <div class="text-2xl font-bold text-green-600">38</div>
+                <div class="text-xs text-gray-600">Completadas</div>
+              </div>
+              <div class="text-center p-3 bg-purple-50 rounded-lg">
+                <div class="text-2xl font-bold text-purple-600">12</div>
+                <div class="text-xs text-gray-600">Nuevos</div>
+              </div>
+              <div class="text-center p-3 bg-orange-50 rounded-lg">
+                <div class="text-2xl font-bold text-orange-600">4.8</div>
+                <div class="text-xs text-gray-600">Rating</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    }
-    <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-5xl">
-      <div
-        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
-      >
-        <p class="font-semibold">Próximo turno</p>
-        <p class="text-gray-600">20/08/2025 - 14:00hs</p>
-      </div>
-      <div
-        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
-      >
-        <p class="font-semibold">Última consulta</p>
-        <p class="text-gray-600">05/07/2025</p>
-      </div>
-      <div
-        class="p-4 bg-white/70 backdrop-blur-md rounded-xl shadow-md text-center"
-      >
-        <p class="font-semibold">Recordatorios</p>
-        <p class="text-gray-600">2 pendientes</p>
-      </div>
-    </div>
   </div>
 </div>
 
-@if (isEditModalOpen) {
+<!-- Modal de edición de horarios -->
 <div
-  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+  *ngIf="isEditModalOpen"
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50"
 >
-  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-    <h3 class="text-2xl font-semibold mb-4">Editar Horarios de Atención</h3>
-
-    <!-- Checkboxes para los días de la semana -->
-    <div class="mb-4">
-      <label class="block font-medium mb-2">Selecciona los días:</label>
-      <div class="grid grid-cols-2 gap-4">
-        @for (day of daysOfTheWeek; track $index) {
-        <label for="">
-          <input
-            type="checkbox"
-            [ngModel]="specialistWorkDays.includes(day)"
-            (ngModelChange)="onDaySelectionChange(day, $event)"
-            [value]="day"
-            class="mr-2"
-          />
-          {{ day | dayToSpanish }}
-        </label>
-        }
+  <div
+    class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
+  >
+    <div
+      class="sticky top-0 bg-white rounded-t-2xl border-b border-gray-200 px-6 py-4"
+    >
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center"
+          >
+            <svg
+              class="w-5 h-5 text-blue-600"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">
+            Editar Horarios de Atención
+          </h3>
+        </div>
+        <button
+          (click)="closeModal()"
+          class="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+        >
+          <svg
+            class="w-6 h-6 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
       </div>
     </div>
 
-    <!-- Horarios -->
-    <div class="flex flex-row justify-around">
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Horario de inicio:</label>
-        @if (specialistWorkHours.start != null) {
-        <input
-          [(ngModel)]="specialistWorkHours.start"
-          type="time"
-          class="p-2 border border-gray-300 rounded"
-        />
-        }
+    <div class="px-6 py-6">
+      <!-- Selección de días -->
+      <div class="mb-8">
+        <label class="block text-lg font-semibold text-gray-900 mb-4"
+          >Días disponibles</label
+        >
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <label
+            *ngFor="let day of daysOfTheWeek; trackBy: trackByIndex"
+            class="flex items-center p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-blue-50 transition-colors border-2 border-transparent"
+            [class.bg-blue-50]="specialistWorkDays.includes(day)"
+            [class.border-blue-200]="specialistWorkDays.includes(day)"
+          >
+            <input
+              type="checkbox"
+              [ngModel]="specialistWorkDays.includes(day)"
+              (ngModelChange)="onDaySelectionChange(day, $event)"
+              [value]="day"
+              class="sr-only"
+            />
+            <div class="flex items-center gap-3 w-full">
+              <div
+                class="w-5 h-5 border-2 border-gray-300 rounded flex items-center justify-center"
+                [class.bg-blue-600]="specialistWorkDays.includes(day)"
+                [class.border-blue-600]="specialistWorkDays.includes(day)"
+              >
+                <svg
+                  *ngIf="specialistWorkDays.includes(day)"
+                  class="w-3 h-3 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <span class="font-medium text-gray-900">{{
+                day | dayToSpanish
+              }}</span>
+            </div>
+          </label>
+        </div>
       </div>
 
-      <div class="mb-4">
-        <label class="block font-medium mb-2">Horario de fin:</label>
-        <input
-          [(ngModel)]="specialistWorkHours.end"
-          type="time"
-          class="p-2 border border-gray-300 rounded"
-        />
+      <!-- Selección de horarios -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+          <label class="block text-lg font-semibold text-gray-900 mb-3"
+            >Hora de inicio</label
+          >
+          <div class="relative">
+            <input
+              *ngIf="specialistWorkHours.start != null"
+              [(ngModel)]="specialistWorkHours.start"
+              type="time"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 hover:bg-white transition-colors"
+            />
+            <div
+              class="absolute inset-y-0 right-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="w-5 h-5 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-lg font-semibold text-gray-900 mb-3"
+            >Hora de fin</label
+          >
+          <div class="relative">
+            <input
+              [(ngModel)]="specialistWorkHours.end"
+              type="time"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 hover:bg-white transition-colors"
+            />
+            <div
+              class="absolute inset-y-0 right-3 flex items-center pointer-events-none"
+            >
+              <svg
+                class="w-5 h-5 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista previa -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <svg
+            class="w-5 h-5 text-blue-600"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span class="font-semibold text-blue-900"
+            >Vista previa de horarios</span
+          >
+        </div>
+        <p class="text-blue-800">
+          <span *ngFor="let day of specialistWorkDays; let last = last">
+            {{ day | dayToSpanish }}<span *ngIf="!last">, </span>
+          </span>
+          de {{ specialistWorkHours.start }} a {{ specialistWorkHours.end }} hs
+        </p>
       </div>
     </div>
 
-    <div class="flex justify-around mt-4">
-      <button
-        (click)="closeModal()"
-        class="px-4 py-2 bg-gray-400 text-white rounded"
-      >
-        Cancelar
-      </button>
-      <button
-        (click)="saveWorkDays()"
-        class="px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        Guardar
-      </button>
+    <!-- Botones de acción -->
+    <div
+      class="sticky bottom-0 bg-white rounded-b-2xl border-t border-gray-200 px-6 py-4"
+    >
+      <div class="flex justify-end gap-3">
+        <button
+          (click)="closeModal()"
+          class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="saveWorkDays()"
+          class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          Guardar Cambios
+        </button>
+      </div>
     </div>
   </div>
 </div>
-}

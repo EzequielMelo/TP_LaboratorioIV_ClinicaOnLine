@@ -2,11 +2,18 @@ import { inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { catchError, from, map, Observable, throwError } from 'rxjs';
 import { Patient } from '../../classes/patient.class';
-import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  getDoc,
+  collectionData,
+} from '@angular/fire/firestore';
 import { Admin } from '../../classes/admin.class';
 import { Specialist } from '../../classes/specialist.class';
 import { User } from '../../classes/user';
 import { Appointment } from '../../classes/appointment';
+import { AppUser } from '../../classes/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -208,5 +215,11 @@ export class DatabaseService {
       workDays,
       workHours,
     });
+  }
+
+  getAllUsers(): Observable<AppUser[]> {
+    return this.firestore
+      .collection<AppUser>('users')
+      .valueChanges({ idField: 'id' });
   }
 }

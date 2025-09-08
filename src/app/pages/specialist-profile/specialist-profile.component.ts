@@ -143,6 +143,10 @@ export class SpecialistProfileComponent {
     }
   }
 
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
   ngOnDestroy() {
     this.userSubscription?.unsubscribe();
   }

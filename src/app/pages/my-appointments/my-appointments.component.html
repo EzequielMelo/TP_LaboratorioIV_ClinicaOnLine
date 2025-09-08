@@ -1,47 +1,304 @@
-<div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-0">
-  <h1 class="text-center mt-5 text-5xl font-semibold text-white">Mis Turnos</h1>
-
-  <!-- Tabs -->
-  <div
-    class="flex space-x-2 mt-4 bg-white bg-opacity-80 p-1 rounded-lg shadow-lg"
-  >
-    <button
-      type="button"
-      [class.bg-blue-600]="activeView === 'overview'"
-      [class.text-white]="activeView === 'overview'"
-      [class.bg-transparent]="activeView !== 'overview'"
-      [class.text-gray-800]="activeView !== 'overview'"
-      class="px-5 py-2 rounded-md font-medium transition-all duration-200 hover:bg-blue-500 hover:text-white"
-      (click)="toggleView('overview')"
-      (click)="setActiveView('overview')"
-    >
-      Pedir turno
-    </button>
-
-    <button
-      type="button"
-      [class.bg-blue-600]="activeView === 'request'"
-      [class.text-white]="activeView === 'request'"
-      [class.bg-transparent]="activeView !== 'request'"
-      [class.text-gray-800]="activeView !== 'request'"
-      class="px-5 py-2 rounded-md font-medium transition-all duration-200 hover:bg-blue-500 hover:text-white"
-      (click)="toggleView('request')"
-      (click)="setActiveView('request')"
-    >
-      Ver turnos
-    </button>
-  </div>
-
-  <!-- Contenedor -->
-  <div
-    class="w-full flex flex-row mt-6 mb-10 justify-center rounded-lg shadow-lg sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border border-gray-300"
-  >
-    <div class="p-6 w-full space-y-4 min-h-[30rem] rounded-lg">
-      @if (showAppointmentRequest) {
-      <app-appointments-overview />
-      } @else {
-      <app-appointment-request />
-      }
+<!-- Contenedor principal con gradiente de fondo -->
+<div class="min-h-screen">
+  <div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-12">
+    <!-- Header principal -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 backdrop-blur-sm rounded-full mb-6 shadow-lg"
+      >
+        <svg
+          class="w-10 h-10 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <h1 class="text-5xl font-bold text-white mb-2">Gestión de Turnos</h1>
+      <p class="text-xl text-blue-100">
+        Administre sus citas médicas de forma sencilla
+      </p>
     </div>
+
+    <!-- Navigation Tabs mejoradas -->
+    <div
+      class="flex space-x-1 mb-8 bg-white bg-opacity-10 backdrop-blur-sm p-2 rounded-2xl shadow-xl border border-white border-opacity-20"
+    >
+      <button
+        type="button"
+        [ngClass]="{
+          'bg-white text-blue-600 shadow-lg': activeView === 'overview',
+          'bg-transparent text-white hover:bg-white hover:bg-opacity-20':
+            activeView !== 'overview'
+        }"
+        class="relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-3"
+        (click)="setActiveView('overview')"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span class="hidden sm:inline">Ver mis turnos</span>
+        <span class="sm:hidden">Ver turnos</span>
+
+        <!-- Indicador activo -->
+        <div
+          *ngIf="activeView === 'overview'"
+          class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full"
+        ></div>
+      </button>
+
+      <button
+        type="button"
+        [ngClass]="{
+          'bg-white text-blue-600 shadow-lg': activeView === 'request',
+          'bg-transparent text-white hover:bg-white hover:bg-opacity-20':
+            activeView !== 'request'
+        }"
+        class="relative px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-3"
+        (click)="setActiveView('request')"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span class="hidden sm:inline">Pedir nuevo turno</span>
+        <span class="sm:hidden">Pedir turno</span>
+
+        <!-- Indicador activo -->
+        <div
+          *ngIf="activeView === 'request'"
+          class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full"
+        ></div>
+      </button>
+    </div>
+
+    <!-- Breadcrumb/Context indicator -->
+    <div class="flex items-center gap-2 mb-6 text-blue-100">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fill-rule="evenodd"
+          d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <span class="text-sm">
+        {{
+          activeView === "overview"
+            ? "Mis turnos médicos"
+            : "Solicitar nueva cita"
+        }}
+      </span>
+    </div>
+
+    <!-- Contenedor principal con animación -->
+    <div class="w-full max-w-7xl transition-all duration-500 transform">
+      <div
+        class="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-50 overflow-hidden"
+      >
+        <!-- Header del contenido -->
+        <div
+          class="bg-gradient-to-r from-gray-50 to-gray-100 px-8 py-6 border-b border-gray-200"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-xl flex items-center justify-center"
+                [ngClass]="{
+                  'bg-blue-100': activeView === 'overview',
+                  'bg-green-100': activeView === 'request'
+                }"
+              >
+                <svg
+                  class="w-6 h-6"
+                  [ngClass]="{
+                    'text-blue-600': activeView === 'overview',
+                    'text-green-600': activeView === 'request'
+                  }"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    *ngIf="activeView === 'overview'"
+                    fill-rule="evenodd"
+                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd"
+                  />
+                  <path
+                    *ngIf="activeView === 'request'"
+                    fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">
+                  {{
+                    activeView === "overview"
+                      ? "Mis Turnos Médicos"
+                      : "Solicitar Nuevo Turno"
+                  }}
+                </h2>
+                <p class="text-gray-600">
+                  {{
+                    activeView === "overview"
+                      ? "Gestione y haga seguimiento de sus citas médicas"
+                      : "Complete el formulario para solicitar una nueva cita"
+                  }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Acción rápida -->
+            <div class="hidden lg:block">
+              <button
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                (click)="
+                  setActiveView(
+                    activeView === 'overview' ? 'request' : 'overview'
+                  )
+                "
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.707 14.707a1 1 0 01-1.414 0L3 11.414A1 1 0 014.414 10l2.293 2.293V4a1 1 0 112 0v8.293l2.293-2.293a1 1 0 111.414 1.414l-4 4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                {{ activeView === "overview" ? "Pedir turno" : "Ver turnos" }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido principal con transición -->
+        <div class="relative overflow-hidden">
+          <div
+            class="transition-all duration-500 ease-in-out"
+            [ngClass]="{
+              'opacity-100 translate-x-0': true,
+              'min-h-[600px]': true
+            }"
+          >
+            <!-- Vista de turnos existentes -->
+            <div *ngIf="activeView === 'overview'" class="animate-fade-in">
+              <app-appointments-overview />
+            </div>
+
+            <!-- Vista de solicitud de turno -->
+            <div *ngIf="activeView === 'request'" class="animate-fade-in">
+              <app-appointment-request />
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer del contenedor -->
+        <div class="bg-gray-50 px-8 py-4 border-t border-gray-200">
+          <div class="flex items-center justify-between text-sm text-gray-600">
+            <div class="flex items-center gap-4">
+              <span>¿Necesita ayuda?</span>
+              <button class="text-blue-600 hover:text-blue-700 font-medium">
+                Contactar soporte
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <div
+                class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+              ></div>
+              <span>Sistema activo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating action button para móviles -->
+    <button
+      class="fixed bottom-6 right-6 lg:hidden w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 z-50"
+      (click)="
+        setActiveView(activeView === 'overview' ? 'request' : 'overview')
+      "
+    >
+      <svg
+        class="w-6 h-6 transition-transform duration-300"
+        [ngClass]="{ 'rotate-45': activeView === 'request' }"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          *ngIf="activeView === 'overview'"
+          fill-rule="evenodd"
+          d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+          clip-rule="evenodd"
+        />
+        <path
+          *ngIf="activeView === 'request'"
+          fill-rule="evenodd"
+          d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
   </div>
 </div>
+
+<!-- Estilos CSS adicionales -->
+<style>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  /* Scrollbar personalizado */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Backdrop blur para navegadores que no lo soporten */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  @supports not (backdrop-filter: blur(4px)) {
+    .backdrop-blur-sm {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+  }
+</style>

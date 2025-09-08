@@ -4,11 +4,12 @@ import { Subscription } from 'rxjs';
 import { UserTypes } from '../../models/user-types';
 import { Patient } from '../../classes/patient.class';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
 })

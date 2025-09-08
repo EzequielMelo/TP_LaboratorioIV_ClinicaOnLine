@@ -18,7 +18,7 @@ export class MyAppointmentsComponent {
   // Variable para controlar qué componente mostrar
   showAppointmentRequest: boolean = true;
 
-  activeView: 'overview' | 'request' = 'request'; // vista por defecto
+  activeView: 'overview' | 'request' = 'overview'; // vista por defecto
 
   setActiveView(view: 'overview' | 'request') {
     this.activeView = view;

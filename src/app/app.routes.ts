@@ -100,6 +100,22 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
   },
   {
+    path: 'admin-my-users',
+    loadComponent: () =>
+      import('./pages/my-users/my-users.component').then(
+        (c) => c.MyUsersComponent
+      ),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'admin-add-admin',
+    loadComponent: () =>
+      import('./pages/add-admin/add-admin.component').then(
+        (c) => c.AddAdminComponent
+      ),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
     path: 'my-appointments',
     loadComponent: () =>
       import('./pages/my-appointments/my-appointments.component').then(

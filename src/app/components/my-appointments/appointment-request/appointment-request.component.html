@@ -1,126 +1,450 @@
-<div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8">
-  <h1 class="text-center text-3xl font-bold text-gray-800 mb-6">
-    Solicitar nuevo turno
-  </h1>
-  <p class="text-center text-gray-500 mb-8">
-    Complete los campos para agendar su cita médica
-  </p>
-
-  <form
-    class="space-y-6"
-    [formGroup]="newAppointmentForm"
-    (ngSubmit)="onSubmit()"
-  >
-    <!-- Especialidad -->
-    <div>
-      <label
-        for="specialty"
-        class="block text-sm font-semibold text-gray-700 mb-2"
-        >Especialidad</label
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-8"
+>
+  <div class="w-full max-w-2xl">
+    <!-- Header con ícono -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full shadow-lg mb-4"
       >
-      <select
-        formControlName="specialty"
-        id="specialty"
-        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition"
-      >
-        <option value="" selected disabled>Selecciona una especialidad</option>
-        @for (specialty of specialtys; track $index) {
-        <option value="{{ specialty }}">{{ specialty }}</option>
-        }
-      </select>
-      @if (newAppointmentForm.controls['specialty'].invalid &&
-      newAppointmentForm.controls['specialty'].touched) {
-      <p class="text-xs text-red-600 mt-1">
-        Por favor seleccione una especialidad
+        <svg
+          class="w-10 h-10 text-white"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Solicitar Turno</h1>
+      <p class="text-lg text-gray-600">
+        Complete los datos para agendar su cita médica
       </p>
-      }
     </div>
 
-    <!-- Profesional -->
-    <div>
-      <label
-        for="specialistName"
-        class="block text-sm font-semibold text-gray-700 mb-2"
-        >Profesional</label
-      >
-      <select
-        formControlName="specialistName"
-        id="specialistName"
-        (change)="onSpecialistChange($event)"
-        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition"
-      >
-        <option value="" selected disabled>Selecciona al profesional</option>
-        @for (specialist of specialists; track $index) {
-        <option class="text-black" value="{{ specialist.id }}">
-          {{ specialist.name }} {{ specialist.lastName }}
-        </option>
-        }
-      </select>
-      @if (newAppointmentForm.controls['specialistName'].invalid &&
-      newAppointmentForm.controls['specialistName'].touched) {
-      <p class="text-xs text-red-600 mt-1">
-        Por favor seleccione un especialista
-      </p>
-      }
+    <!-- Card principal -->
+    <div
+      class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100"
+    >
+      <!-- Barra de progreso decorativa -->
+      <div
+        class="h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600"
+      ></div>
+
+      <div class="p-8">
+        <!-- Indicador de pasos -->
+        <div class="flex items-center justify-center mb-8">
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold"
+              >
+                1
+              </div>
+              <span class="ml-2 text-sm font-medium text-gray-700"
+                >Especialidad</span
+              >
+            </div>
+            <div class="w-8 h-px bg-gray-300"></div>
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold"
+              >
+                2
+              </div>
+              <span class="ml-2 text-sm font-medium text-gray-500"
+                >Profesional</span
+              >
+            </div>
+            <div class="w-8 h-px bg-gray-300"></div>
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold"
+              >
+                3
+              </div>
+              <span class="ml-2 text-sm font-medium text-gray-500"
+                >Fecha & Hora</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <form
+          class="space-y-6"
+          [formGroup]="newAppointmentForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <!-- Especialidad -->
+          <div class="group">
+            <label
+              for="specialty"
+              class="flex items-center text-sm font-semibold text-gray-700 mb-3"
+            >
+              <div
+                class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-focus-within:bg-blue-200 transition-colors"
+              >
+                <svg
+                  class="w-4 h-4 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              Especialidad médica
+            </label>
+            <div class="relative">
+              <select
+                formControlName="specialty"
+                id="specialty"
+                class="w-full pl-12 pr-4 py-4 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md appearance-none"
+              >
+                <option value="" selected disabled>
+                  ¿Qué especialidad necesita?
+                </option>
+                <option
+                  *ngFor="let specialty of specialtys; trackBy: trackByIndex"
+                  [value]="specialty"
+                >
+                  {{ specialty }}
+                </option>
+              </select>
+              <div
+                class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div
+                class="absolute inset-y-0 right-4 flex items-center pointer-events-none"
+              ></div>
+            </div>
+            <p
+              *ngIf="
+                newAppointmentForm.controls['specialty'].invalid &&
+                newAppointmentForm.controls['specialty'].touched
+              "
+              class="text-sm text-red-600 mt-2 flex items-center"
+            >
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Por favor seleccione una especialidad
+            </p>
+          </div>
+
+          <!-- Profesional -->
+          <div class="group">
+            <label
+              for="specialistName"
+              class="flex items-center text-sm font-semibold text-gray-700 mb-3"
+            >
+              <div
+                class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-focus-within:bg-green-200 transition-colors"
+              >
+                <svg
+                  class="w-4 h-4 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  />
+                </svg>
+              </div>
+              Profesional de la salud
+            </label>
+            <div class="relative">
+              <select
+                formControlName="specialistName"
+                id="specialistName"
+                (change)="onSpecialistChange($event)"
+                class="w-full pl-12 pr-4 py-4 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md appearance-none"
+              >
+                <option value="" selected disabled>
+                  Seleccione su médico preferido
+                </option>
+                <option
+                  *ngFor="let specialist of specialists; trackBy: trackByIndex"
+                  [value]="specialist.id"
+                >
+                  Dr. {{ specialist.name }} {{ specialist.lastName }}
+                </option>
+              </select>
+              <div
+                class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  />
+                </svg>
+              </div>
+              <div
+                class="absolute inset-y-0 right-4 flex items-center pointer-events-none"
+              ></div>
+            </div>
+            <p
+              *ngIf="
+                newAppointmentForm.controls['specialistName'].invalid &&
+                newAppointmentForm.controls['specialistName'].touched
+              "
+              class="text-sm text-red-600 mt-2 flex items-center"
+            >
+              <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Por favor seleccione un especialista
+            </p>
+          </div>
+
+          <!-- Fecha y Horario en grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Día disponible -->
+            <div class="group">
+              <label
+                for="availableDays"
+                class="flex items-center text-sm font-semibold text-gray-700 mb-3"
+              >
+                <div
+                  class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 group-focus-within:bg-purple-200 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4 text-purple-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                Fecha disponible
+              </label>
+              <div class="relative">
+                <select
+                  id="availableDays"
+                  formControlName="selectedDay"
+                  (change)="onDayChange($event)"
+                  class="w-full pl-12 pr-4 py-4 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-purple-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md appearance-none"
+                >
+                  <option value="" selected disabled>¿Qué día prefiere?</option>
+                  <option
+                    *ngFor="
+                      let day of schedule;
+                      let i = index;
+                      trackBy: trackByIndex
+                    "
+                    [value]="i"
+                  >
+                    {{ day.date.toString() | date : "EEEE, dd/MM/yyyy" }}
+                  </option>
+                </select>
+                <div
+                  class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="absolute inset-y-0 right-4 flex items-center pointer-events-none"
+                ></div>
+              </div>
+              <p
+                *ngIf="
+                  newAppointmentForm.controls['selectedDay'].invalid &&
+                  newAppointmentForm.controls['selectedDay'].touched
+                "
+                class="text-sm text-red-600 mt-2 flex items-center"
+              >
+                <svg
+                  class="w-4 h-4 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Seleccione un día
+              </p>
+            </div>
+
+            <!-- Horario -->
+            <div class="group">
+              <label
+                for="selectedSlot"
+                class="flex items-center text-sm font-semibold text-gray-700 mb-3"
+              >
+                <div
+                  class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3 group-focus-within:bg-orange-200 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4 text-orange-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                Horario preferido
+              </label>
+              <div class="relative">
+                <select
+                  id="selectedSlot"
+                  formControlName="selectedSlot"
+                  class="w-full pl-12 pr-4 py-4 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-transparent focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md appearance-none"
+                >
+                  <option value="" selected disabled>¿A qué hora?</option>
+                  <option
+                    *ngFor="
+                      let slot of selectedDaySlots;
+                      let i = index;
+                      trackBy: trackByIndex
+                    "
+                    [value]="i"
+                  >
+                    {{ slot }}
+                  </option>
+                </select>
+                <div
+                  class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+                >
+                  <svg
+                    class="w-5 h-5 text-gray-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div
+                  class="absolute inset-y-0 right-4 flex items-center pointer-events-none"
+                ></div>
+              </div>
+              <p
+                *ngIf="
+                  newAppointmentForm.controls['selectedSlot'].invalid &&
+                  newAppointmentForm.controls['selectedSlot'].touched
+                "
+                class="text-sm text-red-600 mt-2 flex items-center"
+              >
+                <svg
+                  class="w-4 h-4 mr-1"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Seleccione un horario
+              </p>
+            </div>
+          </div>
+
+          <!-- Información adicional -->
+          <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg
+                  class="w-5 h-5 text-blue-600 mt-0.5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h4 class="text-sm font-medium text-blue-800">
+                  Información importante
+                </h4>
+                <p class="text-sm text-blue-700 mt-1">
+                  • Llegue 15 minutos antes de su cita<br />
+                  • Traiga su documento de identidad<br />
+                  • Puede cancelar hasta 2 horas antes
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="pt-6">
+            <button
+              type="submit"
+              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:ring-4 focus:ring-blue-300"
+            >
+              <span class="flex items-center justify-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Confirmar y Solicitar Turno
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
-    <!-- Día disponible -->
-    <div>
-      <label
-        for="availableDays"
-        class="block text-sm font-semibold text-gray-700 mb-2"
-        >Día disponible</label
-      >
-      <select
-        id="availableDays"
-        formControlName="selectedDay"
-        (change)="onDayChange($event)"
-        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition"
-      >
-        <option value="" selected disabled>Seleccione un día</option>
-        @for (day of schedule; track $index) {
-        <option [value]="$index">
-          {{ day.date.toString() | date : "fullDate" }}
-        </option>
-        }
-      </select>
-      @if (newAppointmentForm.controls['selectedDay'].invalid &&
-      newAppointmentForm.controls['selectedDay'].touched) {
-      <p class="text-xs text-red-600 mt-1">Por favor seleccione un día</p>
-      }
+    <!-- Footer informativo -->
+    <div class="text-center mt-8 text-sm text-gray-500">
+      <p>¿Necesita ayuda? Contacte a nuestro equipo de soporte</p>
     </div>
-
-    <!-- Horario -->
-    <div>
-      <label
-        for="selectedSlot"
-        class="block text-sm font-semibold text-gray-700 mb-2"
-        >Horario</label
-      >
-      <select
-        id="selectedSlot"
-        formControlName="selectedSlot"
-        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 transition"
-      >
-        <option value="" selected disabled>Seleccione un horario</option>
-        @for (slot of selectedDaySlots; track $index) {
-        <option [value]="$index">{{ slot }}</option>
-        }
-      </select>
-      @if (newAppointmentForm.controls['selectedSlot'].invalid &&
-      newAppointmentForm.controls['selectedSlot'].touched) {
-      <p class="text-xs text-red-600 mt-1">Por favor seleccione un horario</p>
-      }
-    </div>
-
-    <!-- Botón -->
-    <div class="pt-4">
-      <button
-        type="submit"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition"
-      >
-        Solicitar turno
-      </button>
-    </div>
-  </form>
+  </div>
 </div>

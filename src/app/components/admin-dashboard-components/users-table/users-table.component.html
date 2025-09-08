@@ -1,0 +1,74 @@
+<div class="relative">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <!-- ENCABEZADO -->
+    <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+      <tr>
+        <th scope="col" class="px-6 py-3 bg-gray-100">Nombre</th>
+        <th scope="col" class="px-6 py-3">Apellido</th>
+        <th scope="col" class="px-6 py-3 bg-gray-100">DNI</th>
+
+        <!-- Solo especialistas -->
+        <th *ngIf="userType === 'specialist'" scope="col" class="px-6 py-3">
+          Cuenta Habilitada
+        </th>
+
+        <!-- Solo pacientes -->
+        <th *ngIf="userType === 'patient'" scope="col" class="px-6 py-3">
+          Obra Social
+        </th>
+        <th *ngIf="userType === 'patient'" scope="col" class="px-6 py-3">
+          Acciones
+        </th>
+      </tr>
+    </thead>
+
+    <!-- CUERPO -->
+    <tbody>
+      <tr
+        *ngFor="let user of data; let i = index; trackBy: trackById"
+        class="border-b bg-gray-50 border-gray-200 text-gray-900 hover:border-green-600"
+      >
+        <th
+          scope="row"
+          class="px-6 py-4 bg-gray-100 font-medium whitespace-nowrap"
+        >
+          {{ user.name }}
+        </th>
+        <td class="px-6 py-4">{{ user.lastName }}</td>
+        <td class="px-6 py-4 bg-gray-100">{{ user.dni }}</td>
+
+        <!-- Columna solo especialistas -->
+        <td *ngIf="userType === 'specialist'" class="px-6 py-4">
+          <label
+            class="inline-flex items-center cursor-pointer select-none"
+            (click)="$event.stopPropagation()"
+            title="Habilitar cuenta"
+          >
+            <input
+              type="checkbox"
+              class="sr-only peer"
+              [checked]="user.accountConfirmed"
+              (click)="onCheckboxClick($event, user)"
+            />
+            <div
+              class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"
+            ></div>
+          </label>
+        </td>
+
+        <!-- Columnas solo pacientes -->
+        <td *ngIf="userType === 'patient'" class="px-6 py-4">
+          {{ user.healthCareSystem }}
+        </td>
+        <td *ngIf="userType === 'patient'" class="px-6 py-4">
+          <button
+            (click)="onSelectPatient(user)"
+            class="px-3 py-1 text-sm text-white bg-green-600 rounded-lg hover:bg-green-700"
+          >
+            Ver historial médico
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

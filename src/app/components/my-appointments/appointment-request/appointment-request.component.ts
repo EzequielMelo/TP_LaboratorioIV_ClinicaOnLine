@@ -207,4 +207,8 @@ export class AppointmentRequestComponent implements OnInit {
       alert('Por favor completa todos los campos requeridos.');
     }
   }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
 }
