@@ -15,6 +15,7 @@ import { environment } from '../environments/environment';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+import { provideEcharts } from 'ngx-echarts';
 
 registerLocaleData(localeEs);
 
@@ -30,5 +31,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     { provide: FIREBASE_OPTIONS, useValue: environment.firebaseConfig },
     { provide: LOCALE_ID, useValue: 'es' },
+    provideEcharts(),
   ],
 };

@@ -1,72 +1,222 @@
-<div class="mb-4 flex justify-between">
-  <div class="inline-flex rounded-md shadow-sm" role="group">
-    <button type="button" (click)="showAppointments('Sin Asignar')"
-      class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-      <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-        width="26" height="26" fill="none" viewBox="0 0 26 26">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
-      </svg>
-      Turnos nuevos
-    </button>
-    <button type="button" (click)="showAppointments('Aceptado')"
-      class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-      <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-        width="26" height="26" fill="none" viewBox="0 0 26 26">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 7 2 2 4-4m-5-9v4h4V3h-4Z" />
-      </svg>
-      Turnos aceptados
-    </button>
-    <button type="button" (click)="showAppointments('Realizado')"
-      class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-      <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-        width="26" height="26" fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd"
-          d="M15.03 9.684h3.965c.322 0 .64.08.925.232.286.153.532.374.717.645a2.109 2.109 0 0 1 .242 1.883l-2.36 7.201c-.288.814-.48 1.355-1.884 1.355-2.072 0-4.276-.677-6.157-1.256-.472-.145-.924-.284-1.348-.404h-.115V9.478a25.485 25.485 0 0 0 4.238-5.514 1.8 1.8 0 0 1 .901-.83 1.74 1.74 0 0 1 1.21-.048c.396.13.736.397.96.757.225.36.32.788.269 1.211l-1.562 4.63ZM4.177 10H7v8a2 2 0 1 1-4 0v-6.823C3 10.527 3.527 10 4.176 10Z"
-          clip-rule="evenodd" />
-      </svg>
-
-      Turnos completados
-    </button>
-    <button type="button" (click)="showAppointments('Cancelado')"
-      class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200  hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-      <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-        width="26" height="26" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M6 18 17.94 6M18 18 6.06 6" />
-      </svg>
-      Turnos cancelados
-    </button>
-    <button type="button" (click)="showAppointments('Rechazado')"
-      class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white">
-      <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-        width="26" height="26" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M6 18 17.94 6M18 18 6.06 6" />
-      </svg>
-
-      Turnos rechazados
-    </button>
-  </div>
-  <div class="rounded-md shadow-sm">
-    <form class="mx-auto" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-      <div class="relative">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-            fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-          </svg>
-        </div>
-        <input type="search" id="default-search" formControlName="keyWord"
-          class="block w-full p-4 ps-9 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Buscar especialidad/especialista" required />
-        <button type="submit"
-          class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Buscar</button>
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6"
+>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header principal -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full shadow-lg mb-4"
+      >
+        <svg
+          class="w-8 h-8 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v6a2 2 0 002 2h4a2 2 0 002-2v-6m-6 0h6"
+          />
+        </svg>
       </div>
-    </form>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Gestión de Turnos</h1>
+      <p class="text-lg text-gray-600">
+        Administre y supervise todos los turnos en sus distintos estados
+      </p>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div
+        *ngFor="let status of appointmentStatuses; trackBy: trackByStatus"
+        class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-200 border border-gray-100"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-2xl font-bold text-gray-900 mb-1">
+              {{ getAppointmentCountByStatus(status.value) }}
+            </div>
+            <div class="text-sm font-medium text-gray-600">
+              {{ status.label }}
+            </div>
+          </div>
+          <div
+            class="w-12 h-12 rounded-lg flex items-center justify-center"
+            [ngClass]="status.bgClass"
+          >
+            <span [innerHTML]="status.icon" class="text-xl"></span>
+          </div>
+        </div>
+        <div class="mt-4 w-full bg-gray-200 rounded-full h-2">
+          <div
+            class="rounded-full h-2 transition-all duration-300"
+            [ngClass]="status.progressClass"
+            [style.width.%]="getStatusPercentage(status.value)"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 border border-gray-100">
+      <div
+        class="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between"
+      >
+        <!-- Filtros de estado -->
+        <div class="w-full lg:w-auto">
+          <label class="block text-sm font-semibold text-gray-700 mb-3"
+            >Filtrar por estado</label
+          >
+          <div class="flex flex-wrap gap-2">
+            <button
+              (click)="showAppointments('all')"
+              [ngClass]="{
+                'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg':
+                  selectedStatus === 'all',
+                'bg-gray-100 text-gray-700 hover:bg-gray-200':
+                  selectedStatus !== 'all'
+              }"
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Todos
+            </button>
+
+            <button
+              *ngFor="let status of appointmentStatuses; trackBy: trackByStatus"
+              (click)="showAppointments(status.value)"
+              [ngClass]="{
+                'text-white shadow-lg': selectedStatus === status.value,
+                'bg-gray-100 text-gray-700 hover:bg-gray-200':
+                  selectedStatus !== status.value
+              }"
+              [class]="
+                selectedStatus === status.value ? status.activeClass : ''
+              "
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-200 transform hover:scale-105"
+            >
+              <span [innerHTML]="status.icon" class="text-sm"></span>
+              <span>{{ status.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Barra de búsqueda -->
+        <div class="w-full lg:w-auto lg:min-w-[320px]">
+          <label class="block text-sm font-semibold text-gray-700 mb-3"
+            >Buscar turnos</label
+          >
+          <form
+            class="relative"
+            [formGroup]="searchForm"
+            (ngSubmit)="onSearch()"
+          >
+            <div class="relative">
+              <input
+                type="search"
+                formControlName="keyWord"
+                placeholder="Especialista, paciente o fecha..."
+                class="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm"
+              />
+              <div
+                class="absolute inset-y-0 left-4 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18.5a7.5 7.5 0 006.15-3.35z"
+                  />
+                </svg>
+              </div>
+              <button
+                *ngIf="searchForm.get('keyWord')?.value"
+                type="button"
+                (click)="clearSearch()"
+                class="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de turnos -->
+    <div
+      class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+    >
+      <div
+        class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200"
+      >
+        <h3 class="text-lg font-semibold text-gray-900">
+          Turnos filtrados
+          <span class="text-sm font-normal text-gray-500 ml-2">
+            ({{ displayedAppointments.length || 0 }}
+            {{ displayedAppointments.length === 1 ? "turno" : "turnos" }})
+          </span>
+        </h3>
+      </div>
+
+      <div
+        class="max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+      >
+        <div
+          *ngIf="!displayedAppointments || displayedAppointments.length === 0"
+          class="flex flex-col items-center justify-center py-16 px-6"
+        >
+          <div
+            class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-12 h-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v6a2 2 0 002 2h4a2 2 0 002-2v-6m-6 0h6"
+              />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            No hay turnos disponibles
+          </h3>
+          <p class="text-gray-500 text-center mb-6">
+            Ajusta los filtros o intenta más tarde
+          </p>
+        </div>
+
+        <app-appointments-list-admin
+          *ngIf="displayedAppointments && displayedAppointments.length > 0"
+          [appointments]="displayedAppointments"
+          [keyWord]="searchForm.get('keyWord')?.value"
+        ></app-appointments-list-admin>
+      </div>
+    </div>
   </div>
 </div>
-<app-appointments-list-admin [appointments]="displayedAppointments"
-  [keyWord]="searchForm.get('keyWord')?.value"></app-appointments-list-admin>

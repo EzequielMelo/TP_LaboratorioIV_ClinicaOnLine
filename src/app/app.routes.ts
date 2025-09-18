@@ -116,6 +116,14 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard],
   },
   {
+    path: 'admin-charts',
+    loadComponent: () =>
+      import('./pages/admin-charts/admin-charts.component').then(
+        (c) => c.AdminChartsComponent
+      ),
+    canActivate: [authGuard, adminGuard],
+  },
+  {
     path: 'my-appointments',
     loadComponent: () =>
       import('./pages/my-appointments/my-appointments.component').then(

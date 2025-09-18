@@ -1,0 +1,224 @@
+<div class="appointments-day-container">
+  <!-- Header del componente -->
+  <div class="component-header">
+    <div class="header-info">
+      <h3>📅 Turnos por Día</h3>
+      <p class="description">Distribución diaria de turnos programados</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-test" (click)="testService()" [disabled]="loading">
+        🧪 Probar Servicio
+      </button>
+
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+
+      <button
+        class="btn btn-export"
+        (click)="exportToCSV()"
+        [disabled]="loading || dailyCounts.length === 0"
+      >
+        📊 Exportar CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas generales -->
+  <div class="stats-section" *ngIf="!loading && !error">
+    <div class="stats-cards">
+      <div class="stat-card primary">
+        <div class="stat-icon">📅</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalDays }}</div>
+          <div class="stat-label">Días con Turnos</div>
+        </div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-icon">📋</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalAppointments }}</div>
+          <div class="stat-label">Total Turnos</div>
+        </div>
+      </div>
+
+      <div class="stat-card info">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ averagePerDay }}</div>
+          <div class="stat-label">Promedio Diario</div>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ maxDayCount }}</div>
+          <div class="stat-label">Día Pico</div>
+          <div class="stat-sublabel" *ngIf="peakDay">
+            {{ peakDay.diaSemana }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats adicionales de días laborables vs fines de semana -->
+    <div class="weekday-stats">
+      <div class="weekday-card">
+        <div class="weekday-info">
+          <span class="weekday-icon">💼</span>
+          <div class="weekday-content">
+            <div class="weekday-number">{{ weekdayAverage }}</div>
+            <div class="weekday-label">Promedio Días Laborables</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weekend-card">
+        <div class="weekend-info">
+          <span class="weekend-icon">🏖️</span>
+          <div class="weekend-content">
+            <div class="weekend-number">{{ weekendAverage }}</div>
+            <div class="weekend-label">Promedio Fines de Semana</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando datos diarios...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Contenido principal - Gráficos -->
+  <div
+    *ngIf="!loading && !error && dailyCounts.length > 0"
+    class="charts-section"
+  >
+    <!-- Gráfico de líneas -->
+    <div class="chart-card full">
+      <div class="chart-wrapper">
+        <div
+          echarts
+          [options]="lineChartOption"
+          [loading]="loading"
+          class="chart-line"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Gráfico de barras -->
+    <div class="chart-card full">
+      <div class="chart-wrapper">
+        <div
+          echarts
+          [options]="barChartOption"
+          [loading]="loading"
+          class="chart-bar"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Tabla detallada -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>📋 Detalle Diario de Turnos</h4>
+        <span class="table-count"
+          >{{ dailyCounts.length }} días registrados</span
+        >
+      </div>
+
+      <div class="table-wrapper">
+        <table class="daily-table">
+          <thead>
+            <tr>
+              <th>📅 Fecha</th>
+              <th>📆 Día</th>
+              <th>📊 Turnos</th>
+              <th>📈 Comparación</th>
+              <th>🏷️ Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let day of dailyCounts; trackBy: trackByDate"
+              class="daily-row"
+              [class]="getDayClass(day)"
+            >
+              <td class="day-date">
+                {{ formatDate(day.fecha) }}
+              </td>
+
+              <td class="day-name">
+                <span class="day-name-text">{{ day.diaSemana }}</span>
+              </td>
+
+              <td class="day-count">
+                <span
+                  class="count-number"
+                  [class]="getCountClass(day.cantidad)"
+                >
+                  {{ day.cantidad }}
+                </span>
+                <span class="count-label">turnos</span>
+              </td>
+
+              <td class="day-comparison">
+                <div class="comparison-bar">
+                  <div
+                    class="comparison-fill"
+                    [style.width.%]="(day.cantidad / maxDayCount) * 100"
+                    [class]="getDayClass(day)"
+                  ></div>
+                  <span class="comparison-text">
+                    {{ Math.round((day.cantidad / averagePerDay) * 100) }}%
+                  </span>
+                </div>
+              </td>
+
+              <td class="day-type">
+                <span class="type-badge" [class]="getDayClass(day)">
+                  {{ day.esFinDeSemana ? "🏖️ Fin de semana" : "💼 Laborable" }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Leyenda -->
+      <div class="table-legend">
+        <div class="legend-item">
+          <span class="legend-color weekday"></span>
+          <span class="legend-text">Días laborables (Lunes-Viernes)</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-color weekend"></span>
+          <span class="legend-text">Fines de semana (Sábado-Domingo)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay datos -->
+  <div *ngIf="!loading && !error && dailyCounts.length === 0" class="no-data">
+    <div class="no-data-icon">📭</div>
+    <h4>No hay datos diarios</h4>
+    <p>No se encontraron turnos con fechas válidas en la base de datos.</p>
+    <button class="btn btn-refresh" (click)="refresh()">
+      🔄 Intentar de nuevo
+    </button>
+  </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="logged-users-container">
+  <!-- Header del componente -->
+  <div class="component-header">
+    <div class="header-info">
+      <h3>🔐 Log de Ingresos al Sistema</h3>
+      <p class="description">Usuario, día y horario de ingreso al sistema</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+
+      <button
+        class="btn btn-export"
+        (click)="exportToCSV()"
+        [disabled]="loading || logs.length === 0"
+      >
+        📊 Exportar CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas generales -->
+  <div class="stats-section" *ngIf="!loading && !error">
+    <div class="stats-cards">
+      <div class="stat-card primary">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalLogins }}</div>
+          <div class="stat-label">Total Logins</div>
+        </div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ loginsByUserType.pacientes }}</div>
+          <div class="stat-label">Pacientes</div>
+        </div>
+      </div>
+
+      <div class="stat-card info">
+        <div class="stat-icon">🏥</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ loginsByUserType.especialistas }}</div>
+          <div class="stat-label">Especialistas</div>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-icon">⚙️</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ loginsByUserType.administradores }}</div>
+          <div class="stat-label">Administradores</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando logs de ingresos...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Contenido principal - Gráficos -->
+  <div *ngIf="!loading && !error" class="charts-section">
+    <!-- Gráfico de Timeline -->
+    <div class="chart-card">
+      <div class="chart-wrapper">
+        <div
+          echarts
+          [options]="timelineChartOption"
+          [loading]="loading"
+          class="chart-timeline"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Gráficos en fila -->
+    <div class="charts-row">
+      <!-- Gráfico de actividad diaria -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="dailyActivityChartOption"
+            [loading]="loading"
+            class="chart-daily"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Gráfico de distribución por tipo -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="userTypeChartOption"
+            [loading]="loading"
+            class="chart-usertype"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de logs recientes -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>📋 Logs Recientes (Últimos 10)</h4>
+        <span class="table-count">{{ logs.length }} registros totales</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="logs-table">
+          <thead>
+            <tr>
+              <th>👤 Usuario</th>
+              <th>🏷️ Tipo</th>
+              <th>📅 Fecha</th>
+              <th>🕒 Hora</th>
+              <th>🆔 ID Usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let log of logs.slice(0, 10); trackBy: trackByLogId"
+              class="log-row"
+            >
+              <td class="user-name">{{ log.usuario }}</td>
+              <td>
+                <span
+                  class="user-type-badge"
+                  [class]="'badge-' + log.tipoUsuario.toLowerCase()"
+                >
+                  {{ log.tipoUsuario }}
+                </span>
+              </td>
+              <td class="log-date">{{ log.fecha }}</td>
+              <td class="log-time">{{ log.hora }}</td>
+              <td class="user-id">{{ log.userId }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mensaje si no hay datos -->
+      <div *ngIf="logs.length === 0" class="no-data">
+        <p>📭 No se encontraron logs de ingreso</p>
+      </div>
+    </div>
+  </div>
+</div>

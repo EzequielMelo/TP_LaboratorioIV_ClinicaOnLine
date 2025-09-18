@@ -293,7 +293,7 @@
               </button>
 
               <button
-                (click)="sectionSelector('appointments')"
+                routerLink="/admin-appointments"
                 [class.ring-4]="currentSection === 'appointments'"
                 [class.ring-purple-300]="currentSection === 'appointments'"
                 class="group bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -331,7 +331,7 @@
               </button>
 
               <button
-                (click)="sectionSelector('settings')"
+                routerLink="/admin-charts"
                 [class.ring-4]="currentSection === 'settings'"
                 [class.ring-gray-300]="currentSection === 'settings'"
                 class="group bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"

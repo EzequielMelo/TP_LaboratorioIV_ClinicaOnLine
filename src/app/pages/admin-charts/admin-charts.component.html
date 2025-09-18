@@ -1,0 +1,129 @@
+<div class="admin-dashboard">
+  <!-- Header del Dashboard -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1>🏥 Panel Administrativo - Clínica</h1>
+        <p class="subtitle">Sistema de análisis y estadísticas</p>
+      </div>
+
+      <div class="header-actions">
+        <div class="last-update">
+          <span
+            >Última actualización:
+            {{ getUltimaActualizacionFormateada() }}</span
+          >
+        </div>
+
+        <button
+          class="btn btn-refresh"
+          (click)="refrescarDatos()"
+          [disabled]="cargando"
+        >
+          <span *ngIf="!cargando">🔄</span>
+          <span *ngIf="cargando" class="spinner">⏳</span>
+          {{ cargando ? "Cargando..." : "Actualizar" }}
+        </button>
+
+        <button
+          class="btn btn-export"
+          (click)="exportarDatos()"
+          [disabled]="cargando"
+        >
+          📊 Exportar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="dashboard-body">
+    <!-- Menú lateral de navegación -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>📋 Estadísticas</h3>
+      </div>
+
+      <nav class="sidebar-nav">
+        <ul class="nav-list">
+          <li
+            *ngFor="let opcion of opcionesGraficos"
+            class="nav-item"
+            [class.active]="opcion.activo"
+          >
+            <button
+              class="nav-button"
+              (click)="seleccionarGrafico(opcion.id)"
+              [class.active]="opcion.activo"
+            >
+              <div class="nav-icon">{{ opcion.icono }}</div>
+              <div class="nav-content">
+                <div class="nav-title">{{ opcion.titulo }}</div>
+                <div class="nav-description">{{ opcion.descripcion }}</div>
+              </div>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Área principal de contenido -->
+    <main class="main-content">
+      <!-- Header del gráfico actual -->
+      <div class="content-header">
+        <div class="content-title">
+          <h2>{{ getTituloGraficoActual() }}</h2>
+          <p class="content-description">{{ getDescripcionGraficoActual() }}</p>
+        </div>
+      </div>
+
+      <!-- Área de gráficos dinámicos -->
+      <div class="chart-container">
+        <!-- Estado de carga -->
+        <div *ngIf="cargando" class="loading-state">
+          <div class="loading-spinner">⏳</div>
+          <p>Cargando estadísticas...</p>
+        </div>
+
+        <!-- Estado de error -->
+        <div *ngIf="error && !cargando" class="error-state">
+          <div class="error-icon">❌</div>
+          <p>{{ error }}</p>
+          <button class="btn btn-retry" (click)="refrescarDatos()">
+            🔄 Reintentar
+          </button>
+        </div>
+
+        <!-- Componentes hijos según la selección -->
+        <div *ngIf="!cargando && !error" class="chart-content">
+          <!-- Resumen General -->
+          <app-logged-users *ngIf="graficoActual === TipoGrafico.LOGINS">
+          </app-logged-users>
+
+          <!-- Logins por Tipo de Usuario -->
+          <app-appointments-requested-by-time
+            *ngIf="graficoActual === TipoGrafico.TURNOS_POR_ESPECIALIDAD"
+          >
+          </app-appointments-requested-by-time>
+
+          <!-- Actividad Diaria -->
+          <app-appointments-completed-by-time
+            *ngIf="graficoActual === TipoGrafico.TURNOS_POR_DIA"
+          >
+          </app-appointments-completed-by-time>
+
+          <!-- Actividad Semanal -->
+          <app-appointments-per-day
+            *ngIf="graficoActual === TipoGrafico.TURNOS_SOLICITADOS"
+          >
+          </app-appointments-per-day>
+
+          <!-- Usuarios Más Activos -->
+          <app-appointments-per-specialty
+            *ngIf="graficoActual === TipoGrafico.TURNOS_FINALIZADOS"
+          >
+          </app-appointments-per-specialty>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

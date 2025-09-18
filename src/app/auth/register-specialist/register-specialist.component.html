@@ -1,225 +1,498 @@
-<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto min:h-screen lg:py-0">
-  <div class="w-full rounded-lg md:my-8 shadow sm:max-w-lg xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700">
+<div
+  class="flex flex-col items-center justify-center px-6 py-8 mx-auto min:h-screen lg:py-0"
+>
+  <div
+    class="w-full rounded-lg md:my-8 shadow sm:max-w-2xl xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700"
+  >
     <div class="p-4 space-y-4 md:space-y-6 sm:p-8">
-      <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
+      <h1
+        class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white"
+      >
         Registro Especialistas
       </h1>
-      <form class="max-w-md mx-auto" [formGroup]="registerForm">
+
+      <form class="max-w-full mx-auto" [formGroup]="registerForm">
+        <!-- Email -->
         <div class="relative z-0 w-full mb-5 group">
-          <input formControlName="email" type="email" name="floating_email" id="floating_email"
-            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-            placeholder=" " required />
-          <label for="floating_email"
-            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Email</label>
+          <input
+            formControlName="email"
+            type="email"
+            name="floating_email"
+            id="floating_email"
+            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+            placeholder=" "
+            required
+          />
+          <label
+            for="floating_email"
+            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >Email</label
+          >
           <div class="h-[10px]">
-            @if (registerForm.controls['email'].errors !== null && registerForm.controls['email'].touched) {
-            @if (registerForm.controls['email'].errors!['required']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="email">Campo requerido</label>
-            }
-            @if (registerForm.controls['email'].errors!['email']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="email">Ingrese email valido</label>
-            }
-            }
+            @if (registerForm.controls['email'].errors !== null &&
+            registerForm.controls['email'].touched) { @if
+            (registerForm.controls['email'].errors!['required']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="email"
+              >Campo requerido</label
+            >
+            } @if (registerForm.controls['email'].errors!['email']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="email"
+              >Ingrese email válido</label
+            >
+            } }
           </div>
         </div>
+
+        <!-- Password -->
         <div class="relative z-0 w-full mb-5 group">
-          <input formControlName="password" type="password" name="floating_password" id="floating_password"
-            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-            placeholder=" " required />
-          <label for="floating_password"
-            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contraseña</label>
+          <input
+            formControlName="password"
+            type="password"
+            name="floating_password"
+            id="floating_password"
+            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+            placeholder=" "
+            required
+          />
+          <label
+            for="floating_password"
+            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >Contraseña</label
+          >
           <div class="h-[10px]">
-            @if (registerForm.controls['password'].errors !== null && registerForm.controls['password'].touched) {
-            @if (registerForm.controls['password'].errors!['required']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-            }
-            @if (registerForm.controls['password'].errors!['minlength']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-            }
-            }
+            @if (registerForm.controls['password'].errors !== null &&
+            registerForm.controls['password'].touched) { @if
+            (registerForm.controls['password'].errors!['required']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="password"
+              >Campo requerido</label
+            >
+            } @if (registerForm.controls['password'].errors!['minlength']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="password"
+              >Ingrese mínimo 6 caracteres</label
+            >
+            } }
           </div>
         </div>
+
+        <!-- Repeat Password -->
         <div class="relative z-0 w-full mb-5 group">
-          <input formControlName="repeat_password" type="password" name="repeat_password" id="floating_repeat_password"
-            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2  appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
-            placeholder=" " required />
-          <label for="floating_repeat_password"
-            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Confirmar
-            contraseña</label>
+          <input
+            formControlName="repeat_password"
+            type="password"
+            name="repeat_password"
+            id="floating_repeat_password"
+            class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer"
+            placeholder=" "
+            required
+          />
+          <label
+            for="floating_repeat_password"
+            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+            >Confirmar contraseña</label
+          >
           <div class="h-[10px]">
             @if (registerForm.controls['repeat_password'].errors !== null &&
-            registerForm.controls['repeat_password'].touched) {
-            @if (registerForm.controls['repeat_password'].errors!['required']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-            }
-            @if (registerForm.controls['repeat_password'].errors!['minlength']) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-            }
-            }
+            registerForm.controls['repeat_password'].touched) { @if
+            (registerForm.controls['repeat_password'].errors!['required']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="password"
+              >Campo requerido</label
+            >
+            } @if
+            (registerForm.controls['repeat_password'].errors!['minlength']) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="password"
+              >Ingrese mínimo 6 caracteres</label
+            >
+            } }
           </div>
         </div>
+
+        <!-- Name and Last Name -->
         <div class="grid md:grid-cols-2 md:gap-6">
           <div class="relative z-0 w-full mb-5 group">
-            <input formControlName="name" type="text" name="floating_first_name" id="floating_first_name"
+            <input
+              formControlName="name"
+              type="text"
+              name="floating_first_name"
+              id="floating_first_name"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" " required />
-            <label for="floating_first_name"
-              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
+              placeholder=" "
+              required
+            />
+            <label
+              for="floating_first_name"
+              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >Nombre</label
+            >
             <div class="h-[10px]">
               @if (registerForm.controls['name'].errors !== null &&
-              registerForm.controls['name'].touched) {
-              @if (registerForm.controls['name'].errors!['required']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-              }
-              @if (registerForm.controls['name'].errors!['minlength']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-              }
-              @if (registerForm.controls['name'].errors!['maxlength']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">El campo es demasiado largo</label>
-              }
-              }
+              registerForm.controls['name'].touched) { @if
+              (registerForm.controls['name'].errors!['required']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >Campo requerido</label
+              >
+              } @if (registerForm.controls['name'].errors!['minlength']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >Ingrese mínimo 2 caracteres</label
+              >
+              } @if (registerForm.controls['name'].errors!['maxlength']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >El campo es demasiado largo</label
+              >
+              } }
             </div>
           </div>
+
           <div class="relative z-0 w-full mb-5 group">
-            <input formControlName="last_name" type="text" name="floating_last_name" id="floating_last_name"
+            <input
+              formControlName="last_name"
+              type="text"
+              name="floating_last_name"
+              id="floating_last_name"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" " required />
-            <label for="floating_last_name"
-              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Apellido</label>
+              placeholder=" "
+              required
+            />
+            <label
+              for="floating_last_name"
+              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >Apellido</label
+            >
             <div class="h-[10px]">
               @if (registerForm.controls['last_name'].errors !== null &&
-              registerForm.controls['last_name'].touched) {
-              @if (registerForm.controls['last_name'].errors!['required']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-              }
-              @if (registerForm.controls['last_name'].errors!['minlength']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-              }
-              @if (registerForm.controls['last_name'].errors!['maxlength']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="password">El campo es demasiado largo</label>
-              }
-              }
+              registerForm.controls['last_name'].touched) { @if
+              (registerForm.controls['last_name'].errors!['required']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >Campo requerido</label
+              >
+              } @if (registerForm.controls['last_name'].errors!['minlength']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >Ingrese mínimo 2 caracteres</label
+              >
+              } @if (registerForm.controls['last_name'].errors!['maxlength']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="password"
+                >El campo es demasiado largo</label
+              >
+              } }
             </div>
           </div>
         </div>
+
+        <!-- Age and DNI -->
         <div class="grid md:grid-cols-2 md:gap-6">
           <div class="relative z-0 w-full mb-5 group">
-            <input formControlName="age" type="text" name="floating_age" id="floating_age"
+            <input
+              formControlName="age"
+              type="text"
+              name="floating_age"
+              id="floating_age"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" " required />
-            <label for="floating_age"
-              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Edad</label>
+              placeholder=" "
+              required
+            />
+            <label
+              for="floating_age"
+              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >Edad</label
+            >
             <div class="h-[10px]">
               @if (registerForm.controls['age'].errors !== null &&
-              registerForm.controls['age'].touched) {
-              @if (registerForm.controls['age'].errors!['required']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Campo requerido</label>
-              }
-              @if (registerForm.controls['age'].errors!['min']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Ingrese una edad minima
-                valida</label>
-              }
-              @if (registerForm.controls['age'].errors!['max']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Ingrese una edad maxima
-                valida</label>
-              }
-              @if (registerForm.controls['age'].errors!['nonNumeric']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age"> Ingrese solo numeros</label>
-              }
-              }
+              registerForm.controls['age'].touched) { @if
+              (registerForm.controls['age'].errors!['required']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_age"
+                >Campo requerido</label
+              >
+              } @if (registerForm.controls['age'].errors!['min']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_age"
+                >Ingrese una edad mínima válida</label
+              >
+              } @if (registerForm.controls['age'].errors!['max']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_age"
+                >Ingrese una edad máxima válida</label
+              >
+              } @if (registerForm.controls['age'].errors!['nonNumeric']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_age"
+                >Ingrese solo números</label
+              >
+              } }
             </div>
           </div>
+
           <div class="relative z-0 w-full mb-5 group">
-            <input formControlName="dni" type="text" name="floating_dni" id="floating_dni"
+            <input
+              formControlName="dni"
+              type="text"
+              name="floating_dni"
+              id="floating_dni"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" " required />
-            <label for="floating_dni"
-              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">DNI
-              (44.444.444)</label>
+              placeholder=" "
+              required
+            />
+            <label
+              for="floating_dni"
+              class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+              >DNI (44.444.444)</label
+            >
             <div class="h-[10px]">
               @if (registerForm.controls['dni'].errors !== null &&
-              registerForm.controls['dni'].touched) {
-              @if (registerForm.controls['dni'].errors!['required']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Campo requerido</label>
-              }
-              @if (registerForm.controls['dni'].errors!['invalidDni']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">DNI inválido</label>
-              }
-              }
+              registerForm.controls['dni'].touched) { @if
+              (registerForm.controls['dni'].errors!['required']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_dni"
+                >Campo requerido</label
+              >
+              } @if (registerForm.controls['dni'].errors!['invalidDni']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_dni"
+                >DNI inválido</label
+              >
+              } }
             </div>
           </div>
         </div>
+
+        <!-- NUEVA SECCIÓN DE ESPECIALIDADES MEJORADA -->
         <div class="relative z-0 w-full mb-5 group">
-          <label for="medical_specialty" class="block mb-2 text-sm font-medium text-gray-400">Seleccione
-            su especialidad</label>
-          <select formControlName="medical_specialty" id="medical_specialty"
-            class="bg-gray-300 h-fit border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 overflow-auto"
-            multiple>
-            <option value="" selected disabled>Selecciona una o mas especialidades</option>
-            @for (specialty of specialties; track $index) {
-            <option value="{{specialty}}">{{specialty}}</option>
+          <label class="block mb-4 text-sm font-medium text-gray-400">
+            Seleccione sus especialidades médicas
+          </label>
+
+          <!-- Contador de especialidades seleccionadas -->
+          <div class="mb-3 flex items-center justify-between">
+            <span class="text-xs text-gray-500">
+              {{ getSelectedSpecialtiesCount() }} especialidad{{
+                getSelectedSpecialtiesCount() !== 1 ? "es" : ""
+              }}
+              seleccionada{{ getSelectedSpecialtiesCount() !== 1 ? "s" : "" }}
+            </span>
+            @if (getSelectedSpecialtiesCount() > 0) {
+            <button
+              type="button"
+              (click)="clearAllSpecialties()"
+              class="text-xs text-red-400 hover:text-red-300 underline"
+            >
+              Limpiar todas
+            </button>
             }
-          </select>
-          <div class="h-[10px]">
+          </div>
+
+          <!-- Grid de especialidades con chips/tags -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mb-4"
+          >
+            @for (specialty of specialties; track specialty) {
+            <div
+              class="specialty-chip cursor-pointer rounded-lg border-2 p-3 text-sm font-medium transition-all duration-200 hover:transform hover:scale-105"
+              [class]="
+                isSpecialtySelected(specialty)
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/25'
+                  : 'bg-gray-700/50 text-gray-300 border-gray-600 hover:border-blue-400 hover:bg-gray-600/50'
+              "
+              (click)="toggleSpecialty(specialty)"
+            >
+              <div class="flex items-center justify-between">
+                <span>{{ specialty }}</span>
+                @if (isSpecialtySelected(specialty)) {
+                <svg
+                  class="w-4 h-4 ml-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                }
+              </div>
+            </div>
+            }
+          </div>
+
+          <!-- Sección para especialidad personalizada -->
+          <div
+            class="mt-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600"
+          >
+            <label class="block mb-2 text-sm font-medium text-gray-400">
+              ¿No encuentra su especialidad? Agréguela aquí:
+            </label>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="otherSpecialty"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Escriba el nombre de la especialidad"
+                class="flex-1 px-3 py-2 text-sm bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                (click)="addCustomSpecialty()"
+                [disabled]="!otherSpecialty.trim()"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mostrar especialidades seleccionadas -->
+          @if (getSelectedSpecialtiesCount() > 0) {
+          <div class="mt-4">
+            <label class="block mb-2 text-sm font-medium text-gray-400">
+              Especialidades seleccionadas:
+            </label>
+            <div class="flex flex-wrap gap-2">
+              @for (specialty of getSelectedSpecialtiesList(); track specialty)
+              {
+              <span
+                class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-blue-600 text-white rounded-full"
+              >
+                {{ specialty }}
+                <button
+                  type="button"
+                  (click)="removeSpecialty(specialty)"
+                  class="ml-1 hover:bg-blue-700 rounded-full p-0.5"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                  </svg>
+                </button>
+              </span>
+              }
+            </div>
+          </div>
+          }
+
+          <!-- Mensaje de error -->
+          <div class="h-[10px] mt-2">
             @if (registerForm.controls['medical_specialty'].invalid &&
-            registerForm.controls['medical_specialty'].touched)
-            {
-            <label class="font-medium mt-1 text-xs text-red-700" for="medical_specialty">Por favor selecciona una
-              especialidad</label>
+            registerForm.controls['medical_specialty'].touched) {
+            <label class="font-medium mt-1 text-xs text-red-700">
+              Por favor seleccione al menos una especialidad
+            </label>
             }
           </div>
         </div>
+
+        <!-- Profile Image -->
         <div class="relative z-0 w-full mb-5 group">
-          <input type="text" name="other-medical-specialty" id="other-medical-specialty" [(ngModel)]="otherSpecialty"
-            [ngModelOptions]="{standalone: true}" class=" block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 appearance-none text-white
-            border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-0 peer" placeholder=" " required />
-          <label for="other-medical-specialty"
-            class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Escriba
-            aca en caso de no encontrar su especialidad</label>
-          <button (click)="addSpecialty()" type="button"
-            class="text-white mt-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ">Añadir
-            especialidad</button>
-        </div>
-        <div class="relative z-0 w-full mb-5 group">
-          <label class="block mb-2 text-sm font-medium text-gray-400" for="user_avatar">Imagen de
-            perfil</label>
-          <input (change)="onFileChange($event, 'user_avatar')"
-            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-300  focus:outline-none"
-            aria-describedby="user_avatar_help" id="user_avatar" type="file" formControlName="user_avatar">
-          <div class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="user_avatar_help">La imagen de perfil es util
-            para confirmar que se encuentra logueado</div>
+          <label
+            class="block mb-2 text-sm font-medium text-gray-400"
+            for="user_avatar"
+          >
+            Imagen de perfil
+          </label>
+          <input
+            (change)="onFileChange($event, 'user_avatar')"
+            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-300 focus:outline-none"
+            aria-describedby="user_avatar_help"
+            id="user_avatar"
+            type="file"
+            formControlName="user_avatar"
+          />
+          <div
+            class="mt-1 text-sm text-gray-500 dark:text-gray-300"
+            id="user_avatar_help"
+          >
+            La imagen de perfil es útil para confirmar que se encuentra logueado
+          </div>
           <div class="h-[10px]">
             @if (registerForm.get('user_avatar')?.errors?.['invalidFileType'] &&
             registerForm.get('user_avatar')?.touched) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="user_avatar">
+            <label
+              class="font-medium mt-1 text-xs text-red-700"
+              for="user_avatar"
+            >
               Solo se permiten archivos JPG y PNG.
             </label>
-            }
-
-            @if (registerForm.get('user_avatar')?.errors?.['required'] && registerForm.get('user_avatar')?.touched) {
-            <label class="font-medium mt-1 text-xs text-red-700" for="user_avatar">
+            } @if (registerForm.get('user_avatar')?.errors?.['required'] &&
+            registerForm.get('user_avatar')?.touched) {
+            <label
+              class="font-medium mt-1 text-xs text-red-700"
+              for="user_avatar"
+            >
               Debes seleccionar un archivo.
             </label>
             }
           </div>
         </div>
 
-        <div class="flex flex-col items-center justify-around h-auto sm:flex-row">
+        <!-- reCAPTCHA and Submit Button -->
+        <div
+          class="flex flex-col items-center justify-around h-auto sm:flex-row"
+        >
           <div class="flex flex-col mb-6 md:mb-0">
-            <ngx-recaptcha2 class="" #captchaElem [siteKey]="siteKey" (success)="handleSuccess($event)"
-              [useGlobalDomain]="false" formControlName="recaptcha">
+            <ngx-recaptcha2
+              class=""
+              #captchaElem
+              [siteKey]="siteKey"
+              (success)="handleSuccess($event)"
+              [useGlobalDomain]="false"
+              formControlName="recaptcha"
+            >
             </ngx-recaptcha2>
             <div class="h-[10px]">
               @if (registerForm.controls['recaptcha'].errors !== null &&
-              registerForm.controls['recaptcha'].touched) {
-              @if (registerForm.controls['recaptcha'].errors!['required']) {
-              <label class="font-medium mt-1 text-xs text-red-700" for="floating_age">Marque la casilla</label>
-              }
-              }
+              registerForm.controls['recaptcha'].touched) { @if
+              (registerForm.controls['recaptcha'].errors!['required']) {
+              <label
+                class="font-medium mt-1 text-xs text-red-700"
+                for="floating_age"
+                >Marque la casilla</label
+              >
+              } }
             </div>
           </div>
-          <button (click)="register()"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none mt-0 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registrarse</button>
+          <button
+            (click)="register()"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none mt-0 focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Registrarse
+          </button>
         </div>
       </form>
     </div>

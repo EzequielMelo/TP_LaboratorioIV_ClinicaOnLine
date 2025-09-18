@@ -12,14 +12,17 @@ import {
 import {
   BehaviorSubject,
   catchError,
-  combineLatest,
+  filter,
   forkJoin,
   from,
   map,
   Observable,
   of,
   switchMap,
+  take,
+  tap,
   throwError,
+  timer,
 } from 'rxjs';
 import { DatabaseService } from '../database/database.service';
 import { StorageService } from '../storage/storage.service';
@@ -29,6 +32,7 @@ import { Admin } from '../../classes/admin.class';
 import { UserTypes } from './../../models/user-types';
 import { environment } from '../../../environments/environment';
 import { LoadingService } from '../loading/loading.service';
+import { LogsService } from '../logs/logs.service';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +50,7 @@ export class AuthService {
   private storage = inject(StorageService);
   private http = inject(HttpClient);
   private loadingService = inject(LoadingService);
+  private logsService = inject(LogsService);
 
   constructor() {
     this.authSubscription = this.auth.onAuthStateChanged((authUser) => {
@@ -55,7 +60,7 @@ export class AuthService {
       } else {
         this.authUserSubject.next(null);
         this.userSubject.next(null);
-        this.loadingService.stopLoading(); // Deja de cargar si no hay usuario
+        this.loadingService.stopLoading();
       }
     });
   }
@@ -178,7 +183,6 @@ export class AuthService {
               profileUrl: profileUpload$,
             }).pipe(
               switchMap(({ profileUrl }) => {
-                // Crear objeto usuario con URLs de imágenes
                 const user: Partial<Specialist> = {
                   name,
                   lastName,
@@ -281,10 +285,44 @@ export class AuthService {
 
   login(email: string, password: string): Observable<UserCredential> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+      tap((userCredential) => {
+        this.scheduleLogSaving(userCredential.user.uid);
+      }),
       catchError((error) => {
         return throwError(() => error);
       })
     );
+  }
+
+  private scheduleLogSaving(uid: string): void {
+    // Esperar hasta 60 segundos por los datos completos
+    timer(1000, 2000)
+      .pipe(
+        // Empezar después de 1s, revisar cada 2s
+        take(30), // Máximo 30 intentos (60 segundos)
+        switchMap(() => this.user$),
+        filter((user) => user !== null && user.id === uid),
+        take(1)
+      )
+      .subscribe({
+        next: (userData) => {
+          this.saveLoginLogInBackground(userData);
+        },
+        error: (error) => {},
+      });
+  }
+
+  private saveLoginLogInBackground(userData: any): void {
+    const loginLogData = {
+      lastName: userData.lastName || '',
+      name: userData.name || '',
+      userId: userData.uid || userData.id,
+      userType: userData.userType || 'paciente',
+    };
+    this.logsService.saveLoginLog(loginLogData).subscribe({
+      next: (result) => {},
+      error: (error) => {},
+    });
   }
 
   checkEmailVerification(): Observable<boolean> {
@@ -352,7 +390,6 @@ export class AuthService {
         this.loadingService.stopLoading();
       },
       (error) => {
-        console.error('Error al cargar los datos del usuario:', error);
         this.userSubject.next(null);
         this.loadingService.stopLoading(); // Detener la carga en caso de error
       }

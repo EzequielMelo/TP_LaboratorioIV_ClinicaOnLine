@@ -1,89 +1,117 @@
-<div class="relative max-h-[600px] overflow-auto">
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-    <thead class="text-xs uppercase bg-gray-50 text-gray-700">
-      <tr>
-        <th scope="col" class="px-3 py-2">
-          Fecha de la solicitud
-        </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
-          Mensaje
-        </th>
-        <th scope="col" class="px-3 py-2">
-          Fecha del turno
-        </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
-          Nombre del Paciente
-        </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
-          Nombre del Especialista
-        </th>
-        <th scope="col" class="px-3 py-2">
-          Especialidad
-        </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
-          Turno
-        </th>
-        <th scope="col" class="px-3 py-2">
-          opciones del turno
-        </th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">
-          Ver reseña
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (appointment of filteredAppointments; track $index) {
-      <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
-        <td class="px-3 py-2">
-          {{appointment.requestedDate ? (appointment.requestedDate.toDate() | date:'dd/MM/yyyy') : ''}}
-        </td>
-        <td class="px-3 py-2 bg-gray-100">
-          {{appointment.message}}
-        </td>
-        <td class="px-3 py-2">
-          @if (appointment.appointmentDate == null) {
-          Sin Asignar
-          }@else {
-          {{ appointment.appointmentDate ? (appointment.appointmentDate.toDate() | date:'dd/MM/yyyy HH:mm') : '' }}
-          }
-        </td>
-        <td class="px-3 py-2 bg-gray-100">
-          {{appointment.patientName}}
-        </td>
-        <td class="px-3 py-2 ">
-          {{appointment.specialistName}}
-        </td>
-        <td class="px-3 py-2bg-gray-100">
-          @if (appointment.speciality == null) {
-          Sin Asignar
-          }@else {
-          {{appointment.speciality}}
-          }
-        </td>
-        <td class="px-3 py-2 font-bold" [ngClass]="{
-          'text-green-700': appointment.appointmentStatus === 'Aceptado',
-          'text-amber-700': appointment.appointmentStatus === 'Rechazado',
-          'text-red-700': appointment.appointmentStatus === 'Cancelado',
-          'text-blue-700': appointment.appointmentStatus === 'Finalizado'
-        }">
-          {{appointment.appointmentStatus}}
-        </td>
-        <td class="px-3 py-2 flex flex-col ali bg-gray-100">
-          <button type="button" [disabled]="!appointment.isCancelable" (click)="cancelAppointment(appointment)"
-            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-2 py-2 text-center me-4 mb-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400">Cancelar
-            turno</button>
-        </td>
-        <td class="px-3 py-2 ">
-          @if(appointment.appointmentStatus == 'Realizado') {
-          <button type="button"
-            class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Ver
-            reseña</button>
-          }@else {
-          Aún no disponible
-          }
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6"
+>
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full shadow-lg mb-4"
+      >
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Todos los Turnos</h1>
+      <p class="text-lg text-gray-600">
+        Visualice y gestione los turnos de todos los pacientes
+      </p>
+    </div>
+
+    <!-- Lista de turnos estilo cards -->
+    <div
+      class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+    >
+      <div
+        class="max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+      >
+        <table class="w-full text-sm text-left text-gray-700">
+          <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+            <tr>
+              <th class="px-3 py-2">Fecha de la solicitud</th>
+              <th class="px-3 py-2 bg-gray-100">Mensaje</th>
+              <th class="px-3 py-2">Fecha del turno</th>
+              <th class="px-3 py-2 bg-gray-100">Nombre del Paciente</th>
+              <th class="px-3 py-2">Nombre del Especialista</th>
+              <th class="px-3 py-2 bg-gray-100">Especialidad</th>
+              <th class="px-3 py-2">Turno</th>
+              <th class="px-3 py-2 bg-gray-100">Opciones del turno</th>
+              <th class="px-3 py-2">Ver reseña</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (appointment of filteredAppointments; track $index) {
+            <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
+              <td class="px-3 py-2">
+                {{
+                  appointment.requestedDate
+                    ? (appointment.requestedDate.toDate() | date : "dd/MM/yyyy")
+                    : ""
+                }}
+              </td>
+              <td class="px-3 py-2 bg-gray-100">{{ appointment.message }}</td>
+              <td class="px-3 py-2">
+                @if (appointment.appointmentDate == null) { Sin Asignar } @else
+                {
+                {{
+                  appointment.appointmentDate
+                    ? (appointment.appointmentDate.toDate()
+                      | date : "dd/MM/yyyy HH:mm")
+                    : ""
+                }}
+                }
+              </td>
+              <td class="px-3 py-2 bg-gray-100">
+                {{ appointment.patientName }}
+              </td>
+              <td class="px-3 py-2">{{ appointment.specialistName }}</td>
+              <td class="px-3 py-2 bg-gray-100">
+                @if (appointment.speciality == null) { Sin Asignar } @else {
+                {{ appointment.speciality }}
+                }
+              </td>
+              <td
+                class="px-3 py-2 font-bold"
+                [ngClass]="{
+                  'text-green-700':
+                    appointment.appointmentStatus === 'Aceptado',
+                  'text-amber-700':
+                    appointment.appointmentStatus === 'Rechazado',
+                  'text-red-700': appointment.appointmentStatus === 'Cancelado',
+                  'text-blue-700':
+                    appointment.appointmentStatus === 'Finalizado'
+                }"
+              >
+                {{ appointment.appointmentStatus }}
+              </td>
+              <td class="px-3 py-2 flex flex-col gap-2 bg-gray-100">
+                <button
+                  type="button"
+                  [disabled]="!appointment.isCancelable"
+                  (click)="cancelAppointment(appointment)"
+                  class="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-full text-sm px-3 py-2 transition disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+                >
+                  Cancelar turno
+                </button>
+              </td>
+              <td class="px-3 py-2">
+                @if(appointment.appointmentStatus == 'Realizado') {
+                <button
+                  type="button"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full text-sm px-3 py-2 transition"
+                >
+                  Ver reseña
+                </button>
+                } @else { Aún no disponible }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
