@@ -118,6 +118,9 @@ export class HealthRecordService {
                           height: data.height,
                           temperature: data.temperature,
                           weight: data.weight,
+                          painLevel: data.painLevel,
+                          glucoseLevel: data.glucoseLevel,
+                          smoker: data.smoker,
                         };
                       })
                     )

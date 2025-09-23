@@ -8,13 +8,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { PdfLogsService } from '../../../services/pdfLogs/pdf-logs.service';
 
 @Component({
   selector: 'app-logged-users',
   standalone: true,
   imports: [CommonModule, NgxEchartsModule],
   templateUrl: './logged-users.component.html',
-  styleUrl: './logged-users.component.css',
+  styleUrls: ['./logged-users.component.css'],
 })
 export class LoggedUsersComponent {
   private destroy$ = new Subject<void>();
@@ -37,7 +38,10 @@ export class LoggedUsersComponent {
     administradores: 0,
   };
 
-  constructor(private logsService: LogsService) {}
+  constructor(
+    private logsService: LogsService,
+    private pdfExportService: PdfLogsService
+  ) {}
 
   ngOnInit(): void {
     console.log('🔐 Componente Logged Users inicializado');
@@ -387,5 +391,97 @@ export class LoggedUsersComponent {
 
   trackByLogId(index: number, log: LoginLogDisplay): string {
     return log.id;
+  }
+
+  /**
+   * Exporta todo el componente a PDF
+   */
+  async exportToPDF(): Promise<void> {
+    try {
+      console.log('📄 Iniciando exportación completa a PDF...');
+
+      const title = 'Log de Ingresos al Sistema';
+      const subtitle = `Reporte completo de ingresos de usuarios - Total: ${this.totalLogins} logins`;
+
+      await this.pdfExportService.exportElementToPdf(
+        'logged-users-container', // ID del contenedor principal
+        'log-ingresos',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF completo exportado');
+    } catch (error) {
+      console.error('❌ Error exportando PDF completo:', error);
+      alert('Error al generar el PDF. Inténtalo de nuevo.');
+    }
+  }
+
+  /**
+   * Exporta solo los gráficos a PDF
+   */
+  async exportChartsToPDF(): Promise<void> {
+    try {
+      console.log('📊 Exportando solo gráficos a PDF...');
+
+      const chartIds = ['chart-timeline', 'chart-daily', 'chart-usertype'];
+
+      const title = 'Gráficos - Log de Ingresos';
+      const subtitle = `Visualizaciones de ${this.totalLogins} logins registrados`;
+
+      await this.pdfExportService.exportChartsOnlyToPdf(
+        chartIds,
+        'graficos-login',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de gráficos exportado');
+    } catch (error) {
+      console.error('❌ Error exportando gráficos PDF:', error);
+      alert('Error al generar el PDF de gráficos. Inténtalo de nuevo.');
+    }
+  }
+
+  exportTableToPDF(): void {
+    try {
+      console.log('📋 Exportando tabla a PDF...');
+
+      const columns = [
+        {
+          key: 'usuario' as keyof LoginLogDisplay,
+          title: 'Usuario',
+          width: 50,
+        },
+        {
+          key: 'tipoUsuario' as keyof LoginLogDisplay,
+          title: 'Tipo',
+          width: 30,
+        },
+        { key: 'fecha' as keyof LoginLogDisplay, title: 'Fecha', width: 30 },
+        { key: 'hora' as keyof LoginLogDisplay, title: 'Hora', width: 25 },
+        {
+          key: 'userId' as keyof LoginLogDisplay,
+          title: 'ID Usuario',
+          width: 55,
+        },
+      ];
+
+      const title = 'Tabla de Logins';
+      const subtitle = `Detalle de todos los ingresos registrados (${this.logs.length} registros)`;
+
+      this.pdfExportService.generateTablePdf(
+        this.logs,
+        columns,
+        'tabla-logins',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de tabla exportado');
+    } catch (error) {
+      console.error('❌ Error exportando tabla PDF:', error);
+      alert('Error al generar el PDF de tabla. Inténtalo de nuevo.');
+    }
   }
 }

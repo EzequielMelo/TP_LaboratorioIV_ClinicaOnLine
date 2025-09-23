@@ -1,1 +1,388 @@
-<p>appointments-completed-by-time works!</p>
+<div
+  class="appointments-completed-container"
+  id="appointments-completed-container"
+>
+  <!-- Header del componente -->
+  <div class="component-header">
+    <div class="header-info">
+      <h3>✅ Turnos Completados por Médico</h3>
+      <p class="description">
+        Cantidad de turnos finalizados por médico en un período de tiempo
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+
+      <!-- Dropdown para exportaciones -->
+      <div class="export-dropdown">
+        <button
+          class="btn btn-export-main"
+          [disabled]="loading || doctorCompletedCounts.length === 0"
+        >
+          📊 Exportar
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div class="export-menu">
+          <button
+            class="export-option"
+            (click)="exportToCSV()"
+            [disabled]="loading || doctorCompletedCounts.length === 0"
+          >
+            📄 Exportar CSV
+          </button>
+          <button
+            class="export-option"
+            (click)="exportToPDF()"
+            [disabled]="loading || doctorCompletedCounts.length === 0"
+          >
+            📑 PDF Completo
+          </button>
+          <button
+            class="export-option"
+            (click)="exportChartsToPDF()"
+            [disabled]="loading || doctorCompletedCounts.length === 0"
+          >
+            📊 PDF Gráficos
+          </button>
+          <button
+            class="export-option"
+            (click)="exportTableToPDF()"
+            [disabled]="loading || doctorCompletedCounts.length === 0"
+          >
+            📋 PDF Tabla
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selector de período de tiempo -->
+  <div class="period-selector" *ngIf="!loading && !error">
+    <div class="period-header">
+      <h4>📅 Seleccionar Período</h4>
+      <span class="period-info">{{ startDate }} - {{ endDate }}</span>
+    </div>
+
+    <div class="period-buttons">
+      <button
+        *ngFor="let period of availablePeriods"
+        class="period-btn"
+        [class.active]="selectedPeriod.value === period.value"
+        (click)="onPeriodChange(period)"
+        [disabled]="loading"
+      >
+        {{ period.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas generales -->
+  <div class="stats-section" *ngIf="!loading && !error">
+    <div class="stats-cards">
+      <div class="stat-card primary">
+        <div class="stat-icon">👨‍⚕️</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalDoctors }}</div>
+          <div class="stat-label">Médicos Activos</div>
+          <div class="stat-sublabel">Con turnos completados</div>
+        </div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalCompletedAppointments }}</div>
+          <div class="stat-label">Turnos Completados</div>
+          <div class="stat-sublabel">{{ periodLabel }}</div>
+        </div>
+      </div>
+
+      <div class="stat-card info">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ averagePerDoctor }}</div>
+          <div class="stat-label">Promedio por Médico</div>
+          <div class="stat-sublabel">Turnos completados</div>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ topDoctor?.cantidad || 0 }}</div>
+          <div class="stat-label">Médico Top</div>
+          <div class="stat-sublabel" *ngIf="topDoctor">
+            Dr. {{ topDoctor.doctorName }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadística de eficiencia general -->
+    <div class="efficiency-summary">
+      <div class="efficiency-card">
+        <div class="efficiency-info">
+          <span class="efficiency-icon">📈</span>
+          <div class="efficiency-content">
+            <div class="efficiency-number">{{ overallEfficiency }}%</div>
+            <div class="efficiency-label">Eficiencia Promedio</div>
+            <div class="efficiency-description">
+              Porcentaje de turnos completados vs solicitados
+            </div>
+          </div>
+        </div>
+        <div class="efficiency-bar">
+          <div
+            class="efficiency-fill"
+            [style.width.%]="overallEfficiency"
+            [class]="getEfficiencyClass(overallEfficiency)"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando turnos completados...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Contenido principal - Gráficos -->
+  <div
+    *ngIf="!loading && !error && doctorCompletedCounts.length > 0"
+    class="charts-section"
+  >
+    <!-- Gráfico de barras (Turnos completados) -->
+    <div class="chart-card full">
+      <div class="chart-wrapper">
+        <div
+          echarts
+          [options]="barChartOption"
+          [loading]="loading"
+          class="chart-bar"
+          id="chart-bar"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Gráficos en fila -->
+    <div class="charts-row">
+      <!-- Gráfico de torta -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="pieChartOption"
+            [loading]="loading"
+            class="chart-pie"
+            id="chart-pie"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Gráfico de eficiencia -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="efficiencyChartOption"
+            [loading]="loading"
+            class="chart-efficiency"
+            id="chart-efficiency"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla detallada -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>✅ Detalle de Turnos Completados</h4>
+        <div class="table-info">
+          <span class="table-count"
+            >{{ doctorCompletedCounts.length }} médicos</span
+          >
+          <span class="table-period">{{ periodLabel }}</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="completed-table">
+          <thead>
+            <tr>
+              <th>👨‍⚕️ Médico</th>
+              <th>🏥 Especialidad</th>
+              <th>✅ Completados</th>
+              <th>📈 Porcentaje</th>
+              <th>⚡ Eficiencia</th>
+              <th>🏆 Clasificación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let doctor of doctorCompletedCounts;
+                let i = index;
+                trackBy: trackByDoctor
+              "
+              class="completed-row"
+            >
+              <td class="doctor-name">
+                <div class="doctor-info">
+                  <div class="doctor-color"></div>
+                  <div class="doctor-details">
+                    <span class="name">Dr. {{ doctor.doctorName }}</span>
+                    <span class="position">#{{ i + 1 }} en completados</span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="doctor-specialty">
+                <span class="specialty-badge">{{
+                  doctor.especialidad || "No especificada"
+                }}</span>
+              </td>
+
+              <td class="completed-count">
+                <span
+                  class="count-number"
+                  [class]="getCountClass(doctor.cantidad)"
+                >
+                  {{ doctor.cantidad }}
+                </span>
+                <span class="count-label">completados</span>
+              </td>
+
+              <td class="completed-percentage">
+                <div class="percentage-bar">
+                  <div
+                    class="percentage-fill"
+                    [style.width.%]="doctor.porcentaje"
+                  ></div>
+                  <span class="percentage-text">{{ doctor.porcentaje }}%</span>
+                </div>
+              </td>
+
+              <td class="doctor-efficiency">
+                <div class="efficiency-display">
+                  <span
+                    class="efficiency-value"
+                    [class]="getEfficiencyClass(doctor.eficiencia || 0)"
+                  >
+                    {{ doctor.eficiencia || 0 }}%
+                  </span>
+                  <div class="efficiency-mini-bar">
+                    <div
+                      class="efficiency-mini-fill"
+                      [style.width.%]="doctor.eficiencia || 0"
+                      [class]="getEfficiencyClass(doctor.eficiencia || 0)"
+                    ></div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="doctor-classification">
+                <span
+                  class="classification-badge"
+                  [class]="getEfficiencyClass(doctor.eficiencia || 0)"
+                >
+                  <span
+                    *ngIf="
+                      getEfficiencyClass(doctor.eficiencia || 0) === 'excellent'
+                    "
+                    >🌟 Excelente</span
+                  >
+                  <span
+                    *ngIf="
+                      getEfficiencyClass(doctor.eficiencia || 0) === 'good'
+                    "
+                    >👍 Buena</span
+                  >
+                  <span
+                    *ngIf="
+                      getEfficiencyClass(doctor.eficiencia || 0) === 'regular'
+                    "
+                    >📊 Regular</span
+                  >
+                  <span
+                    *ngIf="
+                      getEfficiencyClass(doctor.eficiencia || 0) === 'poor'
+                    "
+                    >📉 Necesita mejora</span
+                  >
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Leyenda de eficiencia -->
+      <div class="efficiency-legend">
+        <div class="legend-title">
+          <h5>📊 Clasificación de Eficiencia</h5>
+        </div>
+        <div class="legend-items">
+          <div class="legend-item">
+            <span class="legend-color excellent"></span>
+            <span class="legend-text">Excelente (≥ 80%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color good"></span>
+            <span class="legend-text">Buena (60-79%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color regular"></span>
+            <span class="legend-text">Regular (40-59%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color poor"></span>
+            <span class="legend-text">Necesita mejora (< 40%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay datos -->
+  <div
+    *ngIf="!loading && !error && doctorCompletedCounts.length === 0"
+    class="no-data"
+  >
+    <div class="no-data-icon">✅</div>
+    <h4>No hay turnos completados</h4>
+    <p>
+      No se encontraron turnos completados para médicos en el período
+      seleccionado.
+    </p>
+    <div class="no-data-info">
+      <p>
+        <strong>Nota:</strong> Solo se muestran turnos con estado "Completado"
+      </p>
+    </div>
+    <div class="no-data-actions">
+      <button class="btn btn-refresh" (click)="refresh()">
+        🔄 Intentar de nuevo
+      </button>
+      <button
+        class="btn btn-period"
+        (click)="onPeriodChange(availablePeriods[4])"
+      >
+        📅 Ver último año
+      </button>
+    </div>
+  </div>
+</div>

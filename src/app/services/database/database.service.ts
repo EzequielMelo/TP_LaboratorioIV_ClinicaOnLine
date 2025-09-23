@@ -60,7 +60,8 @@ export class DatabaseService {
               data['healthCareSystem'],
               data['profilePicture'],
               data['coverPicture'],
-              userType
+              userType,
+              data['settings']
             );
           } else if (userType === 'specialist') {
             return new Specialist(
@@ -75,7 +76,8 @@ export class DatabaseService {
               data['accountConfirmed'],
               data['workDays'],
               data['workHours'],
-              userType
+              userType,
+              data['settings']
             );
           } else if (userType === 'admin') {
             return new Admin(
@@ -221,5 +223,19 @@ export class DatabaseService {
     return this.firestore
       .collection<AppUser>('users')
       .valueChanges({ idField: 'id' });
+  }
+
+  registerVisit(): Promise<void> {
+    const visita = {
+      timestamp: new Date(),
+    };
+
+    return this.firestore
+      .collection('site_visits')
+      .add(visita)
+      .then(() => {})
+      .catch((err) => {
+        console.error('Error registrando visita:', err);
+      });
   }
 }

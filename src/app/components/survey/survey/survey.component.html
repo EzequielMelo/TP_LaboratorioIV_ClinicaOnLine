@@ -1,0 +1,259 @@
+<!-- Overlay del modal -->
+<div
+  *ngIf="isVisible"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  (click)="closeModal()"
+>
+  <!-- Contenido del modal -->
+  <div
+    class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header -->
+    <div class="bg-blue-600 text-white px-6 py-4 rounded-t-lg">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold">Encuesta de Satisfacción</h2>
+        <button
+          (click)="closeModal()"
+          class="text-white hover:text-gray-200 text-2xl font-bold"
+        >
+          &times;
+        </button>
+      </div>
+      <p class="text-blue-100 text-sm mt-2">
+        Tu opinión es muy importante para nosotros
+      </p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="surveyForm" (ngSubmit)="onSubmit()" class="p-6">
+      <!-- 1. Calificación con estrellas -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">
+          1. ¿Cómo calificarías tu experiencia general? *
+        </label>
+        <div class="flex space-x-2">
+          <button
+            *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+            type="button"
+            (click)="setRating(star)"
+            class="text-3xl transition-colors duration-200 focus:outline-none"
+            [class.text-yellow-400]="star <= rating"
+            [class.text-gray-300]="star > rating"
+            [class.hover:text-yellow-400]="star > rating"
+          >
+            ★
+          </button>
+        </div>
+        <div class="text-sm text-gray-600 mt-1">
+          <span *ngIf="rating === 1">Muy malo</span>
+          <span *ngIf="rating === 2">Malo</span>
+          <span *ngIf="rating === 3">Regular</span>
+          <span *ngIf="rating === 4">Bueno</span>
+          <span *ngIf="rating === 5">Excelente</span>
+        </div>
+      </div>
+
+      <!-- 2. Control de rango -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">
+          2. ¿Qué tan probable es que recomiendes nuestros servicios? *
+        </label>
+        <div class="px-2">
+          <input
+            type="range"
+            min="0"
+            max="10"
+            formControlName="recommendationLevel"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+          />
+          <div class="flex justify-between text-xs text-gray-600 mt-1">
+            <span>0 - Nada probable</span>
+            <span class="font-medium">{{
+              surveyForm.get("recommendationLevel")?.value
+            }}</span>
+            <span>10 - Muy probable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Radio buttons -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">
+          3. ¿Cómo evaluarías la calidad del servicio recibido? *
+        </label>
+        <div class="space-y-2">
+          <div class="flex items-center">
+            <input
+              id="excellent"
+              type="radio"
+              value="excellent"
+              formControlName="serviceQuality"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            />
+            <label for="excellent" class="ml-2 text-gray-700">Excelente</label>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="good"
+              type="radio"
+              value="good"
+              formControlName="serviceQuality"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            />
+            <label for="good" class="ml-2 text-gray-700">Bueno</label>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="fair"
+              type="radio"
+              value="fair"
+              formControlName="serviceQuality"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            />
+            <label for="fair" class="ml-2 text-gray-700">Regular</label>
+          </div>
+          <div class="flex items-center">
+            <input
+              id="poor"
+              type="radio"
+              value="poor"
+              formControlName="serviceQuality"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+            />
+            <label for="poor" class="ml-2 text-gray-700">Deficiente</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Checkboxes -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">
+          4. ¿En qué aspectos crees que podríamos mejorar? (Selecciona todas las
+          opciones que apliquen)
+        </label>
+        <div class="space-y-2">
+          <div class="flex items-center">
+            <input
+              id="waiting-time"
+              type="checkbox"
+              (change)="onImprovementChange('waiting-time', $event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="waiting-time" class="ml-2 text-gray-700"
+              >Tiempo de espera</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="staff-attention"
+              type="checkbox"
+              (change)="onImprovementChange('staff-attention', $event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="staff-attention" class="ml-2 text-gray-700"
+              >Atención del personal</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="facilities"
+              type="checkbox"
+              (change)="onImprovementChange('facilities', $event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="facilities" class="ml-2 text-gray-700"
+              >Instalaciones</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="communication"
+              type="checkbox"
+              (change)="onImprovementChange('communication', $event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="communication" class="ml-2 text-gray-700"
+              >Comunicación</label
+            >
+          </div>
+          <div class="flex items-center">
+            <input
+              id="scheduling"
+              type="checkbox"
+              (change)="onImprovementChange('scheduling', $event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label for="scheduling" class="ml-2 text-gray-700"
+              >Sistema de citas</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Cuadro de texto -->
+      <div class="mb-6">
+        <label for="comments" class="block text-gray-700 font-medium mb-3">
+          5. Comentarios adicionales o sugerencias
+        </label>
+        <textarea
+          id="comments"
+          formControlName="additionalComments"
+          rows="4"
+          placeholder="Comparte cualquier comentario adicional que nos ayude a mejorar..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+        >
+        </textarea>
+      </div>
+
+      <!-- Mensajes de error -->
+      <div
+        *ngIf="errorMessage"
+        class="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <button
+          type="button"
+          (click)="closeModal()"
+          [disabled]="isSubmitting"
+          class="px-4 py-2 text-gray-600 bg-gray-200 rounded-lg hover:bg-gray-300 disabled:opacity-50 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="!isFormValid() || isSubmitting"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          <span *ngIf="isSubmitting">Enviando...</span>
+          <span *ngIf="!isSubmitting">Enviar Encuesta</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Estilos adicionales para el slider -->
+<style>
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: none;
+  }
+</style>

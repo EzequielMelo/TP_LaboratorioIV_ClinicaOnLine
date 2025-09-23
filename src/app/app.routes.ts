@@ -92,6 +92,19 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'specialist-configuration',
+    loadComponent: () =>
+      import('./pages/specialist-settings/specialist-settings.component').then(
+        (c) => c.SpecialistSettingsComponent
+      ),
+    canActivate: [
+      authGuard,
+      emailVerifiedGuard,
+      specialistGuard,
+      specialistAccountVerifiedGuard,
+    ],
+  },
+  {
     path: 'admin-dashboard',
     loadComponent: () =>
       import('./pages/admin-dashboard/admin-dashboard.component').then(
@@ -122,6 +135,14 @@ export const routes: Routes = [
         (c) => c.AdminChartsComponent
       ),
     canActivate: [authGuard, adminGuard],
+  },
+  {
+    path: 'user-configuration',
+    loadComponent: () =>
+      import('./pages/user-settings/user-settings.component').then(
+        (c) => c.UserSettingsComponent
+      ),
+    canActivate: [authGuard, emailVerifiedGuard, patientGuard],
   },
   {
     path: 'my-appointments',

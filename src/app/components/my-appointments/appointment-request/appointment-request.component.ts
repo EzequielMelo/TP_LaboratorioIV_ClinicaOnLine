@@ -15,11 +15,13 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { UserTypes } from '../../../models/user-types';
 import { AuthService } from '../../../services/auth/auth.service';
+import { CaptchaDirective } from '../../../directives/captcha.directive';
+import { Patient } from '../../../classes/patient.class';
 
 @Component({
   selector: 'app-appointment-request',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, CaptchaDirective],
   templateUrl: './appointment-request.component.html',
   styleUrl: './appointment-request.component.css',
 })
@@ -31,6 +33,9 @@ export class AppointmentRequestComponent implements OnInit {
   specialists: Specialist[] = [];
   selectedDaySlots: string[] = [];
   user: UserTypes | null = null;
+  captchaEnabled = true;
+  captchaOk = false;
+  captchaTouched = false;
 
   private formBuilder = inject(FormBuilder);
   private db = inject(DatabaseService);
@@ -41,6 +46,15 @@ export class AppointmentRequestComponent implements OnInit {
   constructor() {
     this.userSubscription = this.authService.user$.subscribe((user) => {
       this.user = user;
+      if (user instanceof Patient) {
+        this.captchaEnabled = user.settings?.useCaptcha ?? true;
+        if (!this.captchaEnabled) {
+          this.captchaOk = true; // pasa automáticamente la validación
+        }
+      } else {
+        this.captchaEnabled = true;
+        this.captchaOk = true;
+      }
     });
 
     this.newAppointmentForm = this.formBuilder.group({
@@ -160,55 +174,60 @@ export class AppointmentRequestComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.newAppointmentForm.valid) {
-      const formValues = this.newAppointmentForm.value;
-
-      // Obtener el día seleccionado
-      const selectedDay = this.schedule[formValues.selectedDay];
-
-      // Obtener la hora seleccionada (hora y minuto) y combinarlo con el día seleccionado
-      const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
-      const [hour, minute] = selectedSlot.split(':'); // Asumiendo que el formato es 'HH:mm'
-
-      // Crear la fecha completa
-      const appointmentDate = new Date(selectedDay.date + 'T00:00:00'); // Agrega tiempo explícito si solo tienes la fecha
-      appointmentDate.setHours(Number(hour));
-      appointmentDate.setMinutes(Number(minute));
-
-      // Crear el objeto de cita
-      const appointment: Partial<Appointment> = {
-        idPatient: this.user?.id, // ID del paciente autenticado
-        patientName: `${this.user?.name} ${this.user?.lastName}`,
-        idSpecialist: this.selectedSpecialist?.id,
-        message: 'Se solicita un nuevo turno',
-        speciality: formValues.specialty,
-        requestedDate: Timestamp.fromDate(new Date()), // Fecha de solicitud actual
-        appointmentDate: Timestamp.fromDate(appointmentDate), // La fecha y hora combinadas
-        appointmentStatus: 'Sin Asignar',
-        isCancelable: true,
-        specialistName: `${this.selectedSpecialist?.name} ${this.selectedSpecialist?.lastName}`,
-        idMedicalReport: null,
-        idReviewForPatient: null,
-        idReviewForSpecialist: null,
-      };
-
-      // Llamar al servicio para agregar el turno
-      this.appointment.addAppointment(appointment).subscribe({
-        next: () => {
-          alert('Turno creado exitosamente');
-          this.newAppointmentForm.reset(); // Limpiar el formulario
-        },
-        error: (err) => {
-          console.error('Error al crear el turno:', err);
-          alert('Hubo un error al intentar crear el turno.');
-        },
-      });
-    } else {
+    if (!this.newAppointmentForm.valid) {
       alert('Por favor completa todos los campos requeridos.');
+      return;
     }
-  }
 
+    if (!this.captchaOk) {
+      alert('Por favor resuelve el captcha antes de continuar.');
+      return;
+    }
+
+    const formValues = this.newAppointmentForm.value;
+    const selectedDay = this.schedule[formValues.selectedDay];
+    const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
+    const [hour, minute] = selectedSlot.split(':');
+
+    const appointmentDate = new Date(selectedDay.date + 'T00:00:00');
+    appointmentDate.setHours(Number(hour));
+    appointmentDate.setMinutes(Number(minute));
+
+    const appointment: Partial<Appointment> = {
+      idPatient: this.user?.id,
+      patientName: `${this.user?.name} ${this.user?.lastName}`,
+      idSpecialist: this.selectedSpecialist?.id,
+      message: 'Se solicita un nuevo turno',
+      speciality: formValues.specialty,
+      requestedDate: Timestamp.fromDate(new Date()),
+      appointmentDate: Timestamp.fromDate(appointmentDate),
+      appointmentStatus: 'Sin Asignar',
+      isCancelable: true,
+      specialistName: `${this.selectedSpecialist?.name} ${this.selectedSpecialist?.lastName}`,
+      idMedicalReport: null,
+      idReviewForPatient: null,
+      idReviewForSpecialist: null,
+    };
+
+    this.appointment.addAppointment(appointment).subscribe({
+      next: () => {
+        alert('Turno creado exitosamente');
+        this.newAppointmentForm.reset();
+        this.captchaOk = false;
+        this.captchaTouched = false;
+      },
+      error: (err) => {
+        console.error('Error al crear el turno:', err);
+        alert('Hubo un error al intentar crear el turno.');
+      },
+    });
+  }
   trackByIndex(index: number, item: any): number {
     return index;
+  }
+
+  onCaptchaResult(success: boolean) {
+    this.captchaTouched = true;
+    this.captchaOk = success;
   }
 }

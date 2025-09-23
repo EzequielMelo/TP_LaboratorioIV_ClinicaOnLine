@@ -1,6 +1,11 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormArray,
+} from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
 
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
@@ -8,62 +13,135 @@ import { HealthRecordService } from '../../../services/health-record/health-reco
 import { ReviewService } from '../../../services/review/review.service';
 
 import { HealthRecord } from '../../../classes/health-record';
-import { ReviewForPatient } from '../../../classes/reviewForPatient'; // asumo que existe
+import { ReviewForPatient } from '../../../classes/reviewForPatient';
+import { UserTypes } from '../../../models/user-types';
+import { AuthService } from '../../../services/auth/auth.service';
+import { Subscription } from 'rxjs';
+import { CaptchaDirective } from '../../../directives/captcha.directive';
+import { Specialist } from '../../../classes/specialist.class';
 
 @Component({
   selector: 'app-health-record-create',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, ReactiveFormsModule, CaptchaDirective],
   templateUrl: './health-record-create.component.html',
   styleUrl: './health-record-create.component.css',
 })
 export class HealthRecordCreateComponent {
-  height = '';
-  weight = '';
-  temperature = '';
-  bloodPressure = '';
-  review = '';
-
-  dynamicData: { key: string; value: string }[] = [];
-  maxDynamicFields = 3;
-
   @Input() appointmentId: string | null = null;
   @Input() AppointmentIdPatient: string | null = null;
   @Input() AppointmentIdSpecialist: string | null = null;
   @Output() eventCloseModal = new EventEmitter<{ event: boolean }>();
 
+  private fb = inject(FormBuilder);
   private appointmentService = inject(AppointmentsService);
   private healthRecordService = inject(HealthRecordService);
   private reviewService = inject(ReviewService);
+  private userSubscription: Subscription;
+  protected authService = inject(AuthService);
+  user: UserTypes | null = null;
+
+  captchaEnabled = true;
+  captchaOk = false;
+  captchaTouched = false;
+
+  constructor() {
+    this.userSubscription = this.authService.user$.subscribe((user) => {
+      this.user = user;
+      if (user instanceof Specialist) {
+        this.captchaEnabled = user.settings?.useCaptcha ?? true;
+        if (!this.captchaEnabled) {
+          this.captchaOk = true; // pasa automáticamente la validación
+        }
+      } else {
+        this.captchaEnabled = true;
+        this.captchaOk = true;
+      }
+    });
+  }
+
+  form = this.fb.group({
+    height: [
+      '',
+      [Validators.required, Validators.min(30), Validators.max(250)],
+    ],
+    weight: ['', [Validators.required, Validators.min(1), Validators.max(500)]],
+    temperature: [
+      '',
+      [Validators.required, Validators.min(30), Validators.max(45)],
+    ],
+    bloodPressure: [
+      '',
+      [Validators.required, Validators.pattern(/^\d{2,3}\/\d{2,3}$/)],
+    ], // ej 120/80
+    painLevel: [
+      0,
+      [Validators.required, Validators.min(0), Validators.max(100)],
+    ],
+    glucoseLevel: [
+      '',
+      [Validators.required, Validators.min(40), Validators.max(400)],
+    ],
+    smoker: [false, Validators.required],
+    dynamicData: this.fb.array([]),
+    review: ['', [Validators.required, Validators.minLength(5)]],
+  });
+
+  maxDynamicFields = 3;
+
+  get dynamicData(): FormArray {
+    return this.form.get('dynamicData') as FormArray;
+  }
 
   addDynamicField() {
     if (this.dynamicData.length < this.maxDynamicFields) {
-      this.dynamicData.push({ key: '', value: '' });
+      this.dynamicData.push(
+        this.fb.group({
+          key: ['', Validators.required],
+          value: ['', Validators.required],
+        })
+      );
     }
   }
 
+  removeDynamicField(index: number) {
+    this.dynamicData.removeAt(index);
+  }
+
   submitRecord() {
+    if (!this.form.valid) {
+      this.form.markAllAsTouched();
+      console.warn('Formulario inválido');
+      return;
+    }
     if (!this.appointmentId) {
       console.error('No se proporcionó appointmentId');
       return;
     }
 
-    // Convertir el array de campos dinámicos en un objeto { clave: valor }
+    const formValue = this.form.value;
+
+    // Pasar FormArray a objeto clave: valor
     const dynamicDataObject: { [key: string]: string | number } = {};
-    this.dynamicData.forEach((field) => {
+    (formValue.dynamicData || []).forEach((field: any) => {
       if (field.key.trim()) {
         dynamicDataObject[field.key] = field.value;
       }
     });
 
     const record: Partial<HealthRecord> = {
-      height: Number(this.height),
-      weight: Number(this.weight),
-      temperature: Number(this.temperature),
-      bloodPressure: Number(this.bloodPressure),
+      height: Number(formValue.height),
+      weight: Number(formValue.weight),
+      temperature: Number(formValue.temperature),
+      bloodPressure: formValue.bloodPressure
+        ? String(formValue.bloodPressure)
+        : undefined,
+      painLevel: formValue.painLevel != null ? formValue.painLevel : undefined,
+      glucoseLevel: Number(formValue.glucoseLevel),
+      smoker: formValue.smoker ?? false,
       dynamicData: dynamicDataObject,
-      idPatient: this.AppointmentIdPatient || '', // Asegurarse de que no sea null
-      idSpecialist: this.AppointmentIdSpecialist || '', // Esto también
+      idPatient: this.AppointmentIdPatient || '',
+      idSpecialist: this.AppointmentIdSpecialist || '',
     };
 
     let healthRecordIdGenerado = '';
@@ -75,7 +153,7 @@ export class HealthRecordCreateComponent {
           healthRecordIdGenerado = healthRecordId;
 
           const reviewData: Partial<ReviewForPatient> = {
-            review: this.review,
+            review: formValue.review ?? '',
             healthRecordId: healthRecordId,
           };
 
@@ -103,5 +181,10 @@ export class HealthRecordCreateComponent {
 
   closeModal() {
     this.eventCloseModal.emit({ event: false });
+  }
+
+  onCaptchaResult(success: boolean) {
+    this.captchaTouched = true;
+    this.captchaOk = success;
   }
 }

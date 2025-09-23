@@ -9,6 +9,7 @@ import {
 import { EChartsOption } from 'echarts';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { PdfLogsService } from '../../../services/pdfLogs/pdf-logs.service';
 
 @Component({
   selector: 'app-appointments-per-day',
@@ -41,7 +42,10 @@ export class AppointmentsPerDayComponent {
 
   Math = Math;
 
-  constructor(private appointmentsService: LogsService) {
+  constructor(
+    private appointmentsService: LogsService,
+    private pdfExportService: PdfLogsService
+  ) {
     console.log('🏗️ Constructor AppointmentsPerSpecialtyComponent');
   }
 
@@ -437,5 +441,115 @@ export class AppointmentsPerDayComponent {
    */
   trackByDate(index: number, day: DailyAppointmentCount): string {
     return day.fecha;
+  }
+
+  /**
+   * Exporta todo el componente a PDF
+   */
+  async exportToPDF(): Promise<void> {
+    try {
+      console.log('📄 Iniciando exportación completa a PDF...');
+
+      const title = 'Turnos por Día';
+      const subtitle = `Reporte completo - ${this.totalAppointments} turnos en ${this.totalDays} días • Promedio: ${this.averagePerDay} turnos/día`;
+
+      await this.pdfExportService.exportElementToPdf(
+        'appointments-day-container',
+        'turnos-por-dia',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF completo exportado');
+    } catch (error) {
+      console.error('❌ Error exportando PDF completo:', error);
+      alert('Error al generar el PDF. Inténtalo de nuevo.');
+    }
+  }
+
+  /**
+   * Exporta solo los gráficos a PDF
+   */
+  async exportChartsToPDF(): Promise<void> {
+    try {
+      console.log('📊 Exportando solo gráficos a PDF...');
+
+      const chartIds = ['chart-line', 'chart-bar'];
+
+      const title = 'Gráficos - Turnos por Día';
+      const subtitle = `Análisis de ${this.totalAppointments} turnos distribuidos en ${this.totalDays} días`;
+
+      await this.pdfExportService.exportChartsOnlyToPdf(
+        chartIds,
+        'graficos-diarios',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de gráficos exportado');
+    } catch (error) {
+      console.error('❌ Error exportando gráficos PDF:', error);
+      alert('Error al generar el PDF de gráficos. Inténtalo de nuevo.');
+    }
+  }
+
+  /**
+   * Exporta tabla de datos a PDF
+   */
+  exportTableToPDF(): void {
+    try {
+      console.log('Exportando tabla a PDF...');
+
+      const tableData = this.dailyCounts.map((day) => ({
+        fecha: this.formatDate(day.fecha),
+        diaSemana: day.diaSemana,
+        cantidad: day.cantidad,
+        tipoDia: day.esFinDeSemana ? 'Fin de semana' : 'Laborable',
+      }));
+
+      const columns = [
+        {
+          key: 'fecha' as keyof (typeof tableData)[0],
+          title: 'Fecha',
+          width: 30,
+        },
+        {
+          key: 'diaSemana' as keyof (typeof tableData)[0],
+          title: 'Día',
+          width: 30,
+        },
+        {
+          key: 'cantidad' as keyof (typeof tableData)[0],
+          title: 'Turnos',
+          width: 25,
+        },
+        {
+          key: 'tipoDia' as keyof (typeof tableData)[0],
+          title: 'Tipo',
+          width: 35,
+        },
+        {
+          key: 'comparacion' as keyof (typeof tableData)[0],
+          title: 'vs Promedio',
+          width: 30,
+        },
+      ];
+
+      const title = '📋 Tabla de Turnos Diarios';
+      const subtitle = `Detalle día a día (${this.dailyCounts.length} días registrados)`;
+
+      this.pdfExportService.generateTablePdf(
+        tableData,
+        columns,
+        'tabla-diaria',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de tabla exportado');
+    } catch (error) {
+      console.error('❌ Error exportando tabla PDF:', error);
+      alert('Error al generar el PDF de tabla. Inténtalo de nuevo.');
+    }
   }
 }

@@ -163,6 +163,22 @@ export class PdfService {
                         'Temperatura:',
                         `${record.healthRecord.temperature || 'N/A'}°C`,
                       ],
+                      [
+                        'Glucosa:',
+                        `${record.healthRecord.glucoseLevel || 'N/A'} mg/dL`,
+                      ],
+                      [
+                        'El paciente fuma?:',
+                        record.healthRecord.smoker === true
+                          ? 'Sí'
+                          : record.healthRecord.smoker === false
+                          ? 'No'
+                          : 'N/A',
+                      ],
+                      [
+                        'Nivel de dolor:',
+                        `${record.healthRecord.painLevel || 'N/A'} / 100`,
+                      ],
                     ],
                   },
                   layout: {

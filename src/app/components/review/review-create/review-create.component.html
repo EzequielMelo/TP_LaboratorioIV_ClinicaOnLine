@@ -1,3 +1,4 @@
+<!--Modal donde creo la review-->
 <div
   class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
 >
@@ -11,16 +12,42 @@
       <textarea
         id="review"
         [(ngModel)]="reviewText"
-        placeholder="Escribe la reseña sobre la atencion del especialista..."
+        placeholder="Escribe la reseña sobre la atención del especialista..."
         class="w-full border border-gray-300 rounded p-3 text-gray-800 resize-none"
         rows="6"
       ></textarea>
     </div>
 
+    <!-- Captcha: se renderiza *solo* si captchaEnabled es true -->
+    <div *ngIf="captchaEnabled" class="mb-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2"
+        >Verificación Captcha</label
+      >
+
+      <input
+        id="captcha"
+        type="text"
+        placeholder="Ingrese el código"
+        appCaptcha
+        (captchaResolved)="onCaptchaResult($event)"
+        class="w-full pl-3 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
+      />
+
+      <p *ngIf="!captchaOk && captchaTouched" class="text-sm text-red-600 mt-1">
+        El captcha no es correcto
+      </p>
+    </div>
+
+    <!-- Si el captcha está desactivado por configuración, podés mostrar un pequeño aviso opcional -->
+    <p *ngIf="!captchaEnabled" class="text-sm text-gray-500 mb-4">
+      Captcha deshabilitado en tu configuración — no es necesario verificar.
+    </p>
+
     <div class="flex justify-center gap-4">
       <button
         (click)="saveReview()"
-        class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        [disabled]="!captchaOk"
+        class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Guardar
       </button>

@@ -47,37 +47,37 @@ export class AdminChartsComponent {
   opcionesGraficos: OpcionGrafico[] = [
     {
       id: TipoGrafico.LOGINS,
-      titulo: 'Resumen General',
-      descripcion: 'Vista general de todas las estadísticas',
-      icono: '📊',
+      titulo: 'Ingresos al Sistema',
+      descripcion: 'Usuario, día y horario de ingreso al sistema',
+      icono: '🔐',
       activo: true,
     },
     {
       id: TipoGrafico.TURNOS_POR_ESPECIALIDAD,
-      titulo: 'Logins por Tipo',
-      descripcion: 'Pacientes vs Especialistas vs Administradores',
-      icono: '👥',
+      titulo: 'Turnos Solicitados por Medico',
+      descripcion: 'Turnos solicitados por médico en un período de tiempo',
+      icono: '👨‍⚕️',
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_POR_DIA,
-      titulo: 'Actividad Diaria',
-      descripcion: 'Logins por día en los últimos 30 días',
-      icono: '📅',
+      titulo: 'Turnos Completados por Médico',
+      descripcion: 'Turnos finalizados por médico en un período de tiempo',
+      icono: '✅',
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_SOLICITADOS,
-      titulo: 'Actividad Semanal',
-      descripcion: 'Patrones de uso por día de la semana',
-      icono: '📈',
+      titulo: 'Turnos por Día',
+      descripcion: 'Distribución diaria de turnos programados',
+      icono: '📅',
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_FINALIZADOS,
-      titulo: 'Usuarios Más Activos',
-      descripcion: 'Ranking de usuarios por frecuencia de login',
-      icono: '🏆',
+      titulo: 'Turnos por Especialidad',
+      descripcion: 'Cantidad de turnos agrupados por especialidad médica',
+      icono: '🏥',
       activo: false,
     },
   ];
@@ -160,17 +160,6 @@ export class AdminChartsComponent {
     return info
       ? info.descripcion
       : 'Panel de control administrativo de la clínica';
-  }
-
-  /**
-   * Exporta los datos actuales
-   */
-  exportarDatos(): void {
-    console.log('📥 Exportando datos del gráfico:', this.graficoActual);
-
-    // Aquí implementarías la lógica de exportación
-    // Por ahora, solo mostramos un mensaje
-    alert(`📊 Exportando datos de: ${this.getTituloGraficoActual()}`);
   }
 
   /**

@@ -1,1 +1,315 @@
-<p>appointments-requested-by-time works!</p>
+<div class="appointments-time-container" id="appointments-time-container">
+  <div class="component-header">
+    <div class="header-info">
+      <h3>👨‍⚕️ Turnos Solicitados por Médico</h3>
+      <p class="description">
+        Cantidad de turnos solicitados por médico en un período de tiempo
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+
+      <!-- Dropdown para exportaciones -->
+      <div class="export-dropdown">
+        <button
+          class="btn btn-export-main"
+          [disabled]="loading || doctorCounts.length === 0"
+        >
+          📊 Exportar
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div class="export-menu">
+          <button
+            class="export-option"
+            (click)="exportToCSV()"
+            [disabled]="loading || doctorCounts.length === 0"
+          >
+            📄 Exportar CSV
+          </button>
+          <button
+            class="export-option"
+            (click)="exportToPDF()"
+            [disabled]="loading || doctorCounts.length === 0"
+          >
+            📑 PDF Completo
+          </button>
+          <button
+            class="export-option"
+            (click)="exportChartsToPDF()"
+            [disabled]="loading || doctorCounts.length === 0"
+          >
+            📊 PDF Gráficos
+          </button>
+          <button
+            class="export-option"
+            (click)="exportTableToPDF()"
+            [disabled]="loading || doctorCounts.length === 0"
+          >
+            📋 PDF Tabla
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Selector de período de tiempo -->
+  <div class="period-selector" *ngIf="!loading && !error">
+    <div class="period-header">
+      <h4>📅 Seleccionar Período</h4>
+      <span class="period-info">{{ startDate }} - {{ endDate }}</span>
+    </div>
+
+    <div class="period-buttons">
+      <button
+        *ngFor="let period of availablePeriods"
+        class="period-btn"
+        [class.active]="selectedPeriod.value === period.value"
+        (click)="onPeriodChange(period)"
+        [disabled]="loading"
+      >
+        {{ period.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas generales -->
+  <div class="stats-section" *ngIf="!loading && !error">
+    <div class="stats-cards">
+      <div class="stat-card primary">
+        <div class="stat-icon">👨‍⚕️</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalDoctors }}</div>
+          <div class="stat-label">Médicos Activos</div>
+          <div class="stat-sublabel">{{ periodLabel }}</div>
+        </div>
+      </div>
+
+      <div class="stat-card success">
+        <div class="stat-icon">📋</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalAppointments }}</div>
+          <div class="stat-label">Total Turnos</div>
+          <div class="stat-sublabel">En el período</div>
+        </div>
+      </div>
+
+      <div class="stat-card info">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ averagePerDoctor }}</div>
+          <div class="stat-label">Promedio por Médico</div>
+          <div class="stat-sublabel">Turnos por médico</div>
+        </div>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-content">
+          <div class="stat-number">{{ topDoctor?.cantidad || 0 }}</div>
+          <div class="stat-label">Médico Top</div>
+          <div class="stat-sublabel" *ngIf="topDoctor">
+            Dr. {{ topDoctor.doctorName }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando datos de turnos por médico...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Contenido principal - Gráficos -->
+  <div
+    *ngIf="!loading && !error && doctorCounts.length > 0"
+    class="charts-section"
+  >
+    <!-- Gráfico de barras vertical (Top 10) -->
+    <div class="chart-card full">
+      <div class="chart-wrapper">
+        <div
+          echarts
+          [options]="barChartOption"
+          [loading]="loading"
+          class="chart-bar"
+          id="chart-bar"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Gráficos en fila -->
+    <div class="charts-row">
+      <!-- Gráfico de torta -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="pieChartOption"
+            [loading]="loading"
+            class="chart-pie"
+            id="chart-pie"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Gráfico de barras horizontal -->
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="horizontalBarChartOption"
+            [loading]="loading"
+            class="chart-bar-horizontal"
+            id="chart-bar-horizontal"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla detallada -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>👨‍⚕️ Detalle por Médico</h4>
+        <div class="table-info">
+          <span class="table-count"
+            >{{ doctorCounts.length }} médicos encontrados</span
+          >
+          <span class="table-period">{{ periodLabel }}</span>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="doctors-table">
+          <thead>
+            <tr>
+              <th>👨‍⚕️ Médico</th>
+              <th>🏥 Especialidad</th>
+              <th>📊 Turnos</th>
+              <th>📈 Porcentaje</th>
+              <th>🎯 Rendimiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let doctor of doctorCounts;
+                let i = index;
+                trackBy: trackByDoctor
+              "
+              class="doctor-row"
+            >
+              <td class="doctor-name">
+                <div class="doctor-info">
+                  <div class="doctor-color"></div>
+                  <div class="doctor-details">
+                    <span class="name">Dr. {{ doctor.doctorName }}</span>
+                    <span class="position">#{{ i + 1 }} en ranking</span>
+                  </div>
+                </div>
+              </td>
+
+              <td class="doctor-specialty">
+                <span class="specialty-badge">{{
+                  doctor.especialidad || "No especificada"
+                }}</span>
+              </td>
+
+              <td class="doctor-count">
+                <span
+                  class="count-number"
+                  [class]="getCountClass(doctor.cantidad)"
+                >
+                  {{ doctor.cantidad }}
+                </span>
+                <span class="count-label">turnos</span>
+              </td>
+
+              <td class="doctor-percentage">
+                <div class="percentage-bar">
+                  <div
+                    class="percentage-fill"
+                    [style.width.%]="doctor.porcentaje"
+                  ></div>
+                  <span class="percentage-text">{{ doctor.porcentaje }}%</span>
+                </div>
+              </td>
+
+              <td class="doctor-performance">
+                <span
+                  class="performance-badge"
+                  [class]="getCountClass(doctor.cantidad)"
+                >
+                  <span *ngIf="getCountClass(doctor.cantidad) === 'high'"
+                    >🔥 Alta demanda</span
+                  >
+                  <span *ngIf="getCountClass(doctor.cantidad) === 'medium'"
+                    >📊 Demanda media</span
+                  >
+                  <span *ngIf="getCountClass(doctor.cantidad) === 'low'"
+                    >📉 Baja demanda</span
+                  >
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resumen de rendimiento -->
+      <div class="performance-summary">
+        <div class="performance-item">
+          <span class="performance-color high"></span>
+          <span class="performance-text"
+            >Alta demanda (≥
+            {{ Math.round(averagePerDoctor * 1.5) }} turnos)</span
+          >
+        </div>
+        <div class="performance-item">
+          <span class="performance-color medium"></span>
+          <span class="performance-text"
+            >Demanda media ({{ Math.round(averagePerDoctor * 0.75) }} -
+            {{ Math.round(averagePerDoctor * 1.5) }} turnos)</span
+          >
+        </div>
+        <div class="performance-item">
+          <span class="performance-color low"></span>
+          <span class="performance-text"
+            >Baja demanda (<
+            {{ Math.round(averagePerDoctor * 0.75) }} turnos)</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay datos -->
+  <div *ngIf="!loading && !error && doctorCounts.length === 0" class="no-data">
+    <div class="no-data-icon">👨‍⚕️</div>
+    <h4>No hay datos de médicos</h4>
+    <p>No se encontraron turnos para médicos en el período seleccionado.</p>
+    <div class="no-data-actions">
+      <button class="btn btn-refresh" (click)="refresh()">
+        🔄 Intentar de nuevo
+      </button>
+      <button
+        class="btn btn-period"
+        (click)="onPeriodChange(availablePeriods[4])"
+      >
+        📅 Ver último año
+      </button>
+    </div>
+  </div>
+</div>

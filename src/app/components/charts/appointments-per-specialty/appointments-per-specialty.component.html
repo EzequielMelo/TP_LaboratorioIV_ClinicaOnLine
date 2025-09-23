@@ -1,4 +1,7 @@
-<div class="appointments-specialty-container">
+<div
+  class="appointments-specialty-container"
+  id="appointments-specialty-container"
+>
   <!-- Header del componente -->
   <div class="component-header">
     <div class="header-info">
@@ -15,13 +18,47 @@
         {{ loading ? "Cargando..." : "Actualizar" }}
       </button>
 
-      <button
-        class="btn btn-export"
-        (click)="exportToCSV()"
-        [disabled]="loading || specialityCounts.length === 0"
-      >
-        📊 Exportar CSV
-      </button>
+      <!-- Dropdown para exportaciones -->
+      <div class="export-dropdown">
+        <button
+          class="btn btn-export-main"
+          [disabled]="loading || specialityCounts.length === 0"
+        >
+          📊 Exportar
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div class="export-menu">
+          <button
+            class="export-option"
+            (click)="exportToCSV()"
+            [disabled]="loading || specialityCounts.length === 0"
+          >
+            📄 Exportar CSV
+          </button>
+          <button
+            class="export-option"
+            (click)="exportToPDF()"
+            [disabled]="loading || specialityCounts.length === 0"
+          >
+            📑 PDF Completo
+          </button>
+          <button
+            class="export-option"
+            (click)="exportChartsToPDF()"
+            [disabled]="loading || specialityCounts.length === 0"
+          >
+            📊 PDF Gráficos
+          </button>
+          <button
+            class="export-option"
+            (click)="exportTableToPDF()"
+            [disabled]="loading || specialityCounts.length === 0"
+          >
+            📋 PDF Tabla
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -92,6 +129,7 @@
             [options]="pieChartOption"
             [loading]="loading"
             class="chart-pie"
+            id="chart-pie"
           ></div>
         </div>
       </div>
@@ -104,6 +142,7 @@
             [options]="barChartOption"
             [loading]="loading"
             class="chart-bar"
+            id="chart-bar"
           ></div>
         </div>
       </div>

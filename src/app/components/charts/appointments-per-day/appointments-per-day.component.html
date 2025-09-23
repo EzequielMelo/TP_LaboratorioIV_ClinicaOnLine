@@ -1,4 +1,4 @@
-<div class="appointments-day-container">
+<div class="appointments-day-container" id="appointments-day-container">
   <!-- Header del componente -->
   <div class="component-header">
     <div class="header-info">
@@ -7,23 +7,53 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn btn-test" (click)="testService()" [disabled]="loading">
-        🧪 Probar Servicio
-      </button>
-
       <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
         <span *ngIf="!loading">🔄</span>
         <span *ngIf="loading" class="spinner">⏳</span>
         {{ loading ? "Cargando..." : "Actualizar" }}
       </button>
 
-      <button
-        class="btn btn-export"
-        (click)="exportToCSV()"
-        [disabled]="loading || dailyCounts.length === 0"
-      >
-        📊 Exportar CSV
-      </button>
+      <!-- Dropdown para exportaciones -->
+      <div class="export-dropdown">
+        <button
+          class="btn btn-export-main"
+          [disabled]="loading || dailyCounts.length === 0"
+        >
+          📊 Exportar
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div class="export-menu">
+          <button
+            class="export-option"
+            (click)="exportToCSV()"
+            [disabled]="loading || dailyCounts.length === 0"
+          >
+            📄 Exportar CSV
+          </button>
+          <button
+            class="export-option"
+            (click)="exportToPDF()"
+            [disabled]="loading || dailyCounts.length === 0"
+          >
+            📑 PDF Completo
+          </button>
+          <button
+            class="export-option"
+            (click)="exportChartsToPDF()"
+            [disabled]="loading || dailyCounts.length === 0"
+          >
+            📊 PDF Gráficos
+          </button>
+          <button
+            class="export-option"
+            (click)="exportTableToPDF()"
+            [disabled]="loading || dailyCounts.length === 0"
+          >
+            📋 PDF Tabla
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -115,6 +145,7 @@
           [options]="lineChartOption"
           [loading]="loading"
           class="chart-line"
+          id="chart-line"
         ></div>
       </div>
     </div>
@@ -127,6 +158,7 @@
           [options]="barChartOption"
           [loading]="loading"
           class="chart-bar"
+          id="chart-bar"
         ></div>
       </div>
     </div>

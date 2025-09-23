@@ -1,3 +1,4 @@
+import { Specialist } from './../../../classes/user.model';
 import { HealthRecord } from './../../../classes/health-record';
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, inject, Input, input } from '@angular/core';
@@ -8,6 +9,7 @@ import { ReviewService } from '../../../services/review/review.service';
 import { ReviewForPatient } from '../../../classes/reviewForPatient';
 import { ReviewOverviewComponent } from '../../review/review-overview/review-overview.component';
 import { ReviewCreateComponent } from '../../review/review-create/review-create.component';
+import { SurveyComponent } from '../../survey/survey/survey.component';
 
 @Component({
   selector: 'app-appointments-list',
@@ -17,6 +19,7 @@ import { ReviewCreateComponent } from '../../review/review-create/review-create.
     NgClass,
     ReviewOverviewComponent,
     ReviewCreateComponent,
+    SurveyComponent, // Cambiar por el componente correcto
   ],
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css',
@@ -24,15 +27,23 @@ import { ReviewCreateComponent } from '../../review/review-create/review-create.
 export class AppointmentsListComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
+
+  // Propiedades existentes
   healthRecord: HealthRecord | null = null;
   review: string | null = null;
   appointmentId: string | null = null;
   patientId: string | null = null;
+  specialistId: string | null = null;
+  isReviewModalOpen: boolean = false;
+  isCreateReviewModalOpen: boolean = false;
+
+  // Propiedades para la encuesta de satisfacción
+  showSurveyModal = false;
+  surveyPatientId: string | null = null;
+  surveySpecialistId: string | null = null;
 
   private appointmentService = inject(AppointmentsService);
   private reviewService = inject(ReviewService);
-  isReviewModalOpen: boolean = false;
-  isCreateReviewModalOpen: boolean = false;
 
   get filteredAppointments(): Appointment[] {
     if (!this.keyWord || this.keyWord.trim() === '') {
@@ -77,21 +88,66 @@ export class AppointmentsListComponent {
     }
   }
 
+  // Método para mostrar el modal de crear reseña
   showCreateReviewModal(
-    appointmentId: string | null,
-    patientId: string | null
+    appointmentId: string,
+    patientId: string,
+    specialistId?: null | string
   ) {
-    if (appointmentId) {
-      this.appointmentId = appointmentId;
-      this.patientId = patientId;
-    }
+    this.appointmentId = appointmentId;
+    this.patientId = patientId;
+    this.specialistId = specialistId || null;
     this.isCreateReviewModalOpen = true;
   }
 
-  closeCreateReviewModal(data: { event: boolean }) {
-    this.isCreateReviewModalOpen = data.event;
+  // Método que se ejecuta cuando se cierra el modal de reseña
+  closeCreateReviewModal(event: { event: boolean }) {
+    this.isCreateReviewModalOpen = event.event;
   }
 
+  // Método que se ejecuta cuando se debe mostrar la encuesta después de la reseña
+  onShowSurvey(event: {
+    patientId: string | null;
+    specialistId: string | null;
+  }) {
+    this.surveyPatientId = event.patientId;
+    this.surveySpecialistId = event.specialistId;
+    this.showSurveyModal = true;
+
+    console.log('Mostrando encuesta de satisfacción para:', {
+      patient: event.patientId,
+      specialist: event.specialistId,
+    });
+  }
+
+  // Método para cerrar la encuesta
+  onSurveyModalClosed() {
+    this.showSurveyModal = false;
+    this.surveyPatientId = null;
+    this.surveySpecialistId = null;
+    console.log('Encuesta cerrada');
+  }
+
+  // Método cuando se envía la encuesta
+  onSurveySubmitted(surveyId: string) {
+    console.log('Encuesta enviada con ID:', surveyId);
+
+    // Mostrar mensaje de agradecimiento
+    Swal.fire({
+      title: '¡Gracias!',
+      text: 'Tu encuesta de satisfacción ha sido enviada correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#3B82F6',
+    });
+
+    // Opcional: Puedes añadir aquí lógica adicional como:
+    // - Actualizar algún estado en la aplicación
+    // - Enviar notificación al administrador
+    // - Redirigir a otra página
+  }
+
+  // Métodos existentes para el modal de review
   showReviewModal(ReviewdId: string | null) {
     if (ReviewdId) {
       this.reviewService.getReviewForPatient(ReviewdId).subscribe({

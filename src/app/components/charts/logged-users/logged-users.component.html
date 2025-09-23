@@ -1,5 +1,4 @@
-<div class="logged-users-container">
-  <!-- Header del componente -->
+<div class="logged-users-container" id="logged-users-container">
   <div class="component-header">
     <div class="header-info">
       <h3>🔐 Log de Ingresos al Sistema</h3>
@@ -13,13 +12,47 @@
         {{ loading ? "Cargando..." : "Actualizar" }}
       </button>
 
-      <button
-        class="btn btn-export"
-        (click)="exportToCSV()"
-        [disabled]="loading || logs.length === 0"
-      >
-        📊 Exportar CSV
-      </button>
+      <!-- Dropdown para exportaciones -->
+      <div class="export-dropdown">
+        <button
+          class="btn btn-export-main"
+          [disabled]="loading || logs.length === 0"
+        >
+          📊 Exportar
+          <span class="dropdown-arrow">▾</span>
+        </button>
+
+        <div class="export-menu">
+          <button
+            class="export-option"
+            (click)="exportToCSV()"
+            [disabled]="loading || logs.length === 0"
+          >
+            📄 Exportar CSV
+          </button>
+          <button
+            class="export-option"
+            (click)="exportToPDF()"
+            [disabled]="loading || logs.length === 0"
+          >
+            📑 PDF Completo
+          </button>
+          <button
+            class="export-option"
+            (click)="exportChartsToPDF()"
+            [disabled]="loading || logs.length === 0"
+          >
+            📊 PDF Gráficos
+          </button>
+          <button
+            class="export-option"
+            (click)="exportTableToPDF()"
+            [disabled]="loading || logs.length === 0"
+          >
+            📋 PDF Tabla
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -82,6 +115,7 @@
           [options]="timelineChartOption"
           [loading]="loading"
           class="chart-timeline"
+          id="chart-timeline"
         ></div>
       </div>
     </div>
@@ -96,6 +130,7 @@
             [options]="dailyActivityChartOption"
             [loading]="loading"
             class="chart-daily"
+            id="chart-daily"
           ></div>
         </div>
       </div>
@@ -108,6 +143,7 @@
             [options]="userTypeChartOption"
             [loading]="loading"
             class="chart-usertype"
+            id="chart-usertype"
           ></div>
         </div>
       </div>

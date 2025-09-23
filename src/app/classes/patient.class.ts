@@ -3,7 +3,7 @@ import { User } from './user';
 export class Patient extends User {
   healthCareSystem: string;
   coverPicture: string;
-  userData: any;
+  settings: { useCaptcha: boolean };
 
   constructor(
     id: string,
@@ -15,13 +15,12 @@ export class Patient extends User {
     healthCareSystem: string,
     profilePicture: string,
     coverPicture: string,
-    userType: string
+    userType: string,
+    settings: { useCaptcha: boolean }
   ) {
     super(id, name, lastName, email, age, dni, profilePicture, userType);
-    this.lastName = lastName;
-    this.age = age;
-    this.dni = dni;
     this.healthCareSystem = healthCareSystem;
     this.coverPicture = coverPicture;
+    this.settings = settings;
   }
 }

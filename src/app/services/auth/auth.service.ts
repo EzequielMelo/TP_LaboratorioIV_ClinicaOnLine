@@ -117,6 +117,7 @@ export class AuthService {
                   profilePicture: profileUrl,
                   coverPicture: coverUrl,
                   userType,
+                  settings: { useCaptcha: true },
                 };
 
                 // Guardar el usuario en la base de datos
@@ -192,6 +193,7 @@ export class AuthService {
                   profilePicture: profileUrl,
                   accountConfirmed: false,
                   userType,
+                  settings: { useCaptcha: true },
                 };
 
                 // Guardar el usuario en la base de datos
@@ -352,7 +354,8 @@ export class AuthService {
               userData.healthCareSystem,
               userData.profilePicture,
               userData.coverPicture,
-              userData.userType
+              userData.userType,
+              userData.settings
             );
           } else if (userData instanceof Specialist) {
             user = new Specialist(
@@ -367,7 +370,8 @@ export class AuthService {
               userData.accountConfirmed,
               userData.workDays,
               userData.workHours,
-              userData.userType
+              userData.userType,
+              userData.settings
             );
           } else if (userData instanceof Admin) {
             user = new Admin(
@@ -384,6 +388,7 @@ export class AuthService {
             user = null;
           }
           this.userSubject.next(user);
+          console.log('Usuario cargado en AuthService:', user);
         } else {
           this.userSubject.next(null);
         }
@@ -394,6 +399,10 @@ export class AuthService {
         this.loadingService.stopLoading(); // Detener la carga en caso de error
       }
     );
+  }
+
+  setUser(user: UserTypes) {
+    this.userSubject.next(user);
   }
 
   logOut() {

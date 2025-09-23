@@ -24,14 +24,6 @@
           <span *ngIf="cargando" class="spinner">⏳</span>
           {{ cargando ? "Cargando..." : "Actualizar" }}
         </button>
-
-        <button
-          class="btn btn-export"
-          (click)="exportarDatos()"
-          [disabled]="cargando"
-        >
-          📊 Exportar
-        </button>
       </div>
     </div>
   </header>

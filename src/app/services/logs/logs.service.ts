@@ -68,6 +68,30 @@ export interface DailyAppointmentCount {
   esFinDeSemana: boolean; // true si es sábado o domingo
 }
 
+// Interface para turnos agrupados por médico en un período
+export interface DoctorAppointmentCount {
+  doctorName: string; // Nombre del especialista
+  cantidad: number; // Número de turnos en el período
+  porcentaje?: number; // Porcentaje del total
+  especialidad?: string; // Especialidad del doctor (si está disponible)
+}
+
+// Interface para el período de tiempo
+export interface TimePeriod {
+  label: string; // "Último mes", "Últimos 3 meses", etc.
+  value: number; // Número de meses
+  months: number; // Número de meses para cálculo
+}
+
+// Interface para turnos completados por médico en un período
+export interface DoctorCompletedAppointmentCount {
+  doctorName: string; // Nombre del especialista
+  cantidad: number; // Número de turnos completados en el período
+  porcentaje?: number; // Porcentaje del total
+  especialidad?: string; // Especialidad del doctor
+  eficiencia?: number; // Porcentaje de turnos completados vs solicitados
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -340,9 +364,6 @@ export class LogsService {
     return colores[tipoUsuario] || '#9E9E9E'; // Gris por defecto
   }
 
-  /**
-   * Obtiene todos los appointments de Firebase
-   */
   getAllAppointments(): Observable<AppointmentFirebase[]> {
     console.log('📋 Obteniendo todos los appointments...');
 
@@ -374,9 +395,6 @@ export class LogsService {
     );
   }
 
-  /**
-   * Obtiene el conteo de turnos por especialidad
-   */
   getAppointmentsBySpeciality(): Observable<SpecialityCount[]> {
     console.log('🔢 Contando turnos por especialidad...');
 
@@ -425,9 +443,6 @@ export class LogsService {
     );
   }
 
-  /**
-   * Obtiene datos formateados para gráfico de ngx-echarts
-   */
   getSpecialityChartData(): Observable<SpecialityChartData[]> {
     console.log('📊 Preparando datos para gráfico...');
 
@@ -449,9 +464,6 @@ export class LogsService {
     );
   }
 
-  /**
-   * Obtiene estadísticas resumidas
-   */
   getSpecialityStats(): Observable<{
     totalAppointments: number;
     totalSpecialities: number;
@@ -484,9 +496,6 @@ export class LogsService {
     );
   }
 
-  /**
-   * Normaliza el nombre de la especialidad para evitar duplicados
-   */
   private normalizeSpecialityName(
     speciality: string | undefined | null
   ): string {
@@ -508,6 +517,8 @@ export class LogsService {
   private getColorForSpeciality(index: number): string {
     return this.SPECIALTY_COLORS[index % this.SPECIALTY_COLORS.length];
   }
+
+  /*--------------------------------------------------------------*/
 
   /**
    * Obtiene turnos agrupados por día
@@ -762,6 +773,268 @@ export class LogsService {
   }
 
   /**
+   * Obtiene turnos agrupados por médico en un período de tiempo específico
+   */
+  getAppointmentsByDoctorInPeriod(
+    months: number
+  ): Observable<DoctorAppointmentCount[]> {
+    console.log(
+      `👨‍⚕️ Obteniendo turnos por médico en los últimos ${months} meses...`
+    );
+
+    return this.getAllAppointments().pipe(
+      map((appointments) => {
+        // Calcular fecha de inicio del período
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - months);
+
+        console.log(
+          `📅 Período: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`
+        );
+
+        // Filtrar appointments en el período especificado
+        const filteredAppointments = appointments.filter((appointment) => {
+          const appointmentDate = this.extractDateAsDateObject(
+            appointment['appointmentDate']
+          );
+          if (!appointmentDate) return false;
+
+          return appointmentDate >= startDate && appointmentDate <= endDate;
+        });
+
+        console.log(
+          `📊 ${filteredAppointments.length} turnos encontrados en el período`
+        );
+
+        // Agrupar por médico
+        const doctorCountMap = new Map<string, number>();
+
+        filteredAppointments.forEach((appointment) => {
+          const doctorName = this.normalizeDoctorName(
+            appointment['specialistName']
+          );
+
+          if (doctorName) {
+            const currentCount = doctorCountMap.get(doctorName) || 0;
+            doctorCountMap.set(doctorName, currentCount + 1);
+          } else {
+            console.warn('⚠️ Appointment sin médico encontrado:', appointment);
+          }
+        });
+
+        // Convertir Map a Array y calcular porcentajes
+        const totalFilteredAppointments = filteredAppointments.length;
+        const doctorCounts: DoctorAppointmentCount[] = Array.from(
+          doctorCountMap.entries()
+        )
+          .map(([doctorName, cantidad]) => ({
+            doctorName,
+            cantidad,
+            porcentaje:
+              totalFilteredAppointments > 0
+                ? Math.round((cantidad / totalFilteredAppointments) * 100)
+                : 0,
+            especialidad: this.getDoctorSpecialty(
+              doctorName,
+              filteredAppointments
+            ),
+          }))
+          .sort((a, b) => b.cantidad - a.cantidad); // Ordenar por cantidad descendente
+
+        console.log('📊 Turnos por médico en período:', doctorCounts);
+        console.log('👨‍⚕️ Total médicos únicos:', doctorCounts.length);
+
+        return doctorCounts;
+      })
+    );
+  }
+
+  /**
+   * Obtiene estadísticas de turnos por médico en un período
+   */
+  getDoctorAppointmentStats(months: number): Observable<{
+    totalDoctors: number;
+    totalAppointments: number;
+    averagePerDoctor: number;
+    topDoctor: DoctorAppointmentCount | null;
+    periodLabel: string;
+    startDate: string;
+    endDate: string;
+  }> {
+    return this.getAppointmentsByDoctorInPeriod(months).pipe(
+      map((doctorCounts) => {
+        // Calcular fechas del período
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - months);
+
+        const totalDoctors = doctorCounts.length;
+        const totalAppointments = doctorCounts.reduce(
+          (sum, doctor) => sum + doctor.cantidad,
+          0
+        );
+        const averagePerDoctor =
+          totalDoctors > 0 ? Math.round(totalAppointments / totalDoctors) : 0;
+        const topDoctor = doctorCounts[0] || null;
+
+        const periodLabel = this.getPeriodLabel(months);
+
+        const stats = {
+          totalDoctors,
+          totalAppointments,
+          averagePerDoctor,
+          topDoctor,
+          periodLabel,
+          startDate: startDate.toLocaleDateString('es-ES'),
+          endDate: endDate.toLocaleDateString('es-ES'),
+        };
+
+        console.log('📊 Estadísticas por médico:', stats);
+        return stats;
+      })
+    );
+  }
+
+  /**
+   * Obtiene datos formateados para gráficos de médicos
+   */
+  getDoctorAppointmentChartData(months: number): Observable<{
+    names: string[];
+    counts: number[];
+    colors: string[];
+    pieData: any[];
+  }> {
+    return this.getAppointmentsByDoctorInPeriod(months).pipe(
+      map((doctorCounts) => {
+        const names = doctorCounts.map((doctor) => doctor.doctorName);
+        const counts = doctorCounts.map((doctor) => doctor.cantidad);
+        const colors = doctorCounts.map((_, index) =>
+          this.getColorForDoctor(index)
+        );
+
+        const pieData = doctorCounts.map((doctor, index) => ({
+          name: doctor.doctorName,
+          value: doctor.cantidad,
+          itemStyle: {
+            color: this.getColorForDoctor(index),
+          },
+        }));
+
+        console.log('🎨 Datos del gráfico de médicos preparados');
+        return { names, counts, colors, pieData };
+      })
+    );
+  }
+
+  /**
+   * Extrae fecha como objeto Date del campo appointmentDate
+   */
+  private extractDateAsDateObject(appointmentDate: any): Date | null {
+    if (!appointmentDate) return null;
+
+    try {
+      let dateObj: Date;
+
+      // Si es un Timestamp de Firebase
+      if (
+        appointmentDate.toDate &&
+        typeof appointmentDate.toDate === 'function'
+      ) {
+        dateObj = appointmentDate.toDate();
+      }
+      // Si es un string ISO
+      else if (typeof appointmentDate === 'string') {
+        dateObj = new Date(appointmentDate);
+      }
+      // Si ya es un objeto Date
+      else if (appointmentDate instanceof Date) {
+        dateObj = appointmentDate;
+      }
+      // Si es un timestamp numérico
+      else if (typeof appointmentDate === 'number') {
+        dateObj = new Date(appointmentDate);
+      } else {
+        console.warn('⚠️ Formato de fecha no reconocido:', appointmentDate);
+        return null;
+      }
+
+      // Validar que la fecha sea válida
+      if (isNaN(dateObj.getTime())) {
+        console.warn('⚠️ Fecha inválida:', appointmentDate);
+        return null;
+      }
+
+      return dateObj;
+    } catch (error) {
+      console.error('❌ Error procesando fecha:', appointmentDate, error);
+      return null;
+    }
+  }
+
+  /**
+   * Normaliza el nombre del médico para evitar duplicados
+   */
+  private normalizeDoctorName(
+    specialistName: string | undefined | null
+  ): string {
+    if (!specialistName) return '';
+
+    return (
+      specialistName
+        .toString()
+        .trim()
+        // Capitalizar primera letra de cada palabra
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+    );
+  }
+
+  /**
+   * Intenta obtener la especialidad del médico desde los appointments
+   */
+  private getDoctorSpecialty(
+    doctorName: string,
+    appointments: AppointmentFirebase[]
+  ): string {
+    const doctorAppointment = appointments.find(
+      (app) =>
+        this.normalizeDoctorName(app['specialistName']) === doctorName &&
+        app.speciality
+    );
+
+    return doctorAppointment?.speciality || 'Especialidad no especificada';
+  }
+
+  /**
+   * Obtiene un color para el médico basado en su índice
+   */
+  private getColorForDoctor(index: number): string {
+    const doctorColors = [
+      '#4CAF50',
+      '#2196F3',
+      '#FF9800',
+      '#9C27B0',
+      '#F44336',
+      '#00BCD4',
+      '#8BC34A',
+      '#FF5722',
+      '#607D8B',
+      '#E91E63',
+      '#3F51B5',
+      '#FFC107',
+      '#795548',
+      '#9E9E9E',
+      '#CDDC39',
+      '#FF6B6B',
+      '#4ECDC4',
+      '#45B7D1',
+      '#96CEB4',
+      '#FFEAA7',
+    ];
+    return doctorColors[index % doctorColors.length];
+  }
+
+  /**
    * Método de prueba específico para datos diarios
    */
   testDailyService(): void {
@@ -776,5 +1049,282 @@ export class LogsService {
         console.error('❌ Error en servicio diario:', error);
       },
     });
+  }
+
+  /**
+   * Método de prueba para datos por médico
+   */
+  testDoctorService(): void {
+    console.log('🧪 Probando funciones de médicos...');
+
+    this.getAppointmentsByDoctorInPeriod(3).subscribe({
+      next: (doctorCounts) => {
+        console.log('✅ Servicio de médicos funcionando');
+        console.log('👨‍⚕️ Turnos por médico (3 meses):', doctorCounts);
+      },
+      error: (error) => {
+        console.error('❌ Error en servicio de médicos:', error);
+      },
+    });
+  }
+
+  /**
+   * Obtiene la etiqueta del período en español
+   */
+  private getPeriodLabel(months: number): string {
+    switch (months) {
+      case 1:
+        return 'Último mes';
+      case 2:
+        return 'Últimos 2 meses';
+      case 3:
+        return 'Últimos 3 meses';
+      case 6:
+        return 'Últimos 6 meses';
+      case 12:
+        return 'Último año';
+      default:
+        return `Últimos ${months} meses`;
+    }
+  }
+
+  /**
+   * Obtiene turnos completados agrupados por médico en un período de tiempo específico
+   */
+  getCompletedAppointmentsByDoctorInPeriod(
+    months: number
+  ): Observable<DoctorCompletedAppointmentCount[]> {
+    console.log(
+      `👨‍⚕️ Obteniendo turnos COMPLETADOS por médico en los últimos ${months} meses...`
+    );
+
+    return this.getAllAppointments().pipe(
+      map((appointments) => {
+        // Calcular fecha de inicio del período
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - months);
+
+        console.log(
+          `📅 Período para completados: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`
+        );
+
+        // Filtrar appointments completados en el período especificado
+        const completedAppointments = appointments.filter((appointment) => {
+          const appointmentDate = this.extractDateAsDateObject(
+            appointment['appointmentDate']
+          );
+          if (!appointmentDate) return false;
+
+          const isInPeriod =
+            appointmentDate >= startDate && appointmentDate <= endDate;
+          const isCompleted = this.isAppointmentCompleted(
+            appointment['appointmentStatus']
+          );
+
+          return isInPeriod && isCompleted;
+        });
+
+        console.log(
+          `✅ ${completedAppointments.length} turnos COMPLETADOS encontrados en el período`
+        );
+
+        // Agrupar por médico
+        const doctorCompletedMap = new Map<string, number>();
+
+        completedAppointments.forEach((appointment) => {
+          const doctorName = this.normalizeDoctorName(
+            appointment['specialistName']
+          );
+
+          if (doctorName) {
+            const currentCount = doctorCompletedMap.get(doctorName) || 0;
+            doctorCompletedMap.set(doctorName, currentCount + 1);
+          }
+        });
+
+        // Convertir Map a Array y calcular porcentajes y eficiencia
+        const totalCompletedAppointments = completedAppointments.length;
+        const doctorCompletedCounts: DoctorCompletedAppointmentCount[] =
+          Array.from(doctorCompletedMap.entries())
+            .map(([doctorName, cantidad]) => ({
+              doctorName,
+              cantidad,
+              porcentaje:
+                totalCompletedAppointments > 0
+                  ? Math.round((cantidad / totalCompletedAppointments) * 100)
+                  : 0,
+              especialidad: this.getDoctorSpecialty(
+                doctorName,
+                completedAppointments
+              ),
+              eficiencia: this.calculateDoctorEfficiency(
+                doctorName,
+                appointments,
+                startDate,
+                endDate
+              ),
+            }))
+            .sort((a, b) => b.cantidad - a.cantidad); // Ordenar por cantidad descendente
+
+        console.log('📊 Turnos completados por médico:', doctorCompletedCounts);
+        console.log(
+          '👨‍⚕️ Total médicos con turnos completados:',
+          doctorCompletedCounts.length
+        );
+
+        return doctorCompletedCounts;
+      })
+    );
+  }
+
+  /**
+   * Obtiene estadísticas de turnos completados por médico en un período
+   */
+  getCompletedAppointmentStats(months: number): Observable<{
+    totalDoctors: number;
+    totalCompletedAppointments: number;
+    averagePerDoctor: number;
+    topDoctor: DoctorCompletedAppointmentCount | null;
+    overallEfficiency: number;
+    periodLabel: string;
+    startDate: string;
+    endDate: string;
+  }> {
+    return this.getCompletedAppointmentsByDoctorInPeriod(months).pipe(
+      map((doctorCounts) => {
+        // Calcular fechas del período
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - months);
+
+        const totalDoctors = doctorCounts.length;
+        const totalCompletedAppointments = doctorCounts.reduce(
+          (sum, doctor) => sum + doctor.cantidad,
+          0
+        );
+        const averagePerDoctor =
+          totalDoctors > 0
+            ? Math.round(totalCompletedAppointments / totalDoctors)
+            : 0;
+        const topDoctor = doctorCounts[0] || null;
+
+        // Calcular eficiencia general
+        const overallEfficiency =
+          doctorCounts.length > 0
+            ? Math.round(
+                doctorCounts.reduce(
+                  (sum, doctor) => sum + (doctor.eficiencia || 0),
+                  0
+                ) / doctorCounts.length
+              )
+            : 0;
+
+        const periodLabel = this.getPeriodLabel(months);
+
+        const stats = {
+          totalDoctors,
+          totalCompletedAppointments,
+          averagePerDoctor,
+          topDoctor,
+          overallEfficiency,
+          periodLabel,
+          startDate: startDate.toLocaleDateString('es-ES'),
+          endDate: endDate.toLocaleDateString('es-ES'),
+        };
+
+        console.log('📊 Estadísticas de turnos completados:', stats);
+        return stats;
+      })
+    );
+  }
+
+  /**
+   * Verifica si un appointment está completado
+   */
+  private isAppointmentCompleted(
+    appointmentStatus: string | undefined | null
+  ): boolean {
+    if (!appointmentStatus) return false;
+
+    const normalizedStatus = appointmentStatus.toString().toLowerCase().trim();
+
+    // Variaciones posibles de "completado"
+    const completedVariations = [
+      'completado',
+      'completada',
+      'finalizado',
+      'finalizada',
+      'terminado',
+      'terminada',
+      'realizado',
+      'realizada',
+      'completed',
+    ];
+
+    return completedVariations.includes(normalizedStatus);
+  }
+
+  /**
+   * Método de prueba para datos de turnos completados
+   */
+  testCompletedAppointmentsService(): void {
+    console.log('🧪 Probando funciones de turnos completados...');
+
+    this.getCompletedAppointmentsByDoctorInPeriod(3).subscribe({
+      next: (completedCounts) => {
+        console.log('✅ Servicio de turnos completados funcionando');
+        console.log(
+          '👨‍⚕️ Turnos completados por médico (3 meses):',
+          completedCounts
+        );
+      },
+      error: (error) => {
+        console.error('❌ Error en servicio de turnos completados:', error);
+      },
+    });
+  }
+
+  /**
+   * Calcula la eficiencia del médico (turnos completados vs total de turnos)
+   */
+  private calculateDoctorEfficiency(
+    doctorName: string,
+    allAppointments: AppointmentFirebase[],
+    startDate: Date,
+    endDate: Date
+  ): number {
+    // Filtrar todos los turnos del médico en el período
+    const doctorAppointmentsInPeriod = allAppointments.filter((appointment) => {
+      const appointmentDate = this.extractDateAsDateObject(
+        appointment['appointmentDate']
+      );
+      if (!appointmentDate) return false;
+
+      const isInPeriod =
+        appointmentDate >= startDate && appointmentDate <= endDate;
+      const isDoctorAppointment =
+        this.normalizeDoctorName(appointment['specialistName']) === doctorName;
+
+      return isInPeriod && isDoctorAppointment;
+    });
+
+    const totalAppointments = doctorAppointmentsInPeriod.length;
+    const completedAppointments = doctorAppointmentsInPeriod.filter(
+      (appointment) =>
+        this.isAppointmentCompleted(appointment['appointmentStatus'])
+    ).length;
+
+    if (totalAppointments === 0) return 0;
+
+    const efficiency = Math.round(
+      (completedAppointments / totalAppointments) * 100
+    );
+
+    console.log(
+      `👨‍⚕️ Eficiencia Dr. ${doctorName}: ${completedAppointments}/${totalAppointments} = ${efficiency}%`
+    );
+
+    return efficiency;
   }
 }

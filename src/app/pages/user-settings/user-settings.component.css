@@ -1,0 +1,109 @@
+.settings-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.settings-header {
+  padding: 1.5rem;
+  background: #f5f7fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.title-section h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #666;
+}
+
+.settings-body {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 600px;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+}
+
+.toggle-container input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 40px;
+  height: 20px;
+  background: #ccc;
+  border-radius: 9999px;
+  position: relative;
+  transition: 0.3s;
+  margin-right: 0.75rem;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.toggle-container input:checked+.toggle-slider {
+  background: #3b82f6;
+}
+
+.toggle-container input:checked+.toggle-slider::after {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.btn-save {
+  background: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-save:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+.status-message {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}

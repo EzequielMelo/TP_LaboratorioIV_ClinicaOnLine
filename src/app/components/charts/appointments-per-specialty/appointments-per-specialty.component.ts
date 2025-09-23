@@ -8,6 +8,7 @@ import {
 import { EChartsOption } from 'echarts';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { PdfLogsService } from '../../../services/pdfLogs/pdf-logs.service';
 
 @Component({
   selector: 'app-appointments-per-specialty',
@@ -34,7 +35,10 @@ export class AppointmentsPerSpecialtyComponent implements OnInit, OnDestroy {
   topSpeciality: SpecialityCount | null = null;
   averagePerSpeciality = 0;
 
-  constructor(private appointmentsService: LogsService) {
+  constructor(
+    private appointmentsService: LogsService,
+    private pdfExportService: PdfLogsService
+  ) {
     console.log('🏗️ Constructor AppointmentsPerSpecialtyComponent');
   }
 
@@ -367,5 +371,95 @@ export class AppointmentsPerSpecialtyComponent implements OnInit, OnDestroy {
     if (cantidad >= promedio * 1.5) return 'Alta demanda';
     if (cantidad >= promedio * 0.75) return 'Demanda media';
     return 'Baja demanda';
+  }
+
+  async exportToPDF(): Promise<void> {
+    try {
+      console.log('📄 Iniciando exportación completa a PDF...');
+
+      const title = '🏥 Turnos por Especialidad';
+      const subtitle = `Reporte completo - Total: ${this.totalAppointments} turnos en ${this.totalSpecialities} especialidades`;
+
+      await this.pdfExportService.exportElementToPdf(
+        'appointments-specialty-container',
+        'turnos-especialidad',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF completo exportado');
+    } catch (error) {
+      console.error('❌ Error exportando PDF completo:', error);
+      alert('Error al generar el PDF. Inténtalo de nuevo.');
+    }
+  }
+
+  /**
+   * Exporta solo los gráficos a PDF
+   */
+  async exportChartsToPDF(): Promise<void> {
+    try {
+      console.log('Exportando solo gráficos a PDF...');
+
+      const chartIds = ['chart-pie', 'chart-bar'];
+
+      const title = 'Gráficos - Turnos por Especialidad';
+      const subtitle = `Visualización de ${this.totalAppointments} turnos distribuidos en ${this.totalSpecialities} especialidades`;
+
+      await this.pdfExportService.exportChartsOnlyToPdf(
+        chartIds,
+        'graficos-especialidad',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de gráficos exportado');
+    } catch (error) {
+      console.error('❌ Error exportando gráficos PDF:', error);
+      alert('Error al generar el PDF de gráficos. Inténtalo de nuevo.');
+    }
+  }
+
+  /**
+   * Exporta tabla de datos a PDF
+   */
+  exportTableToPDF(): void {
+    try {
+      console.log('📋 Exportando tabla a PDF...');
+
+      const columns = [
+        {
+          key: 'especialidad' as keyof SpecialityCount,
+          title: 'Especialidad',
+          width: 70,
+        },
+        {
+          key: 'cantidad' as keyof SpecialityCount,
+          title: 'Cantidad',
+          width: 30,
+        },
+        {
+          key: 'porcentaje' as keyof SpecialityCount,
+          title: 'Porcentaje',
+          width: 30,
+        },
+      ];
+
+      const title = 'Tabla de Especialidades';
+      const subtitle = `Detalle de turnos por especialidad (${this.specialityCounts.length} especialidades)`;
+
+      this.pdfExportService.generateTablePdf(
+        this.specialityCounts,
+        columns,
+        'tabla-especialidades',
+        title,
+        subtitle
+      );
+
+      console.log('✅ PDF de tabla exportado');
+    } catch (error) {
+      console.error('❌ Error exportando tabla PDF:', error);
+      alert('Error al generar el PDF de tabla. Inténtalo de nuevo.');
+    }
   }
 }

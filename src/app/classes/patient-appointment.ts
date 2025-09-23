@@ -11,11 +11,16 @@ export class PatientAppointmentData {
 
   healthRecord: {
     id: string;
-    bloodPressure: number;
-    dynamicData: Record<string, any>;
+    idPatient: string;
+    idSpecialist: string;
     height: number;
+    weight: number;
+    bloodPressure: string;
     temperature: number;
-    weight: string;
+    painLevel: number;
+    glucoseLevel: number;
+    smoker: boolean;
+    dynamicData: Record<string, any>;
   } | null;
 
   review: {

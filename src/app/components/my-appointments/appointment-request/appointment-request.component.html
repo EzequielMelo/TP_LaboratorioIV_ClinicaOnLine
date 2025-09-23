@@ -416,26 +416,41 @@
             </div>
           </div>
 
-          <!-- Botón de envío -->
+          <!-- Captcha -->
+          <div *ngIf="captchaEnabled" class="group mt-4">
+            <label
+              for="captcha"
+              class="block text-sm font-semibold text-gray-700 mb-2"
+            >
+              Verificación Captcha
+            </label>
+
+            <input
+              id="captcha"
+              type="text"
+              placeholder="Ingrese el código"
+              appCaptcha
+              (captchaResolved)="onCaptchaResult($event)"
+              class="w-full pl-3 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm"
+            />
+
+            <p
+              *ngIf="!captchaOk && captchaTouched"
+              class="text-sm text-red-600 mt-1"
+            >
+              El captcha no es correcto
+            </p>
+          </div>
+
+          <!-- Botón -->
           <div class="pt-6">
             <button
-              type="submit"
-              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] focus:ring-4 focus:ring-blue-300"
+              type="button"
+              (click)="onSubmit()"
+              [disabled]="!newAppointmentForm.valid || !captchaOk"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span class="flex items-center justify-center">
-                <svg
-                  class="w-5 h-5 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                Confirmar y Solicitar Turno
-              </span>
+              Confirmar y Solicitar Turno
             </button>
           </div>
         </form>
