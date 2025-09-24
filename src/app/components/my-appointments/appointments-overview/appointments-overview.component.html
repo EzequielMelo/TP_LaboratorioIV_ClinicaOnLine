@@ -15,9 +15,11 @@
           />
         </svg>
       </div>
-      <h1 class="text-4xl font-bold text-gray-900 mb-2">Mis Turnos</h1>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">
+        {{ "APPOINTMENTS_OVERVIEW.TITLE" | translate }}
+      </h1>
       <p class="text-lg text-gray-600">
-        Gestione y haga seguimiento de sus citas médicas
+        {{ "APPOINTMENTS_OVERVIEW.SUBTITLE" | translate }}
       </p>
     </div>
 
@@ -60,9 +62,9 @@
       >
         <!-- Filtros de estado -->
         <div class="w-full lg:w-auto">
-          <label class="block text-sm font-semibold text-gray-700 mb-3"
-            >Filtrar por estado</label
-          >
+          <label class="block text-sm font-semibold text-gray-700 mb-3">{{
+            "APPOINTMENTS_OVERVIEW.FILTER_BY_STATUS" | translate
+          }}</label>
           <div class="flex flex-wrap gap-2">
             <button
               (click)="showAppointments('all')"
@@ -81,7 +83,7 @@
                   clip-rule="evenodd"
                 />
               </svg>
-              Todos
+              {{ "APPOINTMENTS_OVERVIEW.ALL" | translate }}
             </button>
 
             <button
@@ -114,9 +116,9 @@
 
         <!-- Barra de búsqueda mejorada -->
         <div class="w-full lg:w-auto lg:min-w-[320px]">
-          <label class="block text-sm font-semibold text-gray-700 mb-3"
-            >Buscar turnos</label
-          >
+          <label class="block text-sm font-semibold text-gray-700 mb-3">{{
+            "APPOINTMENTS_OVERVIEW.SEARCH_APPOINTMENTS" | translate
+          }}</label>
           <form
             class="relative"
             [formGroup]="searchForm"
@@ -126,7 +128,9 @@
               <input
                 type="search"
                 formControlName="keyWord"
-                placeholder="Especialidad, médico o fecha..."
+                [placeholder]="
+                  'APPOINTMENTS_OVERVIEW.SEARCH_PLACEHOLDER' | translate
+                "
                 class="w-full pl-12 pr-12 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm"
               />
               <div
@@ -168,26 +172,50 @@
       <!-- Filtros adicionales -->
       <div class="flex flex-wrap gap-4 mt-6 pt-6 border-t border-gray-100">
         <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">Ordenar por:</label>
+          <label class="text-sm font-medium text-gray-700">{{
+            "APPOINTMENTS_OVERVIEW.SORT_BY" | translate
+          }}</label>
           <select
             class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
-            <option>Fecha más próxima</option>
-            <option>Fecha más lejana</option>
-            <option>Especialidad</option>
-            <option>Estado</option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.DATE_ASC" | translate }}
+            </option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.DATE_DESC" | translate }}
+            </option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.SPECIALTY" | translate }}
+            </option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.STATUS" | translate }}
+            </option>
           </select>
         </div>
 
         <div class="flex items-center space-x-2">
-          <label class="text-sm font-medium text-gray-700">Mostrar:</label>
+          <label class="text-sm font-medium text-gray-700">{{
+            "APPOINTMENTS_OVERVIEW.SHOW" | translate
+          }}</label>
           <select
             class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
-            <option>Próximos 30 días</option>
-            <option>Todos</option>
-            <option>Este mes</option>
-            <option>Últimos 3 meses</option>
+            <option>
+              {{
+                "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.NEXT_30_DAYS" | translate
+              }}
+            </option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.ALL" | translate }}
+            </option>
+            <option>
+              {{ "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.THIS_MONTH" | translate }}
+            </option>
+            <option>
+              {{
+                "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.LAST_3_MONTHS" | translate
+              }}
+            </option>
           </select>
         </div>
       </div>
@@ -206,7 +234,11 @@
             {{ getFilterTitle() }}
             <span class="text-sm font-normal text-gray-500 ml-2">
               ({{ displayedAppointments.length || 0 }}
-              {{ displayedAppointments.length === 1 ? "turno" : "turnos" }})
+              {{
+                displayedAppointments.length === 1
+                  ? ("APPOINTMENTS_OVERVIEW.APPOINTMENT" | translate)
+                  : ("APPOINTMENTS_OVERVIEW.APPOINTMENTS" | translate)
+              }})
             </span>
           </h3>
 
@@ -222,7 +254,7 @@
                   clip-rule="evenodd"
                 />
               </svg>
-              Exportar
+              {{ "APPOINTMENTS_OVERVIEW.EXPORT" | translate }}
             </button>
           </div>
         </div>
@@ -255,7 +287,7 @@
             </svg>
           </div>
           <h3 class="text-lg font-semibold text-gray-900 mb-2">
-            No hay turnos
+            {{ "APPOINTMENTS_OVERVIEW.NO_APPOINTMENTS" | translate }}
           </h3>
           <p class="text-gray-500 text-center mb-6">
             {{ getEmptyStateMessage() }}
@@ -263,7 +295,7 @@
           <button
             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
-            Solicitar nuevo turno
+            {{ "APPOINTMENTS_OVERVIEW.REQUEST_NEW" | translate }}
           </button>
         </div>
 
@@ -283,8 +315,11 @@
       >
         <div class="flex items-center justify-between text-sm text-gray-600">
           <span>
-            Mostrando {{ displayedAppointments.length }} de
-            {{ totalAppointments }} turnos
+            {{ "APPOINTMENTS_OVERVIEW.SHOWING" | translate }}
+            {{ displayedAppointments.length }}
+            {{ "APPOINTMENTS_OVERVIEW.OF" | translate }}
+            {{ totalAppointments }}
+            {{ "APPOINTMENTS_OVERVIEW.APPOINTMENTS" | translate }}
           </span>
           <div
             class="flex gap-2"
@@ -293,12 +328,12 @@
             <button
               class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100"
             >
-              Anterior
+              {{ "APPOINTMENTS_OVERVIEW.PREVIOUS" | translate }}
             </button>
             <button
               class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100"
             >
-              Siguiente
+              {{ "APPOINTMENTS_OVERVIEW.NEXT" | translate }}
             </button>
           </div>
         </div>

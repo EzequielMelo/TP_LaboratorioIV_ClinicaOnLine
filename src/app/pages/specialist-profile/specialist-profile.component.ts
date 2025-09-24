@@ -21,11 +21,17 @@ export class SpecialistProfileComponent {
   private userSubscription: Subscription | undefined;
   private db = inject(DatabaseService);
   isEditModalOpen: boolean = false;
-  specialistWorkDays: string[] = []; // Aquí se guardan los días seleccionados
+  specialistWorkDays: string[] = [];
   specialistWorkHours: { start: string; end: string } = {
     start: '',
     end: '',
   };
+
+  // Propiedades para validación
+  hasStartTimeError: boolean = false;
+  hasEndTimeError: boolean = false;
+  hasTimeRangeError: boolean = false;
+
   daysOfTheWeek: string[] = [
     'Monday',
     'Tuesday',
@@ -33,7 +39,6 @@ export class SpecialistProfileComponent {
     'Thursday',
     'Friday',
     'Saturday',
-    'Sunday',
   ];
 
   constructor(private authService: AuthService) {}
@@ -52,11 +57,9 @@ export class SpecialistProfileComponent {
       'Thursday',
       'Friday',
       'Saturday',
-      'Sunday',
     ];
 
     if (this.user instanceof Specialist) {
-      // Ordena los días seleccionados en base al orden de `daysOfWeekOrder`
       return this.user.workDays.sort(
         (a, b) => daysOfWeekOrder.indexOf(a) - daysOfWeekOrder.indexOf(b)
       );
@@ -67,7 +70,7 @@ export class SpecialistProfileComponent {
   getSpecialistWorkHours(): string[] | null {
     if (this.user instanceof Specialist) {
       const hours = Object.values(this.user.workHours);
-      return hours.sort((a, b) => a.localeCompare(b)); // Ordena los horarios del menor al mayor
+      return hours.sort((a, b) => a.localeCompare(b));
     }
     return null;
   }
@@ -77,12 +80,11 @@ export class SpecialistProfileComponent {
       const hours = Object.values(this.user.workHours).sort((a, b) =>
         a.localeCompare(b)
       );
-      // Suponiendo que hay al menos dos valores, uno para start y otro para end:
       if (hours.length > 1) {
         return { start: hours[0], end: hours[1] };
       }
     }
-    return null; // Devuelve null si no hay datos o el formato no es válido
+    return null;
   }
 
   getSpecialistSpecialtys(): string[] | null {
@@ -95,12 +97,13 @@ export class SpecialistProfileComponent {
   editWorkDays() {
     this.isEditModalOpen = true;
     this.loadSpecialistData();
-    // Prellenar los datos en el modal si es necesario
   }
 
-  // Guardar cambios (enviar a backend o actualizar estado)
   saveWorkDays() {
-    // Lógica para guardar los días y horarios modificados
+    if (!this.isFormValid()) {
+      return;
+    }
+
     console.log('Días seleccionados: ', this.specialistWorkDays);
     console.log('Horarios seleccionados: ', this.specialistWorkHours);
 
@@ -114,18 +117,16 @@ export class SpecialistProfileComponent {
     this.isEditModalOpen = false;
   }
 
-  // Cerrar el popup sin guardar
   closeModal() {
     this.isEditModalOpen = false;
     this.specialistWorkDays = this.getSpecialistWorkDays() || [];
+    this.clearValidationErrors();
   }
 
   onDaySelectionChange(day: string, isSelected: boolean): void {
     if (isSelected) {
-      // Si se selecciona el checkbox, agrega el día
       this.specialistWorkDays.push(day);
     } else {
-      // Si se des-selecciona el checkbox, elimina el día
       const index = this.specialistWorkDays.indexOf(day);
       if (index !== -1) {
         this.specialistWorkDays.splice(index, 1);
@@ -137,10 +138,102 @@ export class SpecialistProfileComponent {
     if (this.user instanceof Specialist) {
       this.specialistWorkDays = this.getSpecialistWorkDays() || [];
       this.specialistWorkHours = this.specialistWorkHoursWithStartAndEnd() || {
-        start: '',
-        end: '',
+        start: '08:00',
+        end: '17:00',
       };
     }
+    this.clearValidationErrors();
+  }
+
+  // Validación de hora de inicio
+  validateStartTime(): void {
+    this.hasStartTimeError = false;
+    this.hasTimeRangeError = false;
+
+    if (!this.specialistWorkHours.start) {
+      return;
+    }
+
+    const startTime = this.specialistWorkHours.start;
+    const [hours, minutes] = startTime.split(':').map(Number);
+
+    // Validar rango 8:00 - 19:00
+    if (hours < 8 || hours > 19 || (hours === 19 && minutes > 0)) {
+      this.hasStartTimeError = true;
+      return;
+    }
+
+    // Validar que la hora de inicio sea anterior a la de fin
+    if (
+      this.specialistWorkHours.end &&
+      startTime >= this.specialistWorkHours.end
+    ) {
+      this.hasTimeRangeError = true;
+    }
+  }
+
+  // Validación de hora de fin
+  validateEndTime(): void {
+    this.hasEndTimeError = false;
+    this.hasTimeRangeError = false;
+
+    if (!this.specialistWorkHours.end) {
+      return;
+    }
+
+    const endTime = this.specialistWorkHours.end;
+    const [hours, minutes] = endTime.split(':').map(Number);
+
+    // Validar rango 8:00 - 19:00
+    if (hours < 8 || hours > 19 || (hours === 19 && minutes > 0)) {
+      this.hasEndTimeError = true;
+      return;
+    }
+
+    // Validar que la hora de fin sea posterior a la de inicio
+    if (
+      this.specialistWorkHours.start &&
+      endTime <= this.specialistWorkHours.start
+    ) {
+      this.hasTimeRangeError = true;
+    }
+  }
+
+  // Limpiar errores de validación
+  clearValidationErrors(): void {
+    this.hasStartTimeError = false;
+    this.hasEndTimeError = false;
+    this.hasTimeRangeError = false;
+  }
+
+  // Validar formulario completo
+  isFormValid(): boolean {
+    if (this.specialistWorkDays.length === 0) {
+      return false;
+    }
+
+    if (!this.specialistWorkHours.start || !this.specialistWorkHours.end) {
+      return false;
+    }
+
+    // Validar formato de tiempo
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (
+      !timeRegex.test(this.specialistWorkHours.start) ||
+      !timeRegex.test(this.specialistWorkHours.end)
+    ) {
+      return false;
+    }
+
+    // Validar rangos
+    this.validateStartTime();
+    this.validateEndTime();
+
+    return (
+      !this.hasStartTimeError &&
+      !this.hasEndTimeError &&
+      !this.hasTimeRangeError
+    );
   }
 
   trackByIndex(index: number, item: any): number {

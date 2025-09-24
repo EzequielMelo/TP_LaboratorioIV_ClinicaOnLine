@@ -46,8 +46,6 @@ export class PatientMedicalRecordsComponent implements OnChanges {
 
     this.isLoading = true;
 
-    // Aquí harías tu llamada a Firebase para obtener los registros médicos
-    // Por ahora, simulamos la carga
     this.healthRecordService
       .getAppointmentsByPatient(this.patient.id)
       .subscribe(

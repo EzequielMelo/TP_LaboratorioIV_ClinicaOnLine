@@ -87,33 +87,50 @@
 
         <!-- Componentes hijos según la selección -->
         <div *ngIf="!cargando && !error" class="chart-content">
-          <!-- Resumen General -->
-          <app-logged-users *ngIf="graficoActual === TipoGrafico.LOGINS">
-          </app-logged-users>
+          <app-logged-users
+            *ngIf="graficoActual === TipoGrafico.LOGINS"
+            @fadeInOut
+          ></app-logged-users>
 
-          <!-- Logins por Tipo de Usuario -->
           <app-appointments-requested-by-time
             *ngIf="graficoActual === TipoGrafico.TURNOS_POR_ESPECIALIDAD"
-          >
-          </app-appointments-requested-by-time>
+            @fadeInOut
+          ></app-appointments-requested-by-time>
 
-          <!-- Actividad Diaria -->
           <app-appointments-completed-by-time
             *ngIf="graficoActual === TipoGrafico.TURNOS_POR_DIA"
-          >
-          </app-appointments-completed-by-time>
+            @fadeInOut
+          ></app-appointments-completed-by-time>
 
-          <!-- Actividad Semanal -->
           <app-appointments-per-day
             *ngIf="graficoActual === TipoGrafico.TURNOS_SOLICITADOS"
-          >
-          </app-appointments-per-day>
+            @fadeInOut
+          ></app-appointments-per-day>
 
-          <!-- Usuarios Más Activos -->
           <app-appointments-per-specialty
             *ngIf="graficoActual === TipoGrafico.TURNOS_FINALIZADOS"
-          >
-          </app-appointments-per-specialty>
+            @fadeInOut
+          ></app-appointments-per-specialty>
+
+          <app-website-visits
+            *ngIf="graficoActual === TipoGrafico.VISITAS_AL_SITIO"
+            @fadeInOut
+          ></app-website-visits>
+
+          <app-specialty-statistics
+            *ngIf="graficoActual === TipoGrafico.DATOS_DE_ESPECIALIDADES"
+            @fadeInOut
+          ></app-specialty-statistics>
+
+          <app-survey-stats
+            *ngIf="graficoActual === TipoGrafico.DATOS_DE_ENCUESTAS"
+            @fadeInOut
+          ></app-survey-stats>
+
+          <app-users-appointments-stats
+            *ngIf="graficoActual === TipoGrafico.DATOS_DE_PACIENTES"
+            @fadeInOut
+          ></app-users-appointments-stats>
         </div>
       </div>
     </main>

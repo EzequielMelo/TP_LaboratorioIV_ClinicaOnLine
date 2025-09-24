@@ -1,65 +1,299 @@
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  <!-- Carousel -->
   <app-carousel></app-carousel>
 
-  <div class="flex flex-col justify-center items-center">
-    <div
-      class="grid-cols-1 md:grid-cols-3 grid gap-4 gap-y-6 w-[80%] md:w-[60%]"
-    >
-      <app-card
-        cardImage="card-01.jpg"
-        cardTitle="TE DAMOS LA BIENVENIDA"
-        cardText="Somos una Medicina Privada, con atención absolutamente personalizada que cumple con todos los requisitos que tu salud pueda necesitar.
-      Contamos con planes superadores."
-      ></app-card>
-      <app-card
-        cardImage="card-02.jpg"
-        cardTitle="TU MÉDICO EN EL BOLSILLO"
-        cardText="Ofrecemos un plan de turismo médico internacional a toda persona que quiera acceder al servicio en Argentina para su tratamiento de salud totalmente personalizado e individual."
-      ></app-card>
-      <app-card
-        cardImage="card-03.jpg"
-        cardTitle="SALUD CENTRAL INTERNACIONAL"
-        cardText="Ofrecemos un Programa Especial de Prestaciones Médicas a toda persona que quiera acceder al servicio en Argentina para el tratamiento de su salud."
-      ></app-card>
-    </div>
-  </div>
-  <section class="bg-sky-200">
-    <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8">
-      <div class="max-w-2xl lg:max-w-4xl mx-auto text-center">
-        <h2 class="text-3xl font-extrabold text-gray-900">ENCONTRANOS EN</h2>
+  <!-- Hero Section mejorada -->
+  <section class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+      <!-- Título principal con animación -->
+      <div class="text-center mb-16">
+        <h1
+          class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight"
+        >
+          <span
+            class="bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent"
+          >
+            Clinical Center
+          </span>
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          Tu salud es nuestra prioridad. Medicina de excelencia con tecnología
+          de vanguardia
+        </p>
+        <div class="mt-8 flex justify-center">
+          <div
+            class="w-24 h-1 bg-gradient-to-r from-blue-500 to-teal-400 rounded-full"
+          ></div>
+        </div>
       </div>
-      <div class="mt-16 lg:mt-20">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="rounded-lg overflow-hidden">
+
+      <!-- Cards Grid -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
+      >
+        <app-card
+          cardImage="card-01.jpg"
+          [cardTitle]="'HOME.WELCOME_TITLE' | translate"
+          [cardText]="'HOME.WELCOME_TEXT' | translate"
+        >
+        </app-card>
+
+        <app-card
+          cardImage="card-02.jpg"
+          [cardTitle]="'HOME.MOBILE_TITLE' | translate"
+          [cardText]="'HOME.MOBILE_TEXT' | translate"
+        >
+        </app-card>
+
+        <app-card
+          cardImage="card-03.jpg"
+          [cardTitle]="'HOME.INTERNATIONAL_TITLE' | translate"
+          [cardText]="'HOME.INTERNATIONAL_TEXT' | translate"
+        >
+        </app-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de estadísticas (nueva) -->
+  <section class="py-16 bg-gradient-to-r from-blue-600 to-teal-600">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center text-white">
+        <div
+          class="transform hover:scale-105 transition-transform duration-300"
+        >
+          <div class="text-4xl font-bold mb-2">15+</div>
+          <div class="text-blue-100">Años de experiencia</div>
+        </div>
+        <div
+          class="transform hover:scale-105 transition-transform duration-300"
+        >
+          <div class="text-4xl font-bold mb-2">50k+</div>
+          <div class="text-blue-100">Pacientes atendidos</div>
+        </div>
+        <div
+          class="transform hover:scale-105 transition-transform duration-300"
+        >
+          <div class="text-4xl font-bold mb-2">100+</div>
+          <div class="text-blue-100">Especialistas</div>
+        </div>
+        <div
+          class="transform hover:scale-105 transition-transform duration-300"
+        >
+          <div class="text-4xl font-bold mb-2">24/7</div>
+          <div class="text-blue-100">Atención disponible</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de ubicación mejorada -->
+  <section class="py-20 bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <!-- Título de sección -->
+      <div class="text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          {{ "HOME.FIND_US" | translate }}
+        </h2>
+        <div
+          class="w-20 h-1 bg-gradient-to-r from-blue-500 to-teal-400 rounded-full mx-auto"
+        ></div>
+      </div>
+
+      <!-- Grid de ubicación -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <!-- Mapa -->
+        <div class="order-2 lg:order-1">
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl group">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3906.1674580189083!2d-58.41019218399908!3d-34.58690672123047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcca82e9b557b5%3A0x6d6d6006385b386f!2sAv.%20Cnel.%20D%C3%ADaz%202211%2C%20C1425%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1742589356476!5m2!1ses-419!2sar"
               width="100%"
-              height="480"
+              height="500"
               style="border: 0"
               allowfullscreen=""
               loading="lazy"
-            ></iframe>
+              class="transition-all duration-300 group-hover:brightness-110"
+            >
+            </iframe>
+            <!-- Overlay decorativo -->
+            <div
+              class="absolute inset-0 ring-1 ring-black/10 rounded-2xl pointer-events-none"
+            ></div>
           </div>
-          <div>
-            <div class="max-w-full mx-auto rounded-lg overflow-hidden">
-              <div class="px-6 py-4">
-                <h3 class="text-lg font-medium text-gray-900">Direccion</h3>
-                <p class="mt-1 text-gray-600">Av. Coronel Díaz 2211</p>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="order-1 lg:order-2 space-y-8">
+          <!-- Dirección -->
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
+          >
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-blue-500 to-teal-400 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                  </svg>
+                </div>
               </div>
-              <div class="border-t border-gray-200 px-6 py-4">
-                <h3 class="text-lg font-medium text-gray-900">Horarios</h3>
-                <p class="mt-1 text-gray-600">Lunes - Viernes: 7:30am - 8pm</p>
-                <p class="mt-1 text-gray-600">Sabados: 8am - 6pm</p>
-                <p class="mt-1 text-gray-600">Domingos: Cerrado</p>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                  {{ "HOME.ADDRESS" | translate }}
+                </h3>
+                <p class="text-gray-600 text-lg">
+                  {{ "HOME.ADDRESS_VALUE" | translate }}
+                </p>
               </div>
-              <div class="border-t border-gray-200 px-6 py-4">
-                <h3 class="text-lg font-medium text-gray-900">Contacto</h3>
-                <p class="mt-1 text-gray-600">Email: clinical&#64;center.com</p>
-                <p class="mt-1 text-gray-600">Phone: +1 23494 34993</p>
+            </div>
+          </div>
+
+          <!-- Horarios -->
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
+          >
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-400 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                  {{ "HOME.SCHEDULE" | translate }}
+                </h3>
+                <div class="space-y-2 text-gray-600">
+                  <p class="flex justify-between">
+                    <span>{{ "HOME.SCHEDULE_WEEKDAYS" | translate }}</span>
+                  </p>
+                  <p class="flex justify-between">
+                    <span>{{ "HOME.SCHEDULE_SATURDAY" | translate }}</span>
+                  </p>
+                  <p class="flex justify-between">
+                    <span>{{ "HOME.SCHEDULE_SUNDAY" | translate }}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contacto -->
+          <div
+            class="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300"
+          >
+            <div class="flex items-start space-x-4">
+              <div class="flex-shrink-0">
+                <div
+                  class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-400 rounded-xl flex items-center justify-center"
+                >
+                  <svg
+                    class="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                  {{ "HOME.CONTACT" | translate }}
+                </h3>
+                <div class="space-y-3 text-gray-600">
+                  <p class="flex items-center">
+                    <svg
+                      class="w-5 h-5 mr-3 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+                      ></path>
+                      <path
+                        d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+                      ></path>
+                    </svg>
+                    {{ "HOME.EMAIL" | translate }}
+                  </p>
+                  <p class="flex items-center">
+                    <svg
+                      class="w-5 h-5 mr-3 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"
+                      ></path>
+                    </svg>
+                    {{ "HOME.PHONE" | translate }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-20 bg-gradient-to-r from-blue-600 to-teal-600">
+    <div class="max-w-4xl mx-auto text-center px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+        ¿Listo para cuidar tu salud?
+      </h2>
+      <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+        Agenda tu cita hoy mismo y descubre la diferencia de una atención médica
+        personalizada
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button
+          class="bg-white text-blue-600 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg"
+        >
+          Agendar Cita
+        </button>
+        <button
+          class="border-2 border-white text-white font-bold py-4 px-8 rounded-xl hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
+        >
+          Contactar Ahora
+        </button>
       </div>
     </div>
   </section>

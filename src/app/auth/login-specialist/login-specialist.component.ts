@@ -62,4 +62,10 @@ export class LoginSpecialistComponent {
       password: '123456',
     });
   }
+  usuarioPrueba2() {
+    this.loginForm.patchValue({
+      email: 'varof80546@artvara.com',
+      password: '1234567',
+    });
+  }
 }

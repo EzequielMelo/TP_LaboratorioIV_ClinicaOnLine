@@ -1,6 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Patient } from '../../../classes/patient.class';
+import { HealthRecordService } from '../../../services/health-record/health-record.service';
+import { PatientAppointmentData } from '../../../classes/patient-appointment';
 
 @Component({
   selector: 'app-patient-list',
@@ -13,6 +22,60 @@ export class PatientListComponent {
   @Input() patients: Patient[] | null = null;
   @Input() keyWord: string | null = null;
   @Output() patientSelected = new EventEmitter<Patient>();
+
+  // Nuevas propiedades
+  patientAppointments: { [patientId: string]: PatientAppointmentData[] } = {};
+  loadingAppointments: { [patientId: string]: boolean } = {};
+
+  private healthRecordService = inject(HealthRecordService);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['patients'] && changes['patients'].currentValue) {
+      this.loadAppointmentsForAllPatients();
+    }
+  }
+
+  private loadAppointmentsForAllPatients(): void {
+    if (!this.patients) return;
+
+    this.patients.forEach((patient) => {
+      this.loadPatientAppointments(patient.id);
+    });
+  }
+
+  private loadPatientAppointments(patientId: string): void {
+    if (this.loadingAppointments[patientId]) return;
+
+    this.loadingAppointments[patientId] = true;
+
+    this.healthRecordService.getAppointmentsByPatient(patientId).subscribe({
+      next: (data: PatientAppointmentData[]) => {
+        // Ordenar por fecha y tomar solo los últimos 3
+        this.patientAppointments[patientId] = data
+          .sort((a, b) => {
+            const dateA = a.appointmentDate
+              ? a.appointmentDate.toDate().getTime()
+              : 0;
+            const dateB = b.appointmentDate
+              ? b.appointmentDate.toDate().getTime()
+              : 0;
+            return dateB - dateA;
+          })
+          .slice(0, 3);
+
+        this.loadingAppointments[patientId] = false;
+      },
+      error: (error) => {
+        console.error('Error loading appointments:', error);
+        this.patientAppointments[patientId] = [];
+        this.loadingAppointments[patientId] = false;
+      },
+    });
+  }
+
+  getLastThreeAppointments(patientId: string): PatientAppointmentData[] {
+    return this.patientAppointments[patientId] || [];
+  }
 
   getInitials(name: string, lastName: string): string {
     // Verificar que al menos uno de los parámetros tenga valor
@@ -58,8 +121,9 @@ export class PatientListComponent {
     // this.router.navigate(['/patient-history', patientId]);
     console.log('Ver historial del paciente:', patient.id);
     this.patientSelected.emit(patient);
+  }
 
-    // O abrir modal con el historial
-    // this.openPatientHistoryModal(patientId);
+  trackByPatient(index: number, patient: Patient): string {
+    return patient.id;
   }
 }

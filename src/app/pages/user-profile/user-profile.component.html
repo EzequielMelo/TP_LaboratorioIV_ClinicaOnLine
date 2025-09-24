@@ -6,7 +6,7 @@
       <div *ngIf="getCoverPicture()" class="relative h-full">
         <img
           [src]="getCoverPicture()"
-          alt="Banner de perfil"
+          [alt]="'PROFILE.BANNER_ALT' | translate"
           class="w-full h-full object-cover"
         />
         <!-- Overlay gradient -->
@@ -86,36 +86,38 @@
                       clip-rule="evenodd"
                     />
                   </svg>
-                  <span class="text-lg">Paciente</span>
+                  <span class="text-lg">{{
+                    "PROFILE.PATIENT" | translate
+                  }}</span>
                 </div>
 
                 <!-- Stats rápidos -->
                 <div class="flex items-center justify-center gap-8 text-sm">
                   <div class="text-center">
                     <div class="font-bold text-blue-600 text-xl">
-                      <!--
-                        {{ getTotalAppointments() }}
-                      -->
+                      <!-- {{ getTotalAppointments() }} -->
                     </div>
-                    <div class="text-gray-500">Turnos</div>
+                    <div class="text-gray-500">
+                      {{ "PROFILE.APPOINTMENTS" | translate }}
+                    </div>
                   </div>
                   <div class="w-px h-8 bg-gray-300"></div>
                   <div class="text-center">
                     <div class="font-bold text-green-600 text-xl">
-                      <!--
-                        {{ getCompletedAppointments() }}
-                      -->
+                      <!-- {{ getCompletedAppointments() }} -->
                     </div>
-                    <div class="text-gray-500">Completados</div>
+                    <div class="text-gray-500">
+                      {{ "PROFILE.COMPLETED" | translate }}
+                    </div>
                   </div>
                   <div class="w-px h-8 bg-gray-300"></div>
                   <div class="text-center">
                     <div class="font-bold text-purple-600 text-xl">
-                      <!--
-                        {{ getActiveRecords() }}
-                      -->
+                      <!-- {{ getActiveRecords() }} -->
                     </div>
-                    <div class="text-gray-500">Historial</div>
+                    <div class="text-gray-500">
+                      {{ "PROFILE.MEDICAL_HISTORY" | translate }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -148,7 +150,9 @@
                     </svg>
                   </div>
                   <div>
-                    <p class="text-blue-600 font-semibold text-sm">Email</p>
+                    <p class="text-blue-600 font-semibold text-sm">
+                      {{ "PROFILE.EMAIL" | translate }}
+                    </p>
                     <p class="text-gray-900 font-medium">{{ user?.email }}</p>
                   </div>
                 </div>
@@ -174,7 +178,9 @@
                     </svg>
                   </div>
                   <div>
-                    <p class="text-green-600 font-semibold text-sm">DNI</p>
+                    <p class="text-green-600 font-semibold text-sm">
+                      {{ "PROFILE.DNI" | translate }}
+                    </p>
                     <p class="text-gray-900 font-medium">{{ user?.dni }}</p>
                   </div>
                 </div>
@@ -200,9 +206,11 @@
                     </svg>
                   </div>
                   <div>
-                    <p class="text-purple-600 font-semibold text-sm">Edad</p>
+                    <p class="text-purple-600 font-semibold text-sm">
+                      {{ "PROFILE.AGE" | translate }}
+                    </p>
                     <p class="text-gray-900 font-medium">
-                      {{ user?.age }} años
+                      {{ user?.age }} {{ "PROFILE.YEARS" | translate }}
                     </p>
                   </div>
                 </div>
@@ -225,10 +233,13 @@
                   </div>
                   <div>
                     <p class="text-orange-600 font-semibold text-sm">
-                      Obra Social
+                      {{ "PROFILE.HEALTH_INSURANCE" | translate }}
                     </p>
                     <p class="text-gray-900 font-medium">
-                      {{ getHealthCareSystem() || "Sin especificar" }}
+                      {{
+                        getHealthCareSystem() ||
+                          ("PROFILE.UNSPECIFIED" | translate)
+                      }}
                     </p>
                   </div>
                 </div>
@@ -271,8 +282,12 @@
                     />
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Mis Turnos</h3>
-                <p class="text-blue-100 text-sm">Gestionar citas médicas</p>
+                <h3 class="text-xl font-bold mb-1">
+                  {{ "PROFILE.MY_APPOINTMENTS" | translate }}
+                </h3>
+                <p class="text-blue-100 text-sm">
+                  {{ "PROFILE.MY_APPOINTMENTS_DESC" | translate }}
+                </p>
               </button>
 
               <button
@@ -305,8 +320,12 @@
                     />
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Historial</h3>
-                <p class="text-green-100 text-sm">Registro médico</p>
+                <h3 class="text-xl font-bold mb-1">
+                  {{ "PROFILE.MEDICAL_RECORDS" | translate }}
+                </h3>
+                <p class="text-green-100 text-sm">
+                  {{ "PROFILE.MEDICAL_RECORDS_DESC" | translate }}
+                </p>
               </button>
 
               <button
@@ -338,8 +357,12 @@
                     />
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Facturación</h3>
-                <p class="text-purple-100 text-sm">Pagos y coberturas</p>
+                <h3 class="text-xl font-bold mb-1">
+                  {{ "PROFILE.BILLING" | translate }}
+                </h3>
+                <p class="text-purple-100 text-sm">
+                  {{ "PROFILE.BILLING_DESC" | translate }}
+                </p>
               </button>
 
               <button
@@ -374,8 +397,12 @@
                     />
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Configuración</h3>
-                <p class="text-gray-100 text-sm">Ajustes de cuenta</p>
+                <h3 class="text-xl font-bold mb-1">
+                  {{ "PROFILE.SETTINGS" | translate }}
+                </h3>
+                <p class="text-gray-100 text-sm">
+                  {{ "PROFILE.SETTINGS_DESC" | translate }}
+                </p>
               </button>
             </div>
           </div>
@@ -405,13 +432,15 @@
                   />
                 </svg>
               </div>
-              <h2 class="text-2xl font-bold text-gray-900">Próximas Citas</h2>
+              <h2 class="text-2xl font-bold text-gray-900">
+                {{ "PROFILE.UPCOMING_APPOINTMENTS" | translate }}
+              </h2>
             </div>
             <button
               routerLink="/my-appointments"
               class="text-blue-600 hover:text-blue-700 text-sm font-semibold hover:underline"
             >
-              Ver todas
+              {{ "PROFILE.VIEW_ALL" | translate }}
             </button>
           </div>
 
@@ -438,7 +467,7 @@
                       <span
                         class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800"
                       >
-                        Confirmada
+                        {{ "PROFILE.CONFIRMED" | translate }}
                       </span>
                     </div>
                   </div>
@@ -475,7 +504,7 @@
                       <span
                         class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800"
                       >
-                        Pendiente
+                        {{ "PROFILE.PENDING" | translate }}
                       </span>
                     </div>
                   </div>
@@ -504,7 +533,9 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                <span class="font-medium">Solicitar nuevo turno</span>
+                <span class="font-medium">{{
+                  "PROFILE.REQUEST_APPOINTMENT" | translate
+                }}</span>
               </div>
             </div>
           </div>
@@ -532,20 +563,28 @@
                   />
                 </svg>
               </div>
-              <h3 class="text-lg font-bold text-gray-900">Estado de Salud</h3>
+              <h3 class="text-lg font-bold text-gray-900">
+                {{ "PROFILE.HEALTH_STATUS" | translate }}
+              </h3>
             </div>
 
             <div class="space-y-4">
               <div class="flex items-center justify-between">
-                <span class="text-gray-600">Última consulta</span>
+                <span class="text-gray-600">{{
+                  "PROFILE.LAST_CONSULTATION" | translate
+                }}</span>
                 <span class="text-gray-900 font-medium">05/07/2025</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-600">Próximo control</span>
+                <span class="text-gray-600">{{
+                  "PROFILE.NEXT_CHECKUP" | translate
+                }}</span>
                 <span class="text-gray-900 font-medium">20/08/2025</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-600">Estudios pendientes</span>
+                <span class="text-gray-600">{{
+                  "PROFILE.PENDING_STUDIES" | translate
+                }}</span>
                 <span
                   class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800"
                 >
@@ -573,7 +612,9 @@
                   />
                 </svg>
               </div>
-              <h3 class="text-lg font-bold text-gray-900">Recordatorios</h3>
+              <h3 class="text-lg font-bold text-gray-900">
+                {{ "PROFILE.REMINDERS" | translate }}
+              </h3>
             </div>
 
             <div class="space-y-3">
@@ -584,10 +625,10 @@
                   ></div>
                   <div>
                     <p class="text-sm font-medium text-gray-900">
-                      Medicación diaria
+                      {{ "PROFILE.DAILY_MEDICATION" | translate }}
                     </p>
                     <p class="text-xs text-gray-600">
-                      Tomar pastilla a las 8:00 AM
+                      {{ "PROFILE.MEDICATION_TIME" | translate }} 8:00 AM
                     </p>
                   </div>
                 </div>

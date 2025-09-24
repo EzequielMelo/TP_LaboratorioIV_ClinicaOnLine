@@ -17,6 +17,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
 import { PatientListComponent } from '../../components/admin-dashboard-components/patient-list/patient-list.component';
 import { Patient } from '../../classes/patient.class';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-appointment-request',
@@ -73,7 +74,7 @@ export class AdminAppointmentRequestComponent {
   ngOnInit() {
     this.db.getSpecialtys().subscribe((specialtys) => {
       if (specialtys) {
-        this.specialtys = specialtys as string[]; // Asigna los datos obtenidos
+        this.specialtys = specialtys as string[];
         console.log(this.specialtys);
       }
     });
@@ -103,8 +104,8 @@ export class AdminAppointmentRequestComponent {
             .subscribe((schedule) => {
               this.schedule = schedule.map((day) => ({
                 ...day,
-                date: day.date, // Deja la fecha tal cual, ya está en formato correcto
-              })); // Actualizar el horario completo
+                date: day.date,
+              }));
               console.log(this.schedule);
             });
         }
@@ -115,51 +116,59 @@ export class AdminAppointmentRequestComponent {
     const selectedIndex = (event.target as HTMLSelectElement).value;
     if (selectedIndex !== '') {
       const selectedDay = this.schedule[parseInt(selectedIndex, 10)];
-      const selectedDate = selectedDay.date; // Fecha seleccionada
+      const selectedDate = selectedDay.date;
       const specialistId = this.newAppointmentForm.get('specialistName')?.value;
 
       console.log('Fecha seleccionada: ', selectedDate);
 
-      // Obtener las citas existentes para este especialista y día
       this.appointment
         .getAppointmentsBySpecialistAndDate(specialistId, selectedDate)
-        .subscribe((appointments) => {
-          const takenSlots = appointments.map((appt: any) => {
-            const date = appt.appointmentDate.toDate(); // Convertir Timestamp a Date
-            console.log('Fecha turnos de Firestore: ', date);
+        .subscribe({
+          next: (appointments) => {
+            const takenSlots = appointments.map((appt: any) => {
+              const date = appt.appointmentDate.toDate();
+              console.log('Fecha turnos de Firestore: ', date);
 
-            // Usar la hora local en vez de UTC
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
-            const formattedSlot = `${hours}:${minutes
-              .toString()
-              .padStart(2, '0')}`;
+              const hours = date.getHours();
+              const minutes = date.getMinutes();
+              const formattedSlot = `${hours}:${minutes
+                .toString()
+                .padStart(2, '0')}`;
 
-            console.log(`Turno ocupado: ${formattedSlot}`);
-            return formattedSlot;
-          });
+              console.log(`Turno ocupado: ${formattedSlot}`);
+              return formattedSlot;
+            });
 
-          // Filtrar los horarios disponibles
-          this.selectedDaySlots = this.schedule[
-            parseInt(selectedIndex, 10)
-          ].slots.filter((slot: string) => {
-            // Obtener la hora y minuto del slot en formato local
-            const [slotHour, slotMinute] = slot.split(':').map(Number);
-            const formattedSlot = `${slotHour}:${slotMinute
-              .toString()
-              .padStart(2, '0')}`;
+            this.selectedDaySlots = this.schedule[
+              parseInt(selectedIndex, 10)
+            ].slots.filter((slot: string) => {
+              const [slotHour, slotMinute] = slot.split(':').map(Number);
+              const formattedSlot = `${slotHour}:${slotMinute
+                .toString()
+                .padStart(2, '0')}`;
 
-            // Comparar si la hora del slot está ocupada
-            console.log(`Slot disponible: ${formattedSlot}`);
-            console.log(
-              `Comparando con turno ocupado: ${takenSlots.join(', ')}`
-            );
+              console.log(`Slot disponible: ${formattedSlot}`);
+              console.log(
+                `Comparando con turno ocupado: ${takenSlots.join(', ')}`
+              );
 
-            return !takenSlots.includes(formattedSlot); // Solo mostrar el slot si no está ocupado
-          });
+              return !takenSlots.includes(formattedSlot);
+            });
 
-          // Imprimir los horarios disponibles después del filtro
-          console.log('Horarios disponibles: ', this.selectedDaySlots);
+            console.log('Horarios disponibles: ', this.selectedDaySlots);
+
+            Swal.close(); // Cerrar el loading
+          },
+          error: (error) => {
+            Swal.close();
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al cargar horarios',
+              text: 'No se pudieron cargar los horarios disponibles',
+              confirmButtonColor: '#dc3545',
+              confirmButtonText: 'Reintentar',
+            });
+          },
         });
     }
   }
@@ -168,71 +177,179 @@ export class AdminAppointmentRequestComponent {
     const selectElement = event.target as HTMLSelectElement;
     const selectedSpecialistId = selectElement.value;
 
-    // Buscar el especialista en la lista de especialistas
     const selectedSpecialist = this.specialists.find(
       (specialist) => specialist.id === selectedSpecialistId
     );
 
     if (selectedSpecialist) {
-      this.selectedSpecialist = selectedSpecialist; // Actualizamos la variable con el especialista seleccionado
-      // Juntar nombre y apellido y actualizar el formulario
+      this.selectedSpecialist = selectedSpecialist;
       const fullName = `${selectedSpecialist.name} ${selectedSpecialist.lastName}`;
       this.newAppointmentForm.patchValue({ specialistName: fullName });
+
+      // Toast para confirmar selección de especialista
+      Swal.fire({
+        icon: 'success',
+        title: 'Especialista seleccionado',
+        text: `Dr. ${fullName}`,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
     }
   }
 
   onSubmit() {
-    if (this.newAppointmentForm.valid) {
-      const formValues = this.newAppointmentForm.value;
-
-      // Obtener el día seleccionado
-      const selectedDay = this.schedule[formValues.selectedDay];
-
-      // Obtener la hora seleccionada (hora y minuto) y combinarlo con el día seleccionado
-      const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
-      const [hour, minute] = selectedSlot.split(':'); // Asumiendo que el formato es 'HH:mm'
-
-      // Crear la fecha completa
-      const appointmentDate = new Date(selectedDay.date + 'T00:00:00'); // Agrega tiempo explícito si solo tienes la fecha
-      appointmentDate.setHours(Number(hour));
-      appointmentDate.setMinutes(Number(minute));
-
-      // Crear el objeto de cita
-      const appointment: Partial<Appointment> = {
-        idPatient: this.patient?.id, // ID del paciente autenticado
-        patientName: `${this.patient?.name} ${this.patient?.lastName}`,
-        idSpecialist: this.selectedSpecialist?.id,
-        message: 'Se solicita un nuevo turno',
-        speciality: formValues.specialty,
-        requestedDate: Timestamp.fromDate(new Date()), // Fecha de solicitud actual
-        appointmentDate: Timestamp.fromDate(appointmentDate), // La fecha y hora combinadas
-        appointmentStatus: 'Sin Asignar',
-        isCancelable: true,
-        specialistName: formValues.specialistName,
-        idMedicalReport: null,
-      };
-
-      // Llamar al servicio para agregar el turno
-      this.appointment.addAppointment(appointment).subscribe({
-        next: () => {
-          alert('Turno creado exitosamente');
-          this.newAppointmentForm.reset(); // Limpiar el formulario
-        },
-        error: (err) => {
-          console.error('Error al crear el turno:', err);
-          alert('Hubo un error al intentar crear el turno.');
-        },
+    if (!this.newAppointmentForm.valid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Por favor completa todos los campos requeridos.',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Entendido',
       });
-    } else {
-      alert('Por favor completa todos los campos requeridos.');
+      return;
     }
+
+    if (!this.patient) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Paciente requerido',
+        text: 'Debes seleccionar un paciente para crear la cita.',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Entendido',
+      });
+      return;
+    }
+
+    // Mostrar confirmación antes de crear la cita
+    const formValues = this.newAppointmentForm.value;
+    const selectedDay = this.schedule[formValues.selectedDay];
+    const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
+
+    Swal.fire({
+      title: '¿Confirmar creación de cita?',
+      html: `
+        <div style="text-align: left;">
+          <p><strong>Paciente:</strong> ${this.patient.name} ${this.patient.lastName}</p>
+          <p><strong>Especialidad:</strong> ${formValues.specialty}</p>
+          <p><strong>Especialista:</strong> ${formValues.specialistName}</p>
+          <p><strong>Fecha:</strong> ${selectedDay.date}</p>
+          <p><strong>Hora:</strong> ${selectedSlot}</p>
+        </div>
+      `,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#dc3545',
+      confirmButtonText: 'Sí, crear cita',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.createAppointment();
+      }
+    });
+  }
+
+  private createAppointment() {
+    const formValues = this.newAppointmentForm.value;
+    const selectedDay = this.schedule[formValues.selectedDay];
+    const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
+    const [hour, minute] = selectedSlot.split(':');
+
+    const appointmentDate = new Date(selectedDay.date + 'T00:00:00');
+    appointmentDate.setHours(Number(hour));
+    appointmentDate.setMinutes(Number(minute));
+
+    const appointment: Partial<Appointment> = {
+      idPatient: this.patient?.id,
+      patientName: `${this.patient?.name} ${this.patient?.lastName}`,
+      idSpecialist: this.selectedSpecialist?.id,
+      message: 'Se solicita un nuevo turno',
+      speciality: formValues.specialty,
+      requestedDate: Timestamp.fromDate(new Date()),
+      appointmentDate: Timestamp.fromDate(appointmentDate),
+      appointmentStatus: 'Sin Asignar',
+      isCancelable: true,
+      specialistName: formValues.specialistName,
+      idMedicalReport: null,
+    };
+
+    // Mostrar loading durante la creación
+    Swal.fire({
+      title: 'Creando cita médica...',
+      text: 'Por favor espera mientras procesamos la información',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    this.appointment.addAppointment(appointment).subscribe({
+      next: () => {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Cita creada exitosamente!',
+          html: `
+            <div style="text-align: left;">
+              <p>La cita médica ha sido programada para:</p>
+              <p><strong>Paciente:</strong> ${this.patient?.name} ${this.patient?.lastName}</p>
+              <p><strong>Fecha:</strong> ${selectedDay.date}</p>
+              <p><strong>Hora:</strong> ${selectedSlot}</p>
+              <p><strong>Especialista:</strong> ${formValues.specialistName}</p>
+            </div>
+          `,
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'Excelente',
+          timer: 5000,
+          timerProgressBar: true,
+        }).then(() => {
+          this.resetForm();
+        });
+      },
+      error: (err) => {
+        console.error('Error al crear el turno:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al crear la cita',
+          text: 'Hubo un error al intentar crear la cita médica. Por favor inténtalo de nuevo.',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Reintentar',
+          footer:
+            '<span style="color: #6c757d;">Si el problema persiste, contacta al soporte técnico</span>',
+        });
+      },
+    });
+  }
+
+  private resetForm() {
+    this.newAppointmentForm.reset();
+    this.patient = null;
+    this.selectedSpecialist = null;
+    this.selectedDaySlots = [];
+    this.schedule = [];
   }
 
   receivePatient(selectedPatient: Patient): void {
-    this.patient = selectedPatient; // Actualizas la propiedad local.
+    this.patient = selectedPatient;
     this.newAppointmentForm.controls['selectedPatient'].setValue(
       selectedPatient.id
-    ); // Asignas el ID al FormControl.
+    );
+
+    // Confirmar selección de paciente
+    Swal.fire({
+      icon: 'success',
+      title: 'Paciente seleccionado',
+      text: `${selectedPatient.name} ${selectedPatient.lastName} - DNI: ${selectedPatient.dni}`,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
   }
 
   formatPatient(patient: Patient): string {
@@ -244,12 +361,38 @@ export class AdminAppointmentRequestComponent {
     console.log('Search submitted:', keyWord);
 
     if (keyWord) {
-      this.patients = this.patients.filter(
+      const filteredPatients = this.patients.filter(
         (patients) =>
           patients.name.toLowerCase().includes(keyWord.toLowerCase()) ||
           patients.lastName.toLowerCase().includes(keyWord.toLowerCase()) ||
           patients.dni.toLowerCase().includes(keyWord.toLowerCase())
       );
+
+      this.patients = filteredPatients;
+
+      if (filteredPatients.length === 0) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Sin resultados',
+          text: 'No se encontraron pacientes que coincidan con la búsqueda.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Búsqueda completada',
+          text: `${filteredPatients.length} paciente(s) encontrado(s)`,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      }
     } else {
       this.db.getPatients().subscribe((data) => {
         this.patients = data;

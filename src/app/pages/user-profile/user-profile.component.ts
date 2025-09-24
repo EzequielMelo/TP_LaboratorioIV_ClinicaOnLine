@@ -5,11 +5,12 @@ import { UserTypes } from '../../models/user-types';
 import { Patient } from '../../classes/patient.class';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, TranslateModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
 })

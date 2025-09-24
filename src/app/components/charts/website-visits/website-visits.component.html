@@ -1,0 +1,108 @@
+<div class="logged-users-container">
+  <!-- Header del componente -->
+  <div class="component-header">
+    <div class="header-info">
+      <h3>👥 Visitas al Sitio Web</h3>
+      <p class="description">
+        Cantidad de visitas agrupadas por fecha de ingreso
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando datos de visitas...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Gráficos y tabla -->
+  <div *ngIf="!loading && !error && visits.length > 0" class="charts-section">
+    <!-- Fila de gráficos -->
+    <div class="charts-row">
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="lineChartOption"
+            [loading]="loading"
+            class="chart-bar"
+            id="chart-line"
+          ></div>
+        </div>
+      </div>
+
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="barChartOption"
+            [loading]="loading"
+            class="chart-bar"
+            id="chart-bar"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla detallada -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>📋 Detalle por Día</h4>
+        <span class="table-count">{{ visits.length }} días encontrados</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="specialty-table">
+          <thead>
+            <tr>
+              <th>📅 Fecha</th>
+              <th>👥 Cantidad</th>
+              <th>📈 Porcentaje</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let day of visits; let i = index" class="specialty-row">
+              <td class="specialty-name">
+                <div class="specialty-info">
+                  <span>{{ day.fecha }}</span>
+                </div>
+              </td>
+              <td class="specialty-count">
+                <strong>{{ day.cantidad }}</strong> visitas
+              </td>
+              <td class="specialty-percentage">
+                <div class="percentage-bar">
+                  <span class="percentage-text">{{ day.porcentaje }}%</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Si no hay datos -->
+  <div *ngIf="!loading && !error && visits.length === 0" class="no-data">
+    <div class="no-data-icon">📭</div>
+    <h4>No hay datos de visitas</h4>
+    <p>No se registraron visitas en la base de datos.</p>
+    <button class="btn btn-refresh" (click)="refresh()">
+      🔄 Intentar de nuevo
+    </button>
+  </div>
+</div>

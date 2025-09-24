@@ -97,7 +97,8 @@ export class LoggedUsersComponent {
 
     // Contar por tipo de usuario
     logs.forEach((log) => {
-      switch (log.tipoUsuario.toLowerCase()) {
+      const tipo = log.tipoUsuario ? String(log.tipoUsuario).toLowerCase() : '';
+      switch (tipo) {
         case 'paciente':
           this.loginsByUserType.pacientes++;
           break;

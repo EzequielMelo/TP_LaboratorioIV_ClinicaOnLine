@@ -2,11 +2,12 @@ import { CardComponent } from '../../components/home-components/card/card.compon
 import { Component, OnInit, inject } from '@angular/core';
 import { CarouselComponent } from '../../components/home-components/carousel/carousel.component';
 import { DatabaseService } from '../../services/database/database.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CarouselComponent, CardComponent],
+  imports: [CarouselComponent, CardComponent, TranslateModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

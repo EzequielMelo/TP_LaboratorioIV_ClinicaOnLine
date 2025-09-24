@@ -1,0 +1,118 @@
+<div class="logged-users-container">
+  <div class="component-header">
+    <div class="header-info">
+      <h3>📊 Estadísticas de Turnos por Paciente</h3>
+      <p class="description">
+        Selecciona un paciente para ver un informe de sus turnos.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Selección de pacientes -->
+  <div
+    *ngIf="!loading && !error && patients.length > 0 && !selectedPatient"
+    class="table-section"
+  >
+    <div class="table-header">
+      <h4>👥 Lista de Pacientes</h4>
+      <span class="table-count">{{ patients.length }} pacientes</span>
+    </div>
+    <div class="table-wrapper">
+      <table class="specialty-table">
+        <thead>
+          <tr>
+            <th>🧑 Nombre</th>
+            <th>🪪 DNI</th>
+            <th>🏥 Obra Social</th>
+            <th>📊 Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of patients" class="specialty-row">
+            <td>{{ p.lastName }}, {{ p.name }}</td>
+            <td>{{ p.dni }}</td>
+            <td>{{ p.healthCareSystem }}</td>
+            <td>
+              <button class="btn btn-test" (click)="selectPatient(p)">
+                📈 Ver estadísticas
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div *ngIf="!loading && !error && selectedPatient" class="charts-section">
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-wrapper">
+          <div echarts [options]="chartOption" class="chart-pie"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de estados -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>📋 Detalle de Turnos</h4>
+        <span class="table-count">{{ appointmentStats.length }} estados</span>
+      </div>
+      <div class="table-wrapper">
+        <table class="specialty-table">
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let stat of appointmentStats" class="specialty-row">
+              <td>{{ stat.status }}</td>
+              <td>{{ stat.count }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="header-actions" style="margin-top: 1.5rem">
+      <button class="btn btn-retry" (click)="selectedPatient = null">
+        ◀️ Volver a pacientes
+      </button>
+    </div>
+  </div>
+
+  <!-- No data -->
+  <div *ngIf="!loading && !error && patients.length === 0" class="no-data">
+    <div class="no-data-icon">📭</div>
+    <h4>No hay pacientes</h4>
+    <p>No se encontraron registros en la base de datos.</p>
+    <button class="btn btn-refresh" (click)="refresh()">
+      🔄 Intentar de nuevo
+    </button>
+  </div>
+</div>

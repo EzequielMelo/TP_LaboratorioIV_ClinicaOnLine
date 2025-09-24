@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AppointmentsOverviewComponent } from '../../components/my-appointments/appointments-overview/appointments-overview.component';
 import { AppointmentRequestComponent } from '../../components/my-appointments/appointment-request/appointment-request.component';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-my-appointments',
@@ -10,6 +11,7 @@ import { CommonModule } from '@angular/common';
     AppointmentsOverviewComponent,
     AppointmentRequestComponent,
     CommonModule,
+    TranslateModule,
   ],
   templateUrl: './my-appointments.component.html',
   styleUrl: './my-appointments.component.css',

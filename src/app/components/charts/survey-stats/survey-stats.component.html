@@ -1,0 +1,111 @@
+<div class="logged-users-container">
+  <div class="component-header">
+    <div class="header-info">
+      <h3>📊 Encuestas de Usuarios</h3>
+      <p class="description">
+        Resultados de satisfacción, comentarios y mejoras sugeridas.
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estados -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando encuestas...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Gráficos y tablas -->
+  <div *ngIf="!loading && !error && surveys.length > 0" class="charts-section">
+    <div class="charts-row">
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="serviceQualityChartOption"
+            class="chart-pie"
+          ></div>
+        </div>
+      </div>
+
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="improvementsChartOption"
+            class="chart-bar"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de respuestas -->
+    <div class="table-section">
+      <div class="table-header">
+        <h4>📋 Respuestas Recibidas</h4>
+        <span class="table-count">{{ surveys.length }} encuestas</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="specialty-table">
+          <thead>
+            <tr>
+              <th>📅 Fecha</th>
+              <th>⭐ Rating</th>
+              <th>👍 Recomendación</th>
+              <th>⚙️ Calidad Servicio</th>
+              <th>📝 Comentarios</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of surveys">
+              <td>{{ s.date }} {{ s.time }}</td>
+              <td>{{ s.rating }}</td>
+              <td>{{ s.recommendationLevel }}</td>
+              <td>{{ s.serviceQuality }}</td>
+              <td>{{ s.additionalComments || "—" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Promedio -->
+    <div class="stats-section">
+      <div class="stats-cards">
+        <div class="stat-card primary">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-content">
+            <div class="stat-number">
+              {{ averageRating | number : "1.1-2" }}
+            </div>
+            <div class="stat-label">Promedio de Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No data -->
+  <div *ngIf="!loading && !error && surveys.length === 0" class="no-data">
+    <div class="no-data-icon">📭</div>
+    <h4>No hay encuestas</h4>
+    <p>No se encontraron respuestas en la base de datos.</p>
+    <button class="btn btn-refresh" (click)="refresh()">
+      🔄 Intentar de nuevo
+    </button>
+  </div>
+</div>

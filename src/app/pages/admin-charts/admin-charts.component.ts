@@ -5,6 +5,11 @@ import { AppointmentsRequestedByTimeComponent } from '../../components/charts/ap
 import { AppointmentsCompletedByTimeComponent } from '../../components/charts/appointments-completed-by-time/appointments-completed-by-time.component';
 import { AppointmentsPerDayComponent } from '../../components/charts/appointments-per-day/appointments-per-day.component';
 import { AppointmentsPerSpecialtyComponent } from '../../components/charts/appointments-per-specialty/appointments-per-specialty.component';
+import { WebsiteVisitsComponent } from '../../components/charts/website-visits/website-visits.component';
+import { SpecialtyStatisticsComponent } from '../../components/charts/specialty-statistics/specialty-statistics.component';
+import { SurveyStatsComponent } from '../../components/charts/survey-stats/survey-stats.component';
+import { UsersAppointmentsStatsComponent } from '../../components/charts/users-appointments-stats/users-appointments-stats.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 export enum TipoGrafico {
   LOGINS = 'logins',
@@ -12,6 +17,10 @@ export enum TipoGrafico {
   TURNOS_POR_DIA = 'turnos-diarios',
   TURNOS_SOLICITADOS = 'turnos-solicitados',
   TURNOS_FINALIZADOS = 'turnos-finalizados',
+  VISITAS_AL_SITIO = 'visitas-al-sitio',
+  DATOS_DE_ESPECIALIDADES = 'datos-de-especialidades',
+  DATOS_DE_ENCUESTAS = 'datos-de-encuestas',
+  DATOS_DE_PACIENTES = 'datos-de-pacientes',
 }
 
 // Interface para las opciones del menú
@@ -33,9 +42,30 @@ export interface OpcionGrafico {
     AppointmentsCompletedByTimeComponent,
     AppointmentsPerDayComponent,
     AppointmentsPerSpecialtyComponent,
+    WebsiteVisitsComponent,
+    SpecialtyStatisticsComponent,
+    SurveyStatsComponent,
+    UsersAppointmentsStatsComponent,
   ],
   templateUrl: './admin-charts.component.html',
   styleUrl: './admin-charts.component.css',
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate(
+          '300ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-in',
+          style({ opacity: 0, transform: 'translateY(-10px)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AdminChartsComponent {
   graficoActual: TipoGrafico = TipoGrafico.LOGINS;
@@ -49,35 +79,63 @@ export class AdminChartsComponent {
       id: TipoGrafico.LOGINS,
       titulo: 'Ingresos al Sistema',
       descripcion: 'Usuario, día y horario de ingreso al sistema',
-      icono: '🔐',
+      icono: '🔐', // login / seguridad
       activo: true,
     },
     {
       id: TipoGrafico.TURNOS_POR_ESPECIALIDAD,
-      titulo: 'Turnos Solicitados por Medico',
+      titulo: 'Turnos Solicitados por Médico',
       descripcion: 'Turnos solicitados por médico en un período de tiempo',
-      icono: '👨‍⚕️',
+      icono: '👨‍⚕️', // médico
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_POR_DIA,
       titulo: 'Turnos Completados por Médico',
       descripcion: 'Turnos finalizados por médico en un período de tiempo',
-      icono: '✅',
+      icono: '✅', // completados
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_SOLICITADOS,
       titulo: 'Turnos por Día',
       descripcion: 'Distribución diaria de turnos programados',
-      icono: '📅',
+      icono: '📅', // calendario
       activo: false,
     },
     {
       id: TipoGrafico.TURNOS_FINALIZADOS,
       titulo: 'Turnos por Especialidad',
       descripcion: 'Cantidad de turnos agrupados por especialidad médica',
-      icono: '🏥',
+      icono: '📊', // gráfico de barras
+      activo: false,
+    },
+    {
+      id: TipoGrafico.VISITAS_AL_SITIO,
+      titulo: 'Visitas al Sitio',
+      descripcion: 'Visitas que obtuvo la página web',
+      icono: '🌐', // web / internet
+      activo: false,
+    },
+    {
+      id: TipoGrafico.DATOS_DE_ESPECIALIDADES,
+      titulo: 'Datos sobre especialidades',
+      descripcion: 'Datos relevantes sobre las especialidades médicas',
+      icono: '🩺', // estetoscopio
+      activo: false,
+    },
+    {
+      id: TipoGrafico.DATOS_DE_ENCUESTAS,
+      titulo: 'Datos sobre encuestas',
+      descripcion: 'Datos relevantes sobre las encuestas de satisfacción',
+      icono: '📝', // encuesta/cuestionario
+      activo: false,
+    },
+    {
+      id: TipoGrafico.DATOS_DE_PACIENTES,
+      titulo: 'Datos sobre los turnos de pacientes',
+      descripcion: 'Datos relevantes sobre los turnos de pacientes',
+      icono: '🧑‍🤝‍🧑', // pacientes/personas
       activo: false,
     },
   ];

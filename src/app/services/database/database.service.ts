@@ -1,6 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { catchError, from, map, Observable, throwError } from 'rxjs';
+import {
+  catchError,
+  forkJoin,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from 'rxjs';
 import { Patient } from '../../classes/patient.class';
 import {
   Firestore,
@@ -237,5 +247,98 @@ export class DatabaseService {
       .catch((err) => {
         console.error('Error registrando visita:', err);
       });
+  }
+
+  addNewSpecialties(specialties: string[]): Observable<void> {
+    // Función auxiliar para normalizar texto
+    const normalizeSpecialty = (specialty: string): string => {
+      return (
+        specialty
+          .trim()
+          .toLowerCase()
+          // Reemplazar caracteres acentuados
+          .replace(/á/g, 'a')
+          .replace(/é/g, 'e')
+          .replace(/í/g, 'i')
+          .replace(/ó/g, 'o')
+          .replace(/ú/g, 'u')
+          .replace(/ñ/g, 'n')
+          .replace(/ü/g, 'u')
+          // Remover signos de puntuación y caracteres especiales
+          .replace(/[^a-zA-Z0-9\s]/g, '')
+          // Capitalizar primera letra
+          .replace(/^\w/, (char) => char.toUpperCase())
+      );
+    };
+
+    // Normalizar las especialidades recibidas
+    const normalizedSpecialties = specialties
+      .map((specialty) => normalizeSpecialty(specialty))
+      .filter((specialty) => specialty.length > 0); // Filtrar strings vacíos
+
+    if (normalizedSpecialties.length === 0) {
+      return of(void 0); // No hay especialidades válidas para agregar
+    }
+
+    // Obtener especialidades existentes para evitar duplicados
+    return this.getSpecialtys().pipe(
+      // CAMBIO: usar this.getSpecialtys() en lugar de this.firestore.getSpecialtys()
+      switchMap((existingSpecialties: string[]) => {
+        // Normalizar especialidades existentes para comparación
+        const normalizedExisting = existingSpecialties.map((specialty) =>
+          normalizeSpecialty(specialty)
+        );
+
+        // Filtrar solo las especialidades que no existen
+        const newSpecialties = normalizedSpecialties.filter(
+          (specialty) => !normalizedExisting.includes(specialty)
+        );
+
+        if (newSpecialties.length === 0) {
+          console.log(
+            'Todas las especialidades ya existen en la base de datos'
+          );
+          return of(void 0); // No hay nuevas especialidades para agregar
+        }
+
+        // Crear observables para cada nueva especialidad
+        const addOperations = newSpecialties.map((specialty) => {
+          const specialtyDoc = {
+            specialty: specialty,
+          };
+
+          // CAMBIO: usar this.firestore.collection().add() en lugar de doc().set()
+          return from(
+            this.firestore.collection('specialtys').add(specialtyDoc)
+          ).pipe(
+            tap(() => console.log(`Especialidad agregada: ${specialty}`)),
+            catchError((error) => {
+              console.error(
+                `Error al agregar especialidad ${specialty}:`,
+                error
+              );
+              return throwError(() => error);
+            })
+          );
+        });
+
+        // Ejecutar todas las operaciones en paralelo
+        return forkJoin(addOperations).pipe(
+          map(() => void 0), // Convertir el resultado a void
+          tap(() => {
+            console.log(
+              `Se agregaron ${newSpecialties.length} nuevas especialidades:`,
+              newSpecialties
+            );
+          })
+        );
+      }),
+      catchError((error) => {
+        console.error('Error al procesar especialidades:', error);
+        return throwError(() => ({
+          message: 'Error al agregar nuevas especialidades a la base de datos.',
+        }));
+      })
+    );
   }
 }

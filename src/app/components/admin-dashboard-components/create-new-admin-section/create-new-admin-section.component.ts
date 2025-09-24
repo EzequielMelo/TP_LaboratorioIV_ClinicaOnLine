@@ -11,6 +11,7 @@ import {
   dniValidator,
   numericValidator,
 } from '../../../shared/validators/custom-validators';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-create-new-admin-section',
@@ -64,12 +65,30 @@ export class CreateNewAdminSectionComponent {
 
   register() {
     const formValues = this.registerForm.value;
-    const profilePicture = this.selectedUserAvatar; // Blob de la imagen de perfil
+    const profilePicture = this.selectedUserAvatar;
 
     if (!profilePicture) {
-      console.error('La imagen es necesaria para registrarse');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Imagen requerida',
+        text: 'Debes seleccionar una imagen de perfil para continuar',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Entendido',
+      });
       return;
     }
+
+    // Mostrar loading mientras se procesa la solicitud
+    Swal.fire({
+      title: 'Creando administrador...',
+      text: 'Por favor espera mientras procesamos la información',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     this.auth
       .registerAdmin(
@@ -84,17 +103,44 @@ export class CreateNewAdminSectionComponent {
       )
       .subscribe({
         next: (res) => {
+          Swal.close(); // Cerrar el loading
+
           if (res.success) {
-            console.log(res.message);
-            alert(res.message); // Mostrar al usuario
-            this.registerForm.reset(); // Opcional: limpiar formulario
+            Swal.fire({
+              icon: 'success',
+              title: '¡Administrador creado!',
+              text: res.message,
+              confirmButtonColor: '#28a745',
+              confirmButtonText: 'Excelente',
+              timer: 3000,
+              timerProgressBar: true,
+            }).then(() => {
+              this.registerForm.reset();
+              this.selectedUserAvatar = null;
+              this.selectedUserAvatarName = null;
+            });
           } else {
-            console.warn(res.message);
+            Swal.fire({
+              icon: 'warning',
+              title: 'Atención',
+              text: res.message,
+              confirmButtonColor: '#ffc107',
+              confirmButtonText: 'Entendido',
+            });
           }
         },
         error: (error) => {
-          console.error('Error en el registro:', error.message);
-          alert(error.message);
+          Swal.close(); // Cerrar el loading
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Error en el registro',
+            text: error.message || 'Ha ocurrido un error inesperado',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Reintentar',
+            footer:
+              '<span style="color: #6c757d;">Si el problema persiste, contacta al soporte técnico</span>',
+          });
         },
       });
   }
@@ -106,7 +152,7 @@ export class CreateNewAdminSectionComponent {
       const control = this.registerForm.get(controlName);
 
       if (control) {
-        control.setErrors(null); // Limpiar errores anteriores
+        control.setErrors(null);
 
         // Validar tipo de archivo
         if (file.type === 'image/jpeg' || file.type === 'image/png') {
@@ -116,11 +162,31 @@ export class CreateNewAdminSectionComponent {
           if (controlName === 'user_avatar') {
             this.selectedUserAvatar = fileBlob;
             this.selectedUserAvatarName = file.name;
+
+            // Mostrar confirmación de imagen seleccionada
+            Swal.fire({
+              icon: 'success',
+              title: 'Imagen seleccionada',
+              text: `Archivo: ${file.name}`,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 2000,
+              timerProgressBar: true,
+            });
           }
 
           control.updateValueAndValidity();
         } else {
           control.setErrors({ invalidFileType: true });
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Formato no válido',
+            text: 'Por favor selecciona una imagen en formato JPG o PNG',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'Entendido',
+          });
         }
       }
     } else {
@@ -130,6 +196,7 @@ export class CreateNewAdminSectionComponent {
       // Limpia la propiedad correspondiente si no se selecciona archivo
       if (controlName === 'user_avatar') {
         this.selectedUserAvatar = null;
+        this.selectedUserAvatarName = null;
       }
     }
   }

@@ -18,9 +18,11 @@
           />
         </svg>
       </div>
-      <h1 class="text-5xl font-bold text-white mb-2">Gestión de Turnos</h1>
+      <h1 class="text-5xl font-bold text-white mb-2">
+        {{ "APPOINTMENTS.TITLE" | translate }}
+      </h1>
       <p class="text-xl text-blue-100">
-        Administre sus citas médicas de forma sencilla
+        {{ "APPOINTMENTS.SUBTITLE" | translate }}
       </p>
     </div>
 
@@ -45,8 +47,12 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span class="hidden sm:inline">Ver mis turnos</span>
-        <span class="sm:hidden">Ver turnos</span>
+        <span class="hidden sm:inline">{{
+          "APPOINTMENTS.VIEW_APPOINTMENTS" | translate
+        }}</span>
+        <span class="sm:hidden">{{
+          "APPOINTMENTS.VIEW_APPOINTMENTS_SHORT" | translate
+        }}</span>
 
         <!-- Indicador activo -->
         <div
@@ -72,8 +78,12 @@
             clip-rule="evenodd"
           />
         </svg>
-        <span class="hidden sm:inline">Pedir nuevo turno</span>
-        <span class="sm:hidden">Pedir turno</span>
+        <span class="hidden sm:inline">{{
+          "APPOINTMENTS.REQUEST_APPOINTMENT" | translate
+        }}</span>
+        <span class="sm:hidden">{{
+          "APPOINTMENTS.REQUEST_APPOINTMENT_SHORT" | translate
+        }}</span>
 
         <!-- Indicador activo -->
         <div
@@ -95,8 +105,8 @@
       <span class="text-sm">
         {{
           activeView === "overview"
-            ? "Mis turnos médicos"
-            : "Solicitar nueva cita"
+            ? ("APPOINTMENTS.MY_APPOINTMENTS" | translate)
+            : ("APPOINTMENTS.REQUEST_NEW" | translate)
         }}
       </span>
     </div>
@@ -146,15 +156,15 @@
                 <h2 class="text-2xl font-bold text-gray-900">
                   {{
                     activeView === "overview"
-                      ? "Mis Turnos Médicos"
-                      : "Solicitar Nuevo Turno"
+                      ? ("APPOINTMENTS.MY_MEDICAL_APPOINTMENTS" | translate)
+                      : ("APPOINTMENTS.REQUEST_APPOINTMENT" | translate)
                   }}
                 </h2>
                 <p class="text-gray-600">
                   {{
                     activeView === "overview"
-                      ? "Gestione y haga seguimiento de sus citas médicas"
-                      : "Complete el formulario para solicitar una nueva cita"
+                      ? ("APPOINTMENTS.APPOINTMENT_MANAGEMENT" | translate)
+                      : ("APPOINTMENTS.REQUEST_FORM" | translate)
                   }}
                 </p>
               </div>
@@ -177,7 +187,11 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                {{ activeView === "overview" ? "Pedir turno" : "Ver turnos" }}
+                {{
+                  activeView === "overview"
+                    ? ("APPOINTMENTS.SWITCH_TO_REQUEST" | translate)
+                    : ("APPOINTMENTS.SWITCH_TO_VIEW" | translate)
+                }}
               </button>
             </div>
           </div>
@@ -208,9 +222,9 @@
         <div class="bg-gray-50 px-8 py-4 border-t border-gray-200">
           <div class="flex items-center justify-between text-sm text-gray-600">
             <div class="flex items-center gap-4">
-              <span>¿Necesita ayuda?</span>
+              <span>{{ "APPOINTMENTS.NEED_HELP" | translate }}</span>
               <button class="text-blue-600 hover:text-blue-700 font-medium">
-                Contactar soporte
+                {{ "APPOINTMENTS.CONTACT_SUPPORT" | translate }}
               </button>
             </div>
 
@@ -218,7 +232,7 @@
               <div
                 class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
               ></div>
-              <span>Sistema activo</span>
+              <span>{{ "APPOINTMENTS.SYSTEM_ACTIVE" | translate }}</span>
             </div>
           </div>
         </div>

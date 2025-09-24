@@ -1,126 +1,153 @@
-<div class="relative max-h-[600px] overflow-auto rounded-xl shadow-lg">
-  <table class="w-full text-sm text-left text-gray-700">
-    <thead
-      class="text-xs uppercase bg-gradient-to-r from-blue-600 to-blue-700 text-white sticky top-0"
-    >
-      <tr>
-        <th class="px-6 py-4 font-semibold">Paciente</th>
-        <th class="px-6 py-4 font-semibold bg-blue-600/80">DNI</th>
-        <th class="px-6 py-4 font-semibold">Obra Social</th>
-        <th class="px-6 py-4 font-semibold bg-blue-600/80">Acciones</th>
-      </tr>
-    </thead>
+<!-- Template simple para el componente padre -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+  <!-- Card por cada paciente -->
+  <div
+    *ngFor="let patient of patients; trackBy: trackByPatient"
+    class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden cursor-pointer"
+    (click)="viewPatientHistory(patient)"
+  >
+    <!-- Header de la Card -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
+      <div class="flex items-center space-x-3">
+        <div
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-semibold text-lg"
+        >
+          {{ getInitials(patient.name, patient.lastName) }}
+        </div>
+        <div>
+          <h3 class="font-semibold text-white text-lg">
+            {{ patient.name }} {{ patient.lastName }}
+          </h3>
+          <p class="text-blue-100 text-sm">DNI: {{ patient.dni }}</p>
+        </div>
+      </div>
+    </div>
 
-    <tbody class="divide-y divide-gray-200">
-      @for (patient of patients; track patient.id) {
-      <tr class="bg-white hover:bg-blue-50 transition-all duration-200 group">
-        <!-- Información del paciente -->
-        <td class="px-6 py-4">
-          <div class="flex items-center space-x-3">
-            <div class="flex-shrink-0">
-              <div
-                class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg"
-              >
-                {{ getInitials(patient.name, patient.lastName) }}
-              </div>
-            </div>
-            <div>
-              <div
-                class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors"
-              >
-                {{ patient.name }} {{ patient.lastName }}
-              </div>
-              <div class="text-xs text-gray-500">ID: {{ patient.id }}</div>
-            </div>
-          </div>
-        </td>
+    <!-- Información de Obra Social -->
+    <div class="p-4 border-b border-gray-100">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Obra Social:</span>
+        <span
+          class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+        >
+          {{ patient.healthCareSystem || "Sin especificar" }}
+        </span>
+      </div>
+    </div>
 
-        <!-- Email -->
-        <td class="px-6 py-4 bg-gray-50/50">
+    <!-- Preview de últimos turnos -->
+    <div class="p-4">
+      <h4 class="text-sm font-semibold text-gray-700 mb-3">
+        Últimas Consultas
+      </h4>
+
+      <!-- Loading -->
+      <div *ngIf="loadingAppointments[patient.id]" class="space-y-2">
+        <div
+          *ngFor="let i of [1, 2, 3]"
+          class="flex items-center justify-between p-2 bg-gray-50 rounded-lg animate-pulse"
+        >
           <div class="flex items-center space-x-2">
-            <span class="text-gray-700">{{ patient.dni }}</span>
-          </div>
-        </td>
-
-        <!-- Obra Social -->
-        <td class="px-6 py-4">
-          <span
-            class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
-          >
-            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
-            {{ patient.healthCareSystem || "Sin especificar" }}
-          </span>
-        </td>
-
-        <!-- Acciones -->
-        <td class="px-6 py-4 bg-gray-50/50">
-          <div class="flex space-x-2">
-            <!-- Botón Ver Historial -->
-            <button
-              (click)="viewPatientHistory(patient)"
-              class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs px-3 py-2 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
-              title="Ver historial completo"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                ></path>
-              </svg>
-              Historial
-            </button>
-          </div>
-        </td>
-      </tr>
-      } @empty {
-      <tr>
-        <td colspan="6" class="px-6 py-12 text-center">
-          <div class="flex flex-col items-center gap-4">
-            <!-- Icono mejorado -->
-            <div
-              class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center"
-            >
-              <svg
-                class="w-10 h-10 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                ></path>
-              </svg>
+            <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+            <div class="space-y-1">
+              <div class="h-3 bg-gray-300 rounded w-20"></div>
+              <div class="h-2 bg-gray-300 rounded w-16"></div>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="text-center">
-              <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                No hay pacientes atendidos
-              </h3>
-              <p class="text-gray-500 max-w-md">
-                Cuando completes consultas con pacientes, aparecerán listados
-                aquí para poder acceder a su historial médico.
+      <!-- Turnos reales -->
+      <div *ngIf="!loadingAppointments[patient.id]" class="space-y-2">
+        <div
+          *ngFor="let appointment of getLastThreeAppointments(patient.id)"
+          class="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+        >
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div>
+              <p class="text-xs font-medium text-gray-700">
+                {{ appointment.speciality }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{
+                  appointment.appointmentDate
+                    ? (appointment.appointmentDate.toDate()
+                      | date : "dd/MM/yyyy")
+                    : ""
+                }}
               </p>
             </div>
           </div>
-        </td>
-      </tr>
-      }
-    </tbody>
-  </table>
+          <span class="text-xs text-green-600 font-medium">Completada</span>
+        </div>
+
+        <!-- Sin turnos -->
+        <div
+          *ngIf="getLastThreeAppointments(patient.id).length === 0"
+          class="text-center py-4 text-gray-500 text-sm"
+        >
+          <p>No hay consultas previas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Acción -->
+    <div class="p-4 bg-gray-50 border-t border-gray-100">
+      <button
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition-all duration-200 flex items-center justify-center gap-2"
+      >
+        <svg
+          class="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          ></path>
+        </svg>
+        Ver Historia Clínica
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <div *ngIf="!patients || patients.length === 0" class="col-span-full">
+    <div
+      class="bg-white rounded-xl shadow-sm border-2 border-dashed border-gray-200 p-12 text-center"
+    >
+      <div class="flex flex-col items-center gap-4">
+        <div
+          class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center"
+        >
+          <svg
+            class="w-10 h-10 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            ></path>
+          </svg>
+        </div>
+        <div class="text-center">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            No hay pacientes atendidos
+          </h3>
+          <p class="text-gray-500 max-w-md">
+            Cuando completes consultas con pacientes, aparecerán listados aquí
+            para poder acceder a su historial médico.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

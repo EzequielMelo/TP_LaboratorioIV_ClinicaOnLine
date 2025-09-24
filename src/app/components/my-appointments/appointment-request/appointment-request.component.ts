@@ -17,6 +17,7 @@ import { UserTypes } from '../../../models/user-types';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CaptchaDirective } from '../../../directives/captcha.directive';
 import { Patient } from '../../../classes/patient.class';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-appointment-request',
@@ -26,17 +27,30 @@ import { Patient } from '../../../classes/patient.class';
   styleUrl: './appointment-request.component.css',
 })
 export class AppointmentRequestComponent implements OnInit {
-  schedule: any[] = [];
-  newAppointmentForm: FormGroup;
-  specialtys: string[] = [];
+  // Estados de los pasos
+  currentStep: number = 1;
+
+  // Datos seleccionados
+  selectedSpecialty: string = '';
   selectedSpecialist: Specialist | null = null;
+  selectedDay: any = null;
+  selectedDayIndex: number = -1;
+  selectedTimeSlot: string = '';
+  selectedTimeSlotIndex: number = -1;
+
+  // Datos del formulario
+  schedule: any[] = [];
+  specialtys: string[] = [];
   specialists: Specialist[] = [];
   selectedDaySlots: string[] = [];
+
+  // Estado del usuario y captcha
   user: UserTypes | null = null;
   captchaEnabled = true;
   captchaOk = false;
   captchaTouched = false;
 
+  // Servicios
   private formBuilder = inject(FormBuilder);
   private db = inject(DatabaseService);
   private appointment = inject(AppointmentsService);
@@ -49,147 +63,254 @@ export class AppointmentRequestComponent implements OnInit {
       if (user instanceof Patient) {
         this.captchaEnabled = user.settings?.useCaptcha ?? true;
         if (!this.captchaEnabled) {
-          this.captchaOk = true; // pasa automáticamente la validación
+          this.captchaOk = true;
         }
       } else {
         this.captchaEnabled = true;
         this.captchaOk = true;
       }
     });
-
-    this.newAppointmentForm = this.formBuilder.group({
-      specialty: ['', Validators.required],
-      specialistName: ['', Validators.required],
-      selectedDay: ['', Validators.required],
-      selectedSlot: ['', Validators.required],
-    });
   }
 
   ngOnInit() {
-    this.db.getSpecialtys().subscribe((specialtys) => {
-      if (specialtys) {
-        this.specialtys = specialtys as string[]; // Asigna los datos obtenidos
-        console.log(this.specialtys);
-      }
-    });
-
-    this.newAppointmentForm
-      .get('specialty')
-      ?.valueChanges.subscribe((selectedSpecialty) => {
-        if (selectedSpecialty) {
-          this.db
-            .getSpecialistsBySpecialty(selectedSpecialty)
-            .subscribe((specialists) => {
-              this.specialists = specialists;
-            });
-        }
-      });
-
-    this.newAppointmentForm
-      .get('specialistName')
-      ?.valueChanges.subscribe((selectedSpecialistId) => {
-        const selectedSpecialist = this.specialists.find(
-          (spec) => spec.id === selectedSpecialistId
-        );
-        if (selectedSpecialist) {
-          // Obtener horario del especialista
-          this.appointment
-            .getSpecialistSchedule(selectedSpecialist)
-            .subscribe((schedule) => {
-              this.schedule = schedule.map((day) => ({
-                ...day,
-                date: day.date, // Deja la fecha tal cual, ya está en formato correcto
-              })); // Actualizar el horario completo
-              console.log(this.schedule);
-            });
-        }
-      });
+    this.loadSpecialties();
+    this.updateStepIndicator();
   }
 
-  onDayChange(event: Event) {
-    const selectedIndex = (event.target as HTMLSelectElement).value;
-    if (selectedIndex !== '') {
-      const selectedDay = this.schedule[parseInt(selectedIndex, 10)];
-      const selectedDate = selectedDay.date; // Fecha seleccionada
-      const specialistId = this.newAppointmentForm.get('specialistName')?.value;
+  ngOnDestroy() {
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
+  }
 
-      console.log('Fecha seleccionada: ', selectedDate);
+  // Cargar especialidades al inicio
+  loadSpecialties() {
+    this.db.getSpecialtys().subscribe((specialtys) => {
+      if (specialtys) {
+        this.specialtys = specialtys as string[];
+        console.log('Especialidades cargadas:', this.specialtys);
+      }
+    });
+  }
 
-      // Obtener las citas existentes para este especialista y día
-      this.appointment
-        .getAppointmentsBySpecialistAndDate(specialistId, selectedDate)
-        .subscribe((appointments) => {
-          const takenSlots = appointments.map((appt: any) => {
-            const date = appt.appointmentDate.toDate(); // Convertir Timestamp a Date
-            console.log('Fecha turnos de Firestore: ', date);
+  // Actualizar indicador de pasos
+  updateStepIndicator() {
+    // Esta función puede usarse para actualizar el indicador visual de pasos
+    console.log('Paso actual:', this.currentStep);
+  }
 
-            // Usar la hora local en vez de UTC
-            const hours = date.getHours();
-            const minutes = date.getMinutes();
-            const formattedSlot = `${hours}:${minutes
-              .toString()
-              .padStart(2, '0')}`;
+  // PASO 1: Seleccionar especialidad
+  selectSpecialty(specialty: string) {
+    this.selectedSpecialty = specialty;
+    this.currentStep = 2;
+    this.loadSpecialists(specialty);
+    this.updateStepIndicator();
+  }
 
-            console.log(`Turno ocupado: ${formattedSlot}`);
-            return formattedSlot;
-          });
+  // Cargar especialistas por especialidad
+  loadSpecialists(specialty: string) {
+    this.db.getSpecialistsBySpecialty(specialty).subscribe((specialists) => {
+      this.specialists = specialists;
+      console.log('Especialistas cargados:', specialists);
+    });
+  }
 
-          // Filtrar los horarios disponibles
-          this.selectedDaySlots = this.schedule[
-            parseInt(selectedIndex, 10)
-          ].slots.filter((slot: string) => {
-            // Obtener la hora y minuto del slot en formato local
+  // PASO 2: Seleccionar especialista
+  selectSpecialist(specialist: Specialist) {
+    this.selectedSpecialist = specialist;
+    this.currentStep = 3;
+    this.loadSpecialistSchedule(specialist);
+    this.updateStepIndicator();
+  }
+
+  // Cargar horario del especialista
+  loadSpecialistSchedule(specialist: Specialist) {
+    this.appointment.getSpecialistSchedule(specialist).subscribe((schedule) => {
+      this.schedule = schedule.map((day) => ({
+        ...day,
+        date: day.date,
+      }));
+      console.log('Horario cargado:', this.schedule);
+    });
+  }
+
+  // PASO 3: Seleccionar día
+  selectDay(dayIndex: number) {
+    this.selectedDayIndex = dayIndex;
+    this.selectedDay = this.schedule[dayIndex];
+    this.currentStep = 4;
+    this.loadAvailableSlots(dayIndex);
+    this.updateStepIndicator();
+  }
+
+  // Cargar horarios disponibles para el día seleccionado
+  loadAvailableSlots(dayIndex: number) {
+    const selectedDay = this.schedule[dayIndex];
+    const selectedDate = selectedDay.date;
+    const specialistId = this.selectedSpecialist?.id;
+
+    if (!specialistId) return;
+
+    console.log('Cargando slots para fecha:', selectedDate);
+
+    this.appointment
+      .getAppointmentsBySpecialistAndDate(specialistId, selectedDate)
+      .subscribe((appointments) => {
+        const takenSlots = appointments.map((appt: any) => {
+          const date = appt.appointmentDate.toDate();
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          const formattedSlot = `${hours}:${minutes
+            .toString()
+            .padStart(2, '0')}`;
+          console.log(`Turno ocupado: ${formattedSlot}`);
+          return formattedSlot;
+        });
+
+        // Filtrar horarios disponibles
+        this.selectedDaySlots = this.schedule[dayIndex].slots.filter(
+          (slot: string) => {
             const [slotHour, slotMinute] = slot.split(':').map(Number);
             const formattedSlot = `${slotHour}:${slotMinute
               .toString()
               .padStart(2, '0')}`;
+            return !takenSlots.includes(formattedSlot);
+          }
+        );
 
-            // Comparar si la hora del slot está ocupada
-            console.log(`Slot disponible: ${formattedSlot}`);
-            console.log(
-              `Comparando con turno ocupado: ${takenSlots.join(', ')}`
-            );
-
-            return !takenSlots.includes(formattedSlot); // Solo mostrar el slot si no está ocupado
-          });
-
-          // Imprimir los horarios disponibles después del filtro
-          console.log('Horarios disponibles: ', this.selectedDaySlots);
-        });
-    }
+        console.log('Horarios disponibles:', this.selectedDaySlots);
+      });
   }
 
-  onSpecialistChange(event: Event) {
-    const selectElement = event.target as HTMLSelectElement;
-    const selectedSpecialistId = selectElement.value;
+  // PASO 4: Seleccionar horario
+  selectTimeSlot(slotIndex: number) {
+    this.selectedTimeSlotIndex = slotIndex;
+    this.selectedTimeSlot = this.selectedDaySlots[slotIndex];
+    console.log('Horario seleccionado:', this.selectedTimeSlot);
+  }
 
-    // Buscar el especialista en la lista de especialistas
-    const selectedSpecialist = this.specialists.find(
-      (specialist) => specialist.id === selectedSpecialistId
+  // Navegación hacia atrás
+  goBackToStep(step: number) {
+    this.currentStep = step;
+
+    // Limpiar datos según el paso
+    if (step === 1) {
+      this.selectedSpecialty = '';
+      this.selectedSpecialist = null;
+      this.selectedDay = null;
+      this.selectedTimeSlot = '';
+      this.specialists = [];
+      this.schedule = [];
+      this.selectedDaySlots = [];
+    } else if (step === 2) {
+      this.selectedSpecialist = null;
+      this.selectedDay = null;
+      this.selectedTimeSlot = '';
+      this.schedule = [];
+      this.selectedDaySlots = [];
+    } else if (step === 3) {
+      this.selectedDay = null;
+      this.selectedTimeSlot = '';
+      this.selectedDaySlots = [];
+    }
+
+    this.updateStepIndicator();
+  }
+
+  // Formatear fecha (DD/MM)
+  formatDate(date: any): string {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
+  }
+
+  // Obtener nombre del día
+  getDayName(date: any): string {
+    const d = new Date(date);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    return days[d.getDay()];
+  }
+
+  // Formatear hora (HH:MMam/pm)
+  formatTime(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number);
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    const displayHours = hours % 12 || 12;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')}${ampm}`;
+  }
+
+  // Obtener imagen de especialidad
+  getSpecialtyImage(specialty: string): string {
+    // Mapeo de especialidades a imágenes (ajusta según tus imágenes)
+    const specialtyImages: { [key: string]: string } = {
+      Cardiologia: '/cardiologia.png',
+      Dermatología: '/assets/images/specialties/dermatology.jpg',
+      Neurología: '/assets/images/specialties/neurology.jpg',
+      Pediatria: '/pediatria.png',
+      Ginecología: '/assets/images/specialties/gynecology.jpg',
+      Oftalmologia: 'oftalmologia.png',
+      Traumatología: '/assets/images/specialties/traumatology.jpg',
+      Psiquiatría: '/assets/images/specialties/psychiatry.jpg',
+    };
+
+    return specialtyImages[specialty] || '/assets/images/default-specialty.jpg';
+  }
+
+  // Obtener imagen del especialista
+  getSpecialistImage(specialist: Specialist): string {
+    // Asume que el especialista tiene una propiedad profileImage
+    return (
+      (specialist as any).profilePicture || '/assets/images/default-doctor.jpg'
     );
-
-    if (selectedSpecialist) {
-      this.selectedSpecialist = selectedSpecialist; // Actualizamos la variable con el especialista seleccionado
-    }
   }
 
+  // Manejar error de imagen
+  onImageError(event: any) {
+    event.target.src = '/assets/images/default-avatar.jpg';
+  }
+
+  // Validar si el formulario está completo
+  isFormValid(): boolean {
+    return !!(
+      this.selectedSpecialty &&
+      this.selectedSpecialist &&
+      this.selectedDay &&
+      this.selectedTimeSlot
+    );
+  }
+
+  // Enviar formulario
   onSubmit() {
-    if (!this.newAppointmentForm.valid) {
-      alert('Por favor completa todos los campos requeridos.');
+    if (!this.isFormValid()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Solicitud incompleta',
+        text: 'Por favor complete todos los pasos antes de continuar.',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Entendido',
+      });
       return;
     }
 
     if (!this.captchaOk) {
-      alert('Por favor resuelve el captcha antes de continuar.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Captcha requerido',
+        text: 'Por favor resuelve el captcha antes de continuar.',
+        confirmButtonColor: '#ffc107',
+        confirmButtonText: 'Entendido',
+      });
       return;
     }
 
-    const formValues = this.newAppointmentForm.value;
-    const selectedDay = this.schedule[formValues.selectedDay];
-    const selectedSlot = this.selectedDaySlots[formValues.selectedSlot];
-    const [hour, minute] = selectedSlot.split(':');
+    this.createAppointment();
+  }
 
-    const appointmentDate = new Date(selectedDay.date + 'T00:00:00');
+  // Crear la cita médica
+  private createAppointment() {
+    const [hour, minute] = this.selectedTimeSlot.split(':');
+    const appointmentDate = new Date(this.selectedDay.date + 'T00:00:00');
     appointmentDate.setHours(Number(hour));
     appointmentDate.setMinutes(Number(minute));
 
@@ -198,7 +319,7 @@ export class AppointmentRequestComponent implements OnInit {
       patientName: `${this.user?.name} ${this.user?.lastName}`,
       idSpecialist: this.selectedSpecialist?.id,
       message: 'Se solicita un nuevo turno',
-      speciality: formValues.specialty,
+      speciality: this.selectedSpecialty,
       requestedDate: Timestamp.fromDate(new Date()),
       appointmentDate: Timestamp.fromDate(appointmentDate),
       appointmentStatus: 'Sin Asignar',
@@ -209,19 +330,77 @@ export class AppointmentRequestComponent implements OnInit {
       idReviewForSpecialist: null,
     };
 
+    // Mostrar loading durante la creación
+    Swal.fire({
+      title: 'Enviando solicitud...',
+      text: 'Por favor espera mientras procesamos tu solicitud',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     this.appointment.addAppointment(appointment).subscribe({
       next: () => {
-        alert('Turno creado exitosamente');
-        this.newAppointmentForm.reset();
-        this.captchaOk = false;
-        this.captchaTouched = false;
+        Swal.fire({
+          icon: 'success',
+          title: '¡Solicitud enviada exitosamente!',
+          html: `
+            <div style="text-align: left;">
+              <p>Tu solicitud de turno ha sido enviada con los siguientes datos:</p>
+              <p><strong>Especialidad:</strong> ${this.selectedSpecialty}</p>
+              <p><strong>Especialista:</strong> Dr. ${
+                this.selectedSpecialist?.name
+              } ${this.selectedSpecialist?.lastName}</p>
+              <p><strong>Fecha:</strong> ${this.formatDate(
+                this.selectedDay.date
+              )}</p>
+              <p><strong>Hora:</strong> ${this.formatTime(
+                this.selectedTimeSlot
+              )}</p>
+              <br>
+              <p style="color: #6c757d; font-size: 0.9em;">Recibirás una confirmación una vez que el especialista revise tu solicitud.</p>
+            </div>
+          `,
+          confirmButtonColor: '#28a745',
+          confirmButtonText: 'Perfecto',
+          timer: 8000,
+          timerProgressBar: true,
+        }).then(() => {
+          this.resetForm();
+        });
       },
       error: (err) => {
         console.error('Error al crear el turno:', err);
-        alert('Hubo un error al intentar crear el turno.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al enviar solicitud',
+          text: 'Hubo un error al intentar enviar tu solicitud. Por favor inténtalo de nuevo.',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Reintentar',
+        });
       },
     });
   }
+
+  // Resetear formulario
+  resetForm() {
+    this.currentStep = 1;
+    this.selectedSpecialty = '';
+    this.selectedSpecialist = null;
+    this.selectedDay = null;
+    this.selectedTimeSlot = '';
+    this.specialists = [];
+    this.schedule = [];
+    this.selectedDaySlots = [];
+    this.captchaOk = false;
+    this.captchaTouched = false;
+    this.updateStepIndicator();
+  }
+
+  // Métodos de utilidad
   trackByIndex(index: number, item: any): number {
     return index;
   }

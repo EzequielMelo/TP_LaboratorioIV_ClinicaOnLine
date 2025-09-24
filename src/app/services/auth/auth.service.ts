@@ -174,7 +174,7 @@ export class AuthService {
           switchMap((userCredential) => {
             const uid = userCredential.user.uid;
 
-            // Subir las imágenes de perfil y portada por separado
+            // Subir las imágenes de perfil
             const profileUpload$ = this.storage.uploadProfilePicture(
               uid,
               profilePicture
@@ -194,10 +194,26 @@ export class AuthService {
                   accountConfirmed: false,
                   userType,
                   settings: { useCaptcha: true },
+                  // Días laborables por defecto (lunes a viernes)
+                  workDays: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                  ],
+                  // Horario de trabajo por defecto
+                  workHours: {
+                    start: '08:00',
+                    end: '18:00',
+                  },
                 };
 
-                // Guardar el usuario en la base de datos
-                return this.db.addUser(user, uid).pipe(
+                // Ejecutar en paralelo: guardar usuario y agregar nuevas especialidades
+                return forkJoin({
+                  userSaved: this.db.addUser(user, uid),
+                  specialtiesAdded: this.db.addNewSpecialties(specialty), // ← Así se llama
+                }).pipe(
                   switchMap(() => {
                     // Enviar correo de verificación
                     if (this.auth.currentUser) {

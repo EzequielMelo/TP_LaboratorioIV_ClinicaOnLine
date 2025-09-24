@@ -6,6 +6,7 @@ import { User } from '../../../classes/user';
 import { Appointment } from '../../../classes/appointment';
 import { CommonModule } from '@angular/common';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface AppointmentStatus {
   label: string;
@@ -21,7 +22,12 @@ interface AppointmentStatus {
 @Component({
   selector: 'app-appointments-overview',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppointmentsListComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AppointmentsListComponent,
+    TranslateModule,
+  ],
   templateUrl: './appointments-overview.component.html',
   styleUrl: './appointments-overview.component.css',
 })

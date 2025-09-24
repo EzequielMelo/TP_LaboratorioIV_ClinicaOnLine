@@ -7,6 +7,8 @@ import {
   getDocs,
   query,
   orderBy,
+  collectionData,
+  where,
 } from '@angular/fire/firestore';
 import { Observable, catchError, from, map, tap } from 'rxjs';
 
@@ -90,6 +92,39 @@ export interface DoctorCompletedAppointmentCount {
   porcentaje?: number; // Porcentaje del total
   especialidad?: string; // Especialidad del doctor
   eficiencia?: number; // Porcentaje de turnos completados vs solicitados
+}
+
+export interface SpecialtyCount {
+  specialty: string;
+  count: number;
+  names?: string[]; // para los medicos
+}
+
+export interface Survey {
+  id: string;
+  additionalComments: string;
+  createdAt: any;
+  date: string;
+  improvements: string[];
+  patientId: string;
+  professionalId: string;
+  rating: number;
+  recommendationLevel: number;
+  serviceQuality: string;
+  time: string;
+}
+
+export interface Patient {
+  id: string;
+  name: string;
+  lastName: string;
+  dni: string;
+  healthCareSystem: string;
+}
+
+export interface AppointmentStat {
+  status: string;
+  count: number;
 }
 
 @Injectable({
@@ -1326,5 +1361,179 @@ export class LogsService {
     );
 
     return efficiency;
+  }
+
+  async getVisitsGroupedByDate(): Promise<
+    { fecha: string; cantidad: number }[]
+  > {
+    const colRef = collection(this.firestore, 'site_visits');
+    const snapshot = await getDocs(colRef);
+
+    const counts: Record<string, number> = {};
+    snapshot.forEach((doc) => {
+      const data = doc.data() as { timestamp: Timestamp };
+      const date = data.timestamp.toDate();
+      const fecha = date.toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+
+      counts[fecha] = (counts[fecha] || 0) + 1;
+    });
+
+    return Object.entries(counts).map(([fecha, cantidad]) => ({
+      fecha,
+      cantidad,
+    }));
+  }
+
+  getPatientsBySpecialty(): Observable<SpecialtyCount[]> {
+    const appointmentsCollection = collection(this.firestore, 'appointments');
+    return collectionData(appointmentsCollection, { idField: 'id' }).pipe(
+      map((appointments: any[]) => {
+        const mapCount: { [key: string]: { count: number; names: string[] } } =
+          {};
+
+        appointments.forEach((app) => {
+          const spec = app.speciality || 'Sin Especialidad';
+          if (!mapCount[spec]) {
+            mapCount[spec] = { count: 0, names: [] };
+          }
+          mapCount[spec].count++;
+          if (
+            app.specialistName &&
+            !mapCount[spec].names.includes(app.specialistName)
+          ) {
+            mapCount[spec].names.push(app.specialistName);
+          }
+        });
+
+        return Object.keys(mapCount).map((s) => ({
+          specialty: s,
+          count: mapCount[s].count,
+          names: mapCount[s].names,
+        }));
+      })
+    );
+  }
+
+  // Cantidad de médicos por especialidad (users)
+  getSpecialistsBySpecialty(): Observable<SpecialtyCount[]> {
+    const usersCollection = collection(this.firestore, 'users');
+    return collectionData(usersCollection, { idField: 'id' }).pipe(
+      map((users: any[]) => {
+        const mapCount: { [key: string]: string[] } = {};
+
+        users
+          .filter((u) => u.userType === 'specialist')
+          .forEach((u) => {
+            (u.specialty || []).forEach((spec: string) => {
+              if (!mapCount[spec]) mapCount[spec] = [];
+              if (!mapCount[spec].includes(u.name)) mapCount[spec].push(u.name);
+            });
+          });
+
+        return Object.keys(mapCount).map((s) => ({
+          specialty: s,
+          count: mapCount[s].length,
+          names: mapCount[s],
+        }));
+      })
+    );
+  }
+
+  getSurveys(): Observable<Survey[]> {
+    const surveysCollection = collection(this.firestore, 'surveys');
+    return collectionData(surveysCollection, { idField: 'id' }) as Observable<
+      Survey[]
+    >;
+  }
+
+  /** Agrupamos por calidad de servicio */
+  getServiceQualityStats(): Observable<{ quality: string; count: number }[]> {
+    return this.getSurveys().pipe(
+      map((surveys) => {
+        const mapCount: { [key: string]: number } = {};
+        surveys.forEach((s) => {
+          const q = s.serviceQuality || 'Sin respuesta';
+          mapCount[q] = (mapCount[q] || 0) + 1;
+        });
+        return Object.keys(mapCount).map((k) => ({
+          quality: k,
+          count: mapCount[k],
+        }));
+      })
+    );
+  }
+
+  /** Promedio de rating */
+  getAverageRating(): Observable<number> {
+    return this.getSurveys().pipe(
+      map((surveys) => {
+        if (!surveys.length) return 0;
+        const total = surveys.reduce((sum, s) => sum + (s.rating || 0), 0);
+        return total / surveys.length;
+      })
+    );
+  }
+
+  /** Mejores mejoras pedidas (array de strings) */
+  getImprovementsStats(): Observable<{ improvement: string; count: number }[]> {
+    return this.getSurveys().pipe(
+      map((surveys) => {
+        const mapCount: { [key: string]: number } = {};
+        surveys.forEach((s) => {
+          (s.improvements || []).forEach((imp) => {
+            mapCount[imp] = (mapCount[imp] || 0) + 1;
+          });
+        });
+        return Object.keys(mapCount).map((k) => ({
+          improvement: k,
+          count: mapCount[k],
+        }));
+      })
+    );
+  }
+
+  getPatients(): Observable<Patient[]> {
+    const usersCollection = collection(this.firestore, 'users');
+    return collectionData(usersCollection, { idField: 'id' }).pipe(
+      map((users: any[]) =>
+        users
+          .filter((u) => u.userType === 'patient') // filtramos solo pacientes
+          .map((u) => ({
+            id: u.id,
+            name: u.name,
+            lastName: u.lastName,
+            dni: u.dni,
+            healthCareSystem: u.healthCareSystem,
+          }))
+      )
+    );
+  }
+
+  getAppointmentsByPatient(patientId: string): Observable<AppointmentStat[]> {
+    const appointmentsCollection = collection(this.firestore, 'appointments');
+    const q = query(
+      appointmentsCollection,
+      where('idPatient', '==', patientId)
+    );
+
+    return from(getDocs(q)).pipe(
+      map((snapshot) => {
+        const counts: { [key: string]: number } = {};
+        snapshot.forEach((doc) => {
+          const data: any = doc.data();
+          const status = data.appointmentStatus || 'Sin Asignar';
+          counts[status] = (counts[status] || 0) + 1;
+        });
+
+        return Object.keys(counts).map((status) => ({
+          status,
+          count: counts[status],
+        }));
+      })
+    );
   }
 }

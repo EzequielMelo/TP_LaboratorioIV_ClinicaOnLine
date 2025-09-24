@@ -1,0 +1,143 @@
+<div class="logged-users-container">
+  <!-- Header del componente -->
+  <div class="component-header">
+    <div class="header-info">
+      <h3>📊 Estadísticas por Especialidad</h3>
+      <p class="description">
+        Cantidad de pacientes y médicos agrupados por especialidad
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="refresh()" [disabled]="loading">
+        <span *ngIf="!loading">🔄</span>
+        <span *ngIf="loading" class="spinner">⏳</span>
+        {{ loading ? "Cargando..." : "Actualizar" }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estados de carga y error -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner">⏳</div>
+    <p>Cargando datos de especialidades...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">❌</div>
+    <p>{{ error }}</p>
+    <button class="btn btn-retry" (click)="refresh()">🔄 Reintentar</button>
+  </div>
+
+  <!-- Gráficos y tablas -->
+  <div
+    *ngIf="
+      !loading &&
+      !error &&
+      (patientsBySpecialty.length > 0 || specialistsBySpecialty.length > 0)
+    "
+    class="charts-section"
+  >
+    <!-- Gráficos de barras -->
+    <div class="charts-row">
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="patientsChartOptions"
+            [loading]="loading"
+            class="chart-bar"
+          ></div>
+        </div>
+      </div>
+
+      <div class="chart-card half">
+        <div class="chart-wrapper">
+          <div
+            echarts
+            [options]="specialistsChartOptions"
+            [loading]="loading"
+            class="chart-bar"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla pacientes -->
+    <div class="table-section" *ngIf="patientsBySpecialty.length > 0">
+      <div class="table-header">
+        <h4>📋 Pacientes por Especialidad</h4>
+        <span class="table-count"
+          >{{ patientsBySpecialty.length }} especialidades</span
+        >
+      </div>
+      <div class="table-wrapper">
+        <table class="specialty-table">
+          <thead>
+            <tr>
+              <th>🩺 Especialidad</th>
+              <th>👥 Cantidad de Pacientes</th>
+              <th>Médicos Involucrados</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of patientsBySpecialty" class="specialty-row">
+              <td class="specialty-name">{{ item.specialty }}</td>
+              <td class="specialty-count">{{ item.count }}</td>
+              <td>{{ item.names?.join(", ") }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabla especialistas -->
+    <div class="table-section" *ngIf="specialistsBySpecialty.length > 0">
+      <div class="table-header">
+        <h4>📋 Médicos por Especialidad</h4>
+        <span class="table-count"
+          >{{ specialistsBySpecialty.length }} especialidades</span
+        >
+      </div>
+      <div class="table-wrapper">
+        <table class="specialty-table">
+          <thead>
+            <tr>
+              <th>🩺 Especialidad</th>
+              <th>👥 Cantidad de Médicos</th>
+              <th>Nombres</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let item of specialistsBySpecialty"
+              class="specialty-row"
+            >
+              <td class="specialty-name">{{ item.specialty }}</td>
+              <td class="specialty-count">{{ item.count }}</td>
+              <td>{{ item.names?.join(", ") }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Si no hay datos -->
+  <div
+    *ngIf="
+      !loading &&
+      !error &&
+      patientsBySpecialty.length === 0 &&
+      specialistsBySpecialty.length === 0
+    "
+    class="no-data"
+  >
+    <div class="no-data-icon">📭</div>
+    <h4>No hay datos de especialidades</h4>
+    <p>No se encontraron pacientes ni médicos en la base de datos.</p>
+    <button class="btn btn-refresh" (click)="refresh()">
+      🔄 Intentar de nuevo
+    </button>
+  </div>
+</div>
