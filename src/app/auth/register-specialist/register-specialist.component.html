@@ -11,6 +11,16 @@
         Registro Especialistas
       </h1>
 
+      <!-- Mensaje de error -->
+      @if (errorMessage) {
+      <div
+        class="p-4 mb-4 text-sm text-red-300 bg-red-900 bg-opacity-50 rounded-lg border border-red-700"
+        role="alert"
+      >
+        <span class="font-medium">Error:</span> {{ errorMessage }}
+      </div>
+      }
+
       <form class="max-w-full mx-auto" [formGroup]="registerForm">
         <!-- Email -->
         <div class="relative z-0 w-full mb-5 group">
@@ -255,7 +265,7 @@
             <label
               for="floating_dni"
               class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >DNI (44.444.444)</label
+              >DNI (44444444)</label
             >
             <div class="h-[10px]">
               @if (registerForm.controls['dni'].errors !== null &&

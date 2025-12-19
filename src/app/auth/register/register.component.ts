@@ -29,6 +29,7 @@ export class RegisterComponent {
   selectedUserCover: Blob | null = null;
   selectedUserCoverName: string | null = null;
   siteKey = '6LeqB9QqAAAAALMr8SZOctATmbR9P8e1pvU3pBuY';
+  errorMessage: string | null = null;
 
   private formBuilder = inject(FormBuilder);
   private auth = inject(AuthService);
@@ -71,9 +72,13 @@ export class RegisterComponent {
   }
 
   register() {
+    // Limpiar mensajes de error previos
+    this.errorMessage = null;
+
     // Verificar si el formulario es válido
     if (this.registerForm.invalid) {
       console.error('Formulario no válido, por favor verifica los campos.');
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
       // Opcionalmente, puedes marcar todos los campos como "tocados" para mostrar los errores
       this.registerForm.markAllAsTouched();
       return; // Salir de la función si el formulario no es válido
@@ -86,6 +91,8 @@ export class RegisterComponent {
     // Verificar si las imágenes están disponibles
     if (!profilePicture || !coverPicture) {
       console.error('Ambas imágenes son necesarias para el registro.');
+      this.errorMessage =
+        'Debes seleccionar ambas imágenes (perfil y portada).';
       return; // Salir de la función si alguna es nula
     }
 
@@ -109,8 +116,28 @@ export class RegisterComponent {
         coverPicture
       )
       .subscribe({
-        next: () => console.log('Usuario registrado con éxito'),
-        error: (error) => console.error('Error en el registro:', error.message),
+        next: () => {
+          console.log('Usuario registrado con éxito');
+          this.errorMessage = null;
+        },
+        error: (error) => {
+          console.error('Error en el registro:', error);
+
+          // Mostrar mensaje específico para DNI duplicado
+          if (error.message && error.message.includes('DNI')) {
+            this.errorMessage = error.message;
+          } else if (error.message) {
+            this.errorMessage = error.message;
+          } else {
+            this.errorMessage =
+              'Ocurrió un error al registrar. Por favor, intenta nuevamente.';
+          }
+
+          // Limpiar el mensaje después de 5 segundos
+          setTimeout(() => {
+            this.errorMessage = null;
+          }, 5000);
+        },
       });
   }
 

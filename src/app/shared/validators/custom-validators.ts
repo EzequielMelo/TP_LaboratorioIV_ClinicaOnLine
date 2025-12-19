@@ -2,7 +2,7 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function dniValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
-    const dniPattern = /^\d{2}\.?\d{3}\.?\d{3}$/;
+    const dniPattern = /^\d{8}$/;
     const isValid = dniPattern.test(control.value);
     return isValid ? null : { invalidDni: true };
   };

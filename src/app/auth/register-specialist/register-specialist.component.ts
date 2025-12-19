@@ -30,6 +30,7 @@ export class RegisterSpecialistComponent {
   selectedUserAvatar: Blob | null = null;
   selectedUserAvatarName: string | null = null;
   siteKey = '6LeqB9QqAAAAALMr8SZOctATmbR9P8e1pvU3pBuY';
+  errorMessage: string | null = null;
   selectedSpecialties: string[] = [];
   specialties: string[] = [
     'Cardiología',
@@ -80,7 +81,7 @@ export class RegisterSpecialistComponent {
           ],
         ],
         birthDate: ['', [Validators.required, birthDateValidator(20, 120)]],
-        dni: ['', [Validators.required, this.dniValidator]],
+        dni: ['', [Validators.required, dniValidator()]],
         medical_specialty: [
           '',
           [Validators.required, this.specialtyValidator.bind(this)],
@@ -97,9 +98,13 @@ export class RegisterSpecialistComponent {
   }
 
   register() {
+    // Limpiar mensajes de error previos
+    this.errorMessage = null;
+
     // Verificar si el formulario es válido
     if (this.registerForm.invalid) {
       console.error('Formulario no válido, por favor verifica los campos.');
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
       // Opcionalmente, puedes marcar todos los campos como "tocados" para mostrar los errores
       this.registerForm.markAllAsTouched();
       return; // Salir de la función si el formulario no es válido
@@ -110,6 +115,7 @@ export class RegisterSpecialistComponent {
 
     if (!profilePicture) {
       console.error('La imagen es necesaria para registrarse');
+      this.errorMessage = 'Debes seleccionar una imagen de perfil.';
       return; // Salir de la función si alguna es nula
     }
 
@@ -131,8 +137,28 @@ export class RegisterSpecialistComponent {
         profilePicture
       )
       .subscribe({
-        next: () => console.log('Usuario registrado con éxito'),
-        error: (error) => console.error('Error en el registro:', error.message),
+        next: () => {
+          console.log('Usuario registrado con éxito');
+          this.errorMessage = null;
+        },
+        error: (error) => {
+          console.error('Error en el registro:', error);
+
+          // Mostrar mensaje específico para DNI duplicado
+          if (error.message && error.message.includes('DNI')) {
+            this.errorMessage = error.message;
+          } else if (error.message) {
+            this.errorMessage = error.message;
+          } else {
+            this.errorMessage =
+              'Ocurrió un error al registrar. Por favor, intenta nuevamente.';
+          }
+
+          // Limpiar el mensaje después de 5 segundos
+          setTimeout(() => {
+            this.errorMessage = null;
+          }, 5000);
+        },
       });
   }
 
@@ -264,22 +290,6 @@ export class RegisterSpecialistComponent {
     if (!this.selectedSpecialties || this.selectedSpecialties.length === 0) {
       return { required: true };
     }
-    return null;
-  }
-
-  /**
-   * Validador para DNI (puedes mantener tu lógica existente)
-   */
-  private dniValidator(control: AbstractControl): ValidationErrors | null {
-    const dni = control.value;
-    if (!dni) return null;
-
-    // Tu lógica de validación de DNI aquí
-    const dniRegex = /^\d{2}\.\d{3}\.\d{3}$/;
-    if (!dniRegex.test(dni)) {
-      return { invalidDni: true };
-    }
-
     return null;
   }
 }
