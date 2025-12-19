@@ -194,21 +194,40 @@ export class DatabaseService {
   }
 
   getSpecialistsBySpecialty(selectedSpecialty: string) {
+    // Normalizar la especialidad seleccionada (eliminar acentos y convertir a minúsculas)
+    const normalizedSearch = this.normalizeString(selectedSpecialty);
+
     return this.firestore
-      .collection('users', (ref) =>
-        ref
-          .where('userType', '==', 'specialist')
-          .where('specialty', 'array-contains', selectedSpecialty)
-      )
+      .collection('users', (ref) => ref.where('userType', '==', 'specialist'))
       .get()
       .pipe(
         map((snapshot) =>
-          snapshot.docs.map((doc) => {
-            const data = doc.data() as Specialist;
-            return { ...data, id: doc.id };
-          })
+          snapshot.docs
+            .map((doc) => {
+              const data = doc.data() as Specialist;
+              return { ...data, id: doc.id };
+            })
+            .filter((specialist) => {
+              // Verificar si alguna especialidad del especialista coincide (normalizada)
+              if (Array.isArray(specialist.specialty)) {
+                return specialist.specialty.some(
+                  (spec: string) =>
+                    this.normalizeString(spec) === normalizedSearch
+                );
+              }
+              return false;
+            })
         )
       );
+  }
+
+  // Método auxiliar para normalizar strings (eliminar acentos, minúsculas, trim)
+  private normalizeString(str: string): string {
+    return str
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, ''); // Elimina acentos
   }
 
   updateAccountConfirmed(userId: string, isConfirmed: boolean): Promise<void> {

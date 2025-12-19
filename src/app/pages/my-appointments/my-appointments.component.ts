@@ -3,6 +3,13 @@ import { AppointmentsOverviewComponent } from '../../components/my-appointments/
 import { AppointmentRequestComponent } from '../../components/my-appointments/appointment-request/appointment-request.component';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-my-appointments',
@@ -15,6 +22,23 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   templateUrl: './my-appointments.component.html',
   styleUrl: './my-appointments.component.css',
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(20px)' }),
+        animate(
+          '300ms ease-out',
+          style({ opacity: 1, transform: 'translateX(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-in',
+          style({ opacity: 0, transform: 'translateX(-20px)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class MyAppointmentsComponent {
   // Variable para controlar qué componente mostrar

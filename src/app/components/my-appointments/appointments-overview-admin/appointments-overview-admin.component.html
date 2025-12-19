@@ -220,13 +220,17 @@
         </p>
       </div>
 
-      <app-appointments-list-admin
+      <div
+        @listAnimation
         *ngIf="displayedAppointments && displayedAppointments.length > 0"
-        [appointments]="displayedAppointments"
-        [keyWord]="searchForm.get('keyWord')?.value"
-        [healthRecordsMap]="healthRecordsMap"
-        [reviewsMap]="reviewsMap"
-      ></app-appointments-list-admin>
+      >
+        <app-appointments-list-admin
+          [appointments]="displayedAppointments"
+          [keyWord]="searchForm.get('keyWord')?.value"
+          [healthRecordsMap]="healthRecordsMap"
+          [reviewsMap]="reviewsMap"
+        ></app-appointments-list-admin>
+      </div>
     </div>
   </div>
 </div>

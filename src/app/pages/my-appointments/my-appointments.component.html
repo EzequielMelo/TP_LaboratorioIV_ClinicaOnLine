@@ -207,12 +207,12 @@
             }"
           >
             <!-- Vista de turnos existentes -->
-            <div *ngIf="activeView === 'overview'" class="animate-fade-in">
+            <div *ngIf="activeView === 'overview'" @slideInOut>
               <app-appointments-overview />
             </div>
 
             <!-- Vista de solicitud de turno -->
-            <div *ngIf="activeView === 'request'" class="animate-fade-in">
+            <div *ngIf="activeView === 'request'" @slideInOut>
               <app-appointment-request />
             </div>
           </div>

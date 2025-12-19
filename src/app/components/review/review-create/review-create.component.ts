@@ -10,6 +10,13 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth/auth.service';
 import { UserTypes } from '../../../models/user-types';
 import { Patient } from '../../../classes/patient.class';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-review-create',
@@ -17,6 +24,27 @@ import { Patient } from '../../../classes/patient.class';
   imports: [CommonModule, FormsModule, CaptchaDirective],
   templateUrl: './review-create.component.html',
   styleUrl: './review-create.component.css',
+  animations: [
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.9)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
+      ]),
+      transition(':leave', [
+        animate(
+          '150ms ease-in',
+          style({ opacity: 0, transform: 'scale(0.95)' })
+        ),
+      ]),
+    ]),
+    trigger('backdropAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('150ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class ReviewCreateComponent {
   @Input() appointmentId: string | null = null;

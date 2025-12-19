@@ -7,6 +7,13 @@ import {
   FormArray,
 } from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
 
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { HealthRecordService } from '../../../services/health-record/health-record.service';
@@ -26,6 +33,27 @@ import { Specialist } from '../../../classes/specialist.class';
   imports: [CommonModule, ReactiveFormsModule, CaptchaDirective],
   templateUrl: './health-record-create.component.html',
   styleUrl: './health-record-create.component.css',
+  animations: [
+    trigger('modalAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.9)' }),
+        animate('200ms ease-out', style({ opacity: 1, transform: 'scale(1)' })),
+      ]),
+      transition(':leave', [
+        animate(
+          '150ms ease-in',
+          style({ opacity: 0, transform: 'scale(0.95)' })
+        ),
+      ]),
+    ]),
+    trigger('backdropAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [animate('150ms ease-in', style({ opacity: 0 }))]),
+    ]),
+  ],
 })
 export class HealthRecordCreateComponent {
   @Input() appointmentId: string | null = null;

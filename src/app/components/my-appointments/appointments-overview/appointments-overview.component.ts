@@ -20,6 +20,7 @@ import {
   TimeFilterDirective,
   TimeFilterCriteria,
 } from '../../../directives/time-filter.directive';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface AppointmentStatus {
   label: string;
@@ -45,6 +46,14 @@ interface AppointmentStatus {
   ],
   templateUrl: './appointments-overview.component.html',
   styleUrl: './appointments-overview.component.css',
+  animations: [
+    trigger('listAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('250ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class AppointmentsOverviewComponent {
   userId: string | null = null;

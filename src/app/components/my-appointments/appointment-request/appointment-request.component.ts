@@ -18,6 +18,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { CaptchaDirective } from '../../../directives/captcha.directive';
 import { Patient } from '../../../classes/patient.class';
 import Swal from 'sweetalert2';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-appointment-request',
@@ -25,6 +26,23 @@ import Swal from 'sweetalert2';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, CaptchaDirective],
   templateUrl: './appointment-request.component.html',
   styleUrl: './appointment-request.component.css',
+  animations: [
+    trigger('stepAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(30px)' }),
+        animate(
+          '300ms ease-out',
+          style({ opacity: 1, transform: 'translateX(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-in',
+          style({ opacity: 0, transform: 'translateX(-30px)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AppointmentRequestComponent implements OnInit {
   // Estados de los pasos
@@ -245,13 +263,8 @@ export class AppointmentRequestComponent implements OnInit {
     // Mapeo de especialidades a imágenes (ajusta según tus imágenes)
     const specialtyImages: { [key: string]: string } = {
       Cardiologia: '/cardiologia.png',
-      Dermatología: '/assets/images/specialties/dermatology.jpg',
-      Neurología: '/assets/images/specialties/neurology.jpg',
       Pediatria: '/pediatria.png',
-      Ginecología: '/assets/images/specialties/gynecology.jpg',
       Oftalmologia: 'oftalmologia.png',
-      Traumatología: '/assets/images/specialties/traumatology.jpg',
-      Psiquiatría: '/assets/images/specialties/psychiatry.jpg',
     };
 
     return specialtyImages[specialty] || '/assets/images/default-specialty.jpg';
@@ -265,7 +278,12 @@ export class AppointmentRequestComponent implements OnInit {
     );
   }
 
-  // Manejar error de imagen
+  // Manejar error de imagen de especialidad
+  onSpecialtyImageError(event: any) {
+    event.target.src = '/logo.png'; // Logo de la clínica
+  }
+
+  // Manejar error de imagen genérico
   onImageError(event: any) {
     event.target.src = '/assets/images/default-avatar.jpg';
   }

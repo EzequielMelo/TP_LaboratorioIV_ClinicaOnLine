@@ -19,6 +19,7 @@ import { ReviewService } from '../../../services/review/review.service';
 import { HealthRecord } from '../../../classes/health-record';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 interface AppointmentStatus {
   label: string;
@@ -42,6 +43,17 @@ interface AppointmentStatus {
   ],
   templateUrl: './appointments-overview-admin.component.html',
   styleUrl: './appointments-overview-admin.component.css',
+  animations: [
+    trigger('listAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate(
+          '250ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AppointmentsOverviewAdminComponent {
   userId: string | null = null;

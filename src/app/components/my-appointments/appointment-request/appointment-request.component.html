@@ -106,7 +106,7 @@
         </div>
 
         <!-- Paso 1: Especialidades -->
-        <div *ngIf="currentStep === 1" class="space-y-6">
+        <div *ngIf="currentStep === 1" @stepAnimation class="space-y-6">
           <div class="text-center mb-6">
             <h2 class="text-2xl font-bold text-gray-900 mb-2">
               Seleccione una Especialidad
@@ -129,18 +129,20 @@
                   [src]="getSpecialtyImage(specialty)"
                   [alt]="specialty"
                   class="w-16 h-16 object-cover rounded-full"
-                  (error)="onImageError($event)"
+                  (error)="onSpecialtyImageError($event)"
                 />
               </div>
 
-              <!-- Nombre de especialidad oculto como solicitaste -->
-              <span class="sr-only">{{ specialty }}</span>
+              <span
+                class="text-sm font-medium text-gray-700 text-center group-hover:text-blue-600 transition-colors"
+                >{{ specialty }}</span
+              >
             </button>
           </div>
         </div>
 
         <!-- Paso 2: Profesionales -->
-        <div *ngIf="currentStep === 2" class="space-y-6">
+        <div *ngIf="currentStep === 2" @stepAnimation class="space-y-6">
           <div class="text-center mb-6">
             <button
               (click)="goBackToStep(1)"
@@ -193,7 +195,7 @@
         </div>
 
         <!-- Paso 3: Días disponibles -->
-        <div *ngIf="currentStep === 3" class="space-y-6">
+        <div *ngIf="currentStep === 3" @stepAnimation class="space-y-6">
           <div class="text-center mb-6">
             <button
               (click)="goBackToStep(2)"
@@ -243,7 +245,7 @@
         </div>
 
         <!-- Paso 4: Horarios disponibles -->
-        <div *ngIf="currentStep === 4" class="space-y-6">
+        <div *ngIf="currentStep === 4" @stepAnimation class="space-y-6">
           <div class="text-center mb-6">
             <button
               (click)="goBackToStep(3)"
