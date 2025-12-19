@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Timestamp } from '@angular/fire/firestore';
 
 export class Admin extends User {
   constructor(
@@ -6,7 +7,7 @@ export class Admin extends User {
     name: string,
     lastName: string,
     email: string,
-    age: string,
+    age: Timestamp,
     dni: string,
     profilePicture: string,
     userType: string

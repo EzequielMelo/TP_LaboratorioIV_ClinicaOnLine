@@ -1,9 +1,11 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 export class User {
   id: string;
   name: string;
   lastName: string;
   email: string;
-  age: string;
+  age: Timestamp;
   dni: string;
   profilePicture: string;
   userType: string;
@@ -13,7 +15,7 @@ export class User {
     name: string,
     lastName: string,
     email: string,
-    age: string,
+    age: Timestamp,
     dni: string,
     profilePicture: string,
     userType: string

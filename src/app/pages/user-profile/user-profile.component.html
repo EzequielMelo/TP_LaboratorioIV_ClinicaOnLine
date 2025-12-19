@@ -70,7 +70,7 @@
             class="relative px-6 pb-8 bg-gradient-to-r from-gray-50 to-gray-100"
           >
             <!-- Información del usuario centrada -->
-            <div class="flex flex-col items-center mb-6">
+            <div class="flex flex-col items-center mb-2">
               <!-- Nombre y título -->
               <div class="text-center mt-4">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
@@ -89,36 +89,6 @@
                   <span class="text-lg">{{
                     "PROFILE.PATIENT" | translate
                   }}</span>
-                </div>
-
-                <!-- Stats rápidos -->
-                <div class="flex items-center justify-center gap-8 text-sm">
-                  <div class="text-center">
-                    <div class="font-bold text-blue-600 text-xl">
-                      <!-- {{ getTotalAppointments() }} -->
-                    </div>
-                    <div class="text-gray-500">
-                      {{ "PROFILE.APPOINTMENTS" | translate }}
-                    </div>
-                  </div>
-                  <div class="w-px h-8 bg-gray-300"></div>
-                  <div class="text-center">
-                    <div class="font-bold text-green-600 text-xl">
-                      <!-- {{ getCompletedAppointments() }} -->
-                    </div>
-                    <div class="text-gray-500">
-                      {{ "PROFILE.COMPLETED" | translate }}
-                    </div>
-                  </div>
-                  <div class="w-px h-8 bg-gray-300"></div>
-                  <div class="text-center">
-                    <div class="font-bold text-purple-600 text-xl">
-                      <!-- {{ getActiveRecords() }} -->
-                    </div>
-                    <div class="text-gray-500">
-                      {{ "PROFILE.MEDICAL_HISTORY" | translate }}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -181,7 +151,9 @@
                     <p class="text-green-600 font-semibold text-sm">
                       {{ "PROFILE.DNI" | translate }}
                     </p>
-                    <p class="text-gray-900 font-medium">{{ user?.dni }}</p>
+                    <p class="text-gray-900 font-medium">
+                      {{ user?.dni | formatDni }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -210,7 +182,7 @@
                       {{ "PROFILE.AGE" | translate }}
                     </p>
                     <p class="text-gray-900 font-medium">
-                      {{ user?.age }} {{ "PROFILE.YEARS" | translate }}
+                      {{ user?.age | calculateAge }}
                     </p>
                   </div>
                 </div>
@@ -329,43 +301,6 @@
               </button>
 
               <button
-                class="group bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <div class="flex items-center justify-between mb-3">
-                  <div
-                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
-                  >
-                    <svg
-                      class="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zM14 6a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h6zM4 8a2 2 0 00-2 2v4a2 2 0 002 2h6a2 2 0 002-2v-4a2 2 0 00-2-2H4z"
-                      />
-                    </svg>
-                  </div>
-                  <svg
-                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-1">
-                  {{ "PROFILE.BILLING" | translate }}
-                </h3>
-                <p class="text-purple-100 text-sm">
-                  {{ "PROFILE.BILLING_DESC" | translate }}
-                </p>
-              </button>
-
-              <button
                 routerLink="/user-configuration"
                 class="group bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
@@ -410,10 +345,10 @@
       </div>
 
       <!-- Dashboard Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Próximas citas -->
         <div
-          class="lg:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+          class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
         >
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
@@ -444,204 +379,122 @@
             </button>
           </div>
 
-          <div class="space-y-4">
-            <!-- Cita 1 -->
+          <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <!-- Appointments del paciente -->
             <div
-              class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+              *ngFor="let appointment of upcomingAppointments"
+              class="bg-gradient-to-r {{
+                getStatusColorClass(appointment.appointmentStatus)
+              }} border rounded-xl p-4 hover:shadow-md transition-shadow"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                   <div
-                    class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold"
+                    class="w-12 h-12 {{
+                      getStatusIconColorClass(appointment.appointmentStatus)
+                    }} rounded-xl flex items-center justify-center text-white font-bold text-sm"
                   >
-                    20
+                    {{ getAppointmentDay(appointment) }}
                   </div>
                   <div>
                     <h3 class="font-semibold text-gray-900">
-                      Dr. García - Cardiología
+                      {{ appointment.specialistName }} -
+                      {{ appointment.speciality }}
                     </h3>
-                    <p class="text-gray-600">
-                      Martes, 20 de Agosto 2025 - 14:00hs
+                    <p class="text-gray-600 text-sm">
+                      {{ getAppointmentDate(appointment) }}
                     </p>
                     <div class="flex items-center gap-2 mt-1">
                       <span
-                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs {{
+                          getStatusClass(appointment.appointmentStatus)
+                        }}"
                       >
-                        {{ "PROFILE.CONFIRMED" | translate }}
+                        {{ appointment.appointmentStatus }}
                       </span>
                     </div>
                   </div>
                 </div>
-                <button class="text-gray-400 hover:text-gray-600">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-                    />
-                  </svg>
-                </button>
               </div>
             </div>
 
-            <!-- Cita 2 -->
+            <!-- Mensaje cuando no hay appointments -->
             <div
-              class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+              *ngIf="upcomingAppointments.length === 0"
+              class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center"
             >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <div
-                    class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white font-bold"
-                  >
-                    25
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">
-                      Dra. López - Dermatología
-                    </h3>
-                    <p class="text-gray-600">
-                      Domingo, 25 de Agosto 2025 - 10:30hs
-                    </p>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span
-                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800"
-                      >
-                        {{ "PROFILE.PENDING" | translate }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <button class="text-gray-400 hover:text-gray-600">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <!-- Enlace para pedir nuevo turno -->
-            <div
-              class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-colors cursor-pointer group"
-            >
-              <div
-                class="flex items-center justify-center gap-3 text-gray-600 group-hover:text-blue-600"
+              <svg
+                class="w-12 h-12 text-gray-400 mx-auto mb-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <span class="font-medium">{{
-                  "PROFILE.REQUEST_APPOINTMENT" | translate
-                }}</span>
-              </div>
+                <path
+                  fill-rule="evenodd"
+                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <p class="text-gray-600 font-medium">
+                No tienes próximas citas disponibles
+              </p>
+              <p class="text-gray-500 text-sm mt-1">
+                Solicita un nuevo turno para comenzar tu atención
+              </p>
             </div>
           </div>
         </div>
 
-        <!-- Panel lateral -->
-        <div class="space-y-6">
-          <!-- Resumen de salud -->
-          <div
-            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"
+        <!-- Resumen de salud -->
+        <div
+          class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                <svg
-                  class="w-5 h-5 text-green-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold text-gray-900">
-                {{ "PROFILE.HEALTH_STATUS" | translate }}
-              </h3>
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
             </div>
-
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">{{
-                  "PROFILE.LAST_CONSULTATION" | translate
-                }}</span>
-                <span class="text-gray-900 font-medium">05/07/2025</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">{{
-                  "PROFILE.NEXT_CHECKUP" | translate
-                }}</span>
-                <span class="text-gray-900 font-medium">20/08/2025</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">{{
-                  "PROFILE.PENDING_STUDIES" | translate
-                }}</span>
-                <span
-                  class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800"
-                >
-                  2 pendientes
-                </span>
-              </div>
-            </div>
+            <h2 class="text-2xl font-bold text-gray-900">
+              {{ "PROFILE.HEALTH_STATUS" | translate }}
+            </h2>
           </div>
 
-          <!-- Recordatorios -->
-          <div
-            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center"
-              >
-                <svg
-                  class="w-5 h-5 text-orange-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold text-gray-900">
-                {{ "PROFILE.REMINDERS" | translate }}
-              </h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">{{
+                "PROFILE.LAST_CONSULTATION" | translate
+              }}</span>
+              <span class="text-gray-900 font-medium">{{
+                lastConsultationDate
+              }}</span>
             </div>
-
-            <div class="space-y-3">
-              <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <div class="flex items-start gap-3">
-                  <div
-                    class="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"
-                  ></div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      {{ "PROFILE.DAILY_MEDICATION" | translate }}
-                    </p>
-                    <p class="text-xs text-gray-600">
-                      {{ "PROFILE.MEDICATION_TIME" | translate }} 8:00 AM
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <div class="flex items-start gap-3">
-                  <div
-                    class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"
-                  ></div>
-                  <div></div>
-                </div>
-              </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">{{
+                "PROFILE.NEXT_CHECKUP" | translate
+              }}</span>
+              <span class="text-gray-900 font-medium">{{
+                nextCheckupDate
+              }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">{{
+                "PROFILE.PENDING_STUDIES" | translate
+              }}</span>
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800"
+              >
+                {{ pendingStudies }} pendientes
+              </span>
             </div>
           </div>
         </div>

@@ -28,6 +28,7 @@ export class MyPatientsSpecialistComponent {
   showPatientList = true;
   showMedicalRecords = false;
   selectedPatient: any = null;
+  currentSearchKeyword: string = '';
 
   protected authService = inject(AuthService);
   private appointmentService = inject(AppointmentsService);
@@ -35,6 +36,11 @@ export class MyPatientsSpecialistComponent {
   constructor(private fb: FormBuilder) {
     this.searchForm = this.fb.group({
       keyWord: [''],
+    });
+
+    // Suscribirse a los cambios del formulario
+    this.searchForm.get('keyWord')?.valueChanges.subscribe((value) => {
+      this.currentSearchKeyword = value || '';
     });
   }
 
@@ -138,12 +144,10 @@ export class MyPatientsSpecialistComponent {
 
   clearSearch(): void {
     this.searchForm.patchValue({ keyWord: '' });
-    this.onSearch(); // Refresh the list
   }
 
   onSearch(): void {
-    const keyWord = this.searchForm.get('keyWord')?.value || '';
-    this.loading = true;
-    this.appointmentService;
+    // El filtrado se maneja automáticamente en el componente hijo
+    // a través del binding de keyWord
   }
 }

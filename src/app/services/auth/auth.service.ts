@@ -9,6 +9,7 @@ import {
   User,
   UserCredential,
 } from '@angular/fire/auth';
+import { Timestamp } from '@angular/fire/firestore';
 import {
   BehaviorSubject,
   catchError,
@@ -70,7 +71,7 @@ export class AuthService {
     lastName: string,
     email: string,
     password: string,
-    age: string,
+    birthDate: Timestamp,
     dni: string,
     healthCareSystem: string,
     userType: string,
@@ -111,7 +112,8 @@ export class AuthService {
                 const user: Partial<Patient> = {
                   name,
                   lastName,
-                  age,
+                  email,
+                  age: birthDate,
                   dni,
                   healthCareSystem,
                   profilePicture: profileUrl,
@@ -153,7 +155,7 @@ export class AuthService {
     lastName: string,
     email: string,
     password: string,
-    age: string,
+    birthDate: Timestamp,
     dni: string,
     specialty: string[],
     userType: string,
@@ -187,7 +189,8 @@ export class AuthService {
                 const user: Partial<Specialist> = {
                   name,
                   lastName,
-                  age,
+                  email,
+                  age: birthDate,
                   dni,
                   specialty,
                   profilePicture: profileUrl,
@@ -245,7 +248,7 @@ export class AuthService {
     lastName: string,
     email: string,
     password: string,
-    age: string,
+    birthDate: Timestamp,
     dni: string,
     userType: string,
     profilePicture: Blob
@@ -274,7 +277,8 @@ export class AuthService {
                   const user: Partial<Admin> = {
                     name,
                     lastName,
-                    age,
+                    email,
+                    age: birthDate,
                     dni,
                     profilePicture: profileUrl,
                     userType,

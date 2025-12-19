@@ -35,7 +35,7 @@
           {{ user.name }}
         </th>
         <td class="px-6 py-4">{{ user.lastName }}</td>
-        <td class="px-6 py-4 bg-gray-100">{{ user.dni }}</td>
+        <td class="px-6 py-4 bg-gray-100">{{ user.dni | formatDni }}</td>
 
         <!-- Columna solo especialistas -->
         <td *ngIf="userType === 'specialist'" class="px-6 py-4">

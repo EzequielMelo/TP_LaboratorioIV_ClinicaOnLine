@@ -231,4 +231,213 @@ export class MyUsersComponent implements OnInit {
     this.showPatientHealthRecord = false;
     this.selectedPatient = null;
   }
+
+  /**
+   * Exporta la lista de usuarios a PDF
+   */
+  async exportUsers(): Promise<void> {
+    if (this.filteredUsers.length === 0) {
+      alert('No hay usuarios para exportar');
+      return;
+    }
+
+    try {
+      // Importación dinámica de pdfMake
+      const pdfMakeModule = await import('pdfmake/build/pdfmake');
+      const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
+
+      // Obtener la instancia correcta de pdfMake
+      let pdfMake: any;
+      if ((pdfMakeModule as any).default) {
+        pdfMake = (pdfMakeModule as any).default;
+      } else if ((pdfMakeModule as any).createPdf) {
+        pdfMake = pdfMakeModule;
+      } else {
+        throw new Error('No se pudo cargar pdfMake correctamente');
+      }
+
+      // Configurar fuentes
+      try {
+        const fonts =
+          (pdfFontsModule as any).pdfMake?.vfs ||
+          (pdfFontsModule as any).vfs ||
+          (pdfFontsModule as any).default ||
+          pdfFontsModule;
+
+        if (typeof pdfMake === 'object' && pdfMake !== null) {
+          pdfMake.vfs = fonts;
+        } else if (typeof (window as any).pdfMake === 'object') {
+          (window as any).pdfMake.vfs = fonts;
+          pdfMake = (window as any).pdfMake;
+        }
+      } catch (fontError) {
+        console.warn('Error configurando fuentes:', fontError);
+      }
+
+      // Preparar datos de la tabla
+      const tableBody: any[] = [
+        // Encabezados
+        [
+          { text: 'Nombre', style: 'tableHeader', fillColor: '#2563eb' },
+          { text: 'Apellido', style: 'tableHeader', fillColor: '#2563eb' },
+          { text: 'Email', style: 'tableHeader', fillColor: '#2563eb' },
+          { text: 'DNI', style: 'tableHeader', fillColor: '#2563eb' },
+          { text: 'Tipo', style: 'tableHeader', fillColor: '#2563eb' },
+          { text: 'Verificado', style: 'tableHeader', fillColor: '#2563eb' },
+        ],
+      ];
+
+      // Agregar filas de usuarios
+      this.filteredUsers.forEach((user) => {
+        const isVerified =
+          user.userType === 'specialist'
+            ? (user as any).accountConfirmed
+            : true;
+
+        tableBody.push([
+          { text: user.name || '-', style: 'tableCell' },
+          { text: user.lastName || '-', style: 'tableCell' },
+          { text: user.email || '-', style: 'tableCell' },
+          { text: this.formatDNI(user.dni) || '-', style: 'tableCell' },
+          { text: this.translateUserType(user.userType), style: 'tableCell' },
+          {
+            text: isVerified ? 'Sí' : 'No',
+            style: 'tableCell',
+            color: isVerified ? '#059669' : '#dc2626',
+          },
+        ]);
+      });
+
+      // Definición del documento
+      const docDefinition: any = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [40, 60, 40, 60],
+
+        header: {
+          columns: [
+            {
+              text: 'CLINICAL CENTER',
+              fontSize: 18,
+              bold: true,
+              margin: [40, 25, 0, 0],
+              color: '#2563eb',
+            },
+            {
+              text: [
+                { text: 'Fecha de emisión:\n', fontSize: 10, color: '#666' },
+                {
+                  text: new Date().toLocaleDateString('es-ES'),
+                  fontSize: 10,
+                  bold: true,
+                },
+              ],
+              alignment: 'right',
+              margin: [0, 25, 40, 0],
+            },
+          ],
+        },
+
+        footer: (currentPage: number, pageCount: number) => {
+          return {
+            text: `Página ${currentPage} de ${pageCount}`,
+            alignment: 'center',
+            fontSize: 10,
+            color: '#666',
+          };
+        },
+
+        content: [
+          {
+            text: 'LISTADO DE USUARIOS',
+            fontSize: 20,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 0, 0, 10],
+            color: '#1e40af',
+          },
+          {
+            text: `Total de usuarios: ${this.filteredUsers.length}`,
+            fontSize: 12,
+            alignment: 'center',
+            margin: [0, 0, 0, 20],
+            color: '#666',
+          },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['auto', 'auto', '*', 'auto', 'auto', 'auto'],
+              body: tableBody,
+            },
+            layout: {
+              fillColor: (rowIndex: number) => {
+                return rowIndex === 0
+                  ? '#2563eb'
+                  : rowIndex % 2 === 0
+                  ? '#f3f4f6'
+                  : null;
+              },
+              hLineWidth: () => 0.5,
+              vLineWidth: () => 0.5,
+              hLineColor: () => '#e5e7eb',
+              vLineColor: () => '#e5e7eb',
+            },
+          },
+        ],
+
+        styles: {
+          tableHeader: {
+            fontSize: 11,
+            bold: true,
+            color: 'white',
+            alignment: 'center',
+          },
+          tableCell: {
+            fontSize: 9,
+            margin: [5, 5, 5, 5],
+          },
+        },
+      };
+
+      // Crear y descargar el PDF
+      const pdf = pdfMake.createPdf(docDefinition);
+      pdf.download(`usuarios_${new Date().getTime()}.pdf`);
+    } catch (error) {
+      console.error('Error al generar el PDF:', error);
+      alert('Error al generar el PDF. Por favor, intente nuevamente.');
+    }
+  }
+
+  /**
+   * Formatea el DNI con puntos
+   */
+  private formatDNI(dni?: string): string {
+    if (!dni) return '-';
+    const dniStr = dni;
+
+    if (dniStr.length === 7) {
+      return `${dniStr.slice(0, 1)}.${dniStr.slice(1, 4)}.${dniStr.slice(4)}`;
+    } else if (dniStr.length === 8) {
+      return `${dniStr.slice(0, 2)}.${dniStr.slice(2, 5)}.${dniStr.slice(5)}`;
+    } else if (dniStr.length > 8) {
+      return `${dniStr.slice(0, 2)}.${dniStr.slice(2, 5)}.${dniStr.slice(
+        5,
+        8
+      )}.${dniStr.slice(8)}`;
+    }
+
+    return dniStr;
+  }
+
+  /**
+   * Traduce el tipo de usuario al español
+   */
+  private translateUserType(userType?: string): string {
+    const translations: { [key: string]: string } = {
+      admin: 'Administrador',
+      specialist: 'Especialista',
+      patient: 'Paciente',
+    };
+    return translations[userType || ''] || userType || '-';
+  }
 }

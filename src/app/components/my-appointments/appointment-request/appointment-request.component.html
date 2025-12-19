@@ -40,33 +40,65 @@
           <div class="flex items-center space-x-4">
             <div class="flex items-center">
               <div
-                class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold"
+                [ngClass]="{
+                  'bg-blue-600 text-white': currentStep === 1,
+                  'bg-green-500 text-white': currentStep > 1,
+                  'bg-gray-300 text-gray-500': currentStep < 1
+                }"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300"
               >
                 1
               </div>
-              <span class="ml-2 text-sm font-medium text-gray-700"
+              <span
+                [ngClass]="{
+                  'text-gray-900': currentStep === 1,
+                  'text-green-600': currentStep > 1,
+                  'text-gray-500': currentStep < 1
+                }"
+                class="ml-2 text-sm font-medium transition-colors duration-300"
                 >Especialidad</span
               >
             </div>
             <div class="w-8 h-px bg-gray-300"></div>
             <div class="flex items-center">
               <div
-                class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold"
+                [ngClass]="{
+                  'bg-blue-600 text-white': currentStep === 2,
+                  'bg-green-500 text-white': currentStep > 2,
+                  'bg-gray-300 text-gray-500': currentStep < 2
+                }"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300"
               >
                 2
               </div>
-              <span class="ml-2 text-sm font-medium text-gray-500"
+              <span
+                [ngClass]="{
+                  'text-gray-900': currentStep === 2,
+                  'text-green-600': currentStep > 2,
+                  'text-gray-500': currentStep < 2
+                }"
+                class="ml-2 text-sm font-medium transition-colors duration-300"
                 >Profesional</span
               >
             </div>
             <div class="w-8 h-px bg-gray-300"></div>
             <div class="flex items-center">
               <div
-                class="w-8 h-8 bg-gray-300 text-gray-500 rounded-full flex items-center justify-center text-sm font-bold"
+                [ngClass]="{
+                  'bg-blue-600 text-white':
+                    currentStep === 3 || currentStep === 4,
+                  'bg-gray-300 text-gray-500': currentStep < 3
+                }"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300"
               >
                 3
               </div>
-              <span class="ml-2 text-sm font-medium text-gray-500"
+              <span
+                [ngClass]="{
+                  'text-gray-900': currentStep === 3 || currentStep === 4,
+                  'text-gray-500': currentStep < 3
+                }"
+                class="ml-2 text-sm font-medium transition-colors duration-300"
                 >Fecha & Hora</span
               >
             </div>
@@ -252,10 +284,21 @@
                 trackBy: trackByIndex
               "
               (click)="selectTimeSlot(i)"
-              class="group p-4 rounded-xl border-2 border-gray-200 hover:border-orange-500 hover:shadow-lg transition-all duration-300 bg-white hover:bg-orange-50 text-center"
+              [ngClass]="{
+                'border-orange-500 bg-orange-50 shadow-lg':
+                  selectedTimeSlotIndex === i,
+                'border-gray-200 bg-white hover:border-orange-500 hover:bg-orange-50 hover:shadow-lg':
+                  selectedTimeSlotIndex !== i
+              }"
+              class="group p-4 rounded-xl border-2 transition-all duration-300 text-center"
             >
               <div
-                class="text-lg font-bold text-gray-900 group-hover:text-orange-700"
+                [ngClass]="{
+                  'text-orange-700': selectedTimeSlotIndex === i,
+                  'text-gray-900 group-hover:text-orange-700':
+                    selectedTimeSlotIndex !== i
+                }"
+                class="text-lg font-bold"
               >
                 {{ formatTime(slot) }}
               </div>

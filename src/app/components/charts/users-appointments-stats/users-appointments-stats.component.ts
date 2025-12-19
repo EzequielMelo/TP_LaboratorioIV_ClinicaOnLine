@@ -7,11 +7,12 @@ import {
 import { Component } from '@angular/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { EChartsOption } from 'echarts/types/dist/echarts';
+import { FormatDniPipe } from '../../../pipes/format-dni.pipe';
 
 @Component({
   selector: 'app-users-appointments-stats',
   standalone: true,
-  imports: [CommonModule, NgxEchartsModule],
+  imports: [CommonModule, NgxEchartsModule, FormatDniPipe],
   templateUrl: './users-appointments-stats.component.html',
   styleUrl: './users-appointments-stats.component.css',
 })

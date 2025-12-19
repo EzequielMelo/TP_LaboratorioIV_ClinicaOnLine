@@ -9,9 +9,14 @@
     "MY_PROFILE": "My profile",
     "ADMIN_PANEL": "Admin panel",
     "MY_APPOINTMENTS": "My appointments",
+    "MY_MEDICAL_RECORDS": "My Medical Records",
     "APPOINTMENTS": "Appointments",
     "REQUEST_APPOINTMENT": "Request appointment",
-    "SELECT_LANGUAGE": "Select language"
+    "SELECT_LANGUAGE": "Select language",
+    "SETTINGS": "Settings",
+    "USER_MANAGEMENT": "User management",
+    "ADD_ADMIN": "Add administrator",
+    "SYSTEM_LOGS": "System logs"
   },
   "HOME": {
     "WELCOME_TITLE": "WE WELCOME YOU",

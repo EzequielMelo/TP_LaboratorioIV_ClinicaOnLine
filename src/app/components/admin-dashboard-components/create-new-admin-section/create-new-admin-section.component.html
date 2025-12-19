@@ -107,7 +107,10 @@
                 registerForm.controls['repeat_password'].touched) { @if
                 (registerForm.controls['repeat_password'].errors['required']) {
                 <p class="text-xs text-red-600">Campo requerido</p>
-                } }
+                } } @if (registerForm.errors?.['passwordMismatch'] &&
+                registerForm.controls['repeat_password'].touched) {
+                <p class="text-xs text-red-600">Las contraseñas no coinciden</p>
+                }
               </div>
             </div>
           </div>
@@ -156,14 +159,27 @@
           <div class="grid md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-semibold text-gray-700"
-                >Edad</label
+                >Fecha de Nacimiento</label
               >
               <input
-                formControlName="age"
-                type="number"
+                formControlName="birthDate"
+                type="date"
                 class="w-full px-4 py-3 mt-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm"
-                placeholder="30"
               />
+              <div class="min-h-[1rem] mt-1">
+                @if (registerForm.controls['birthDate'].errors &&
+                registerForm.controls['birthDate'].touched) { @if
+                (registerForm.controls['birthDate'].errors['required']) {
+                <p class="text-xs text-red-600">Campo requerido</p>
+                } @if (registerForm.controls['birthDate'].errors['minAge']) {
+                <p class="text-xs text-red-600">Edad mínima: 18 años</p>
+                } @if (registerForm.controls['birthDate'].errors['maxAge']) {
+                <p class="text-xs text-red-600">Edad máxima: 120 años</p>
+                } @if (registerForm.controls['birthDate'].errors['futureDate'])
+                {
+                <p class="text-xs text-red-600">La fecha no puede ser futura</p>
+                } }
+              </div>
             </div>
             <div>
               <label class="block text-sm font-semibold text-gray-700"

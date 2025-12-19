@@ -10,6 +10,8 @@ import { ReviewForPatient } from '../../../classes/reviewForPatient';
 import { ReviewOverviewComponent } from '../../review/review-overview/review-overview.component';
 import { ReviewCreateComponent } from '../../review/review-create/review-create.component';
 import { SurveyComponent } from '../../survey/survey/survey.component';
+import { HealthRecordService } from '../../../services/health-record/health-record.service';
+import { HealthRecordOverviewComponent } from '../../health-record/health-record-overview/health-record-overview.component';
 
 @Component({
   selector: 'app-appointments-list',
@@ -19,7 +21,8 @@ import { SurveyComponent } from '../../survey/survey/survey.component';
     NgClass,
     ReviewOverviewComponent,
     ReviewCreateComponent,
-    SurveyComponent, // Cambiar por el componente correcto
+    SurveyComponent,
+    HealthRecordOverviewComponent,
   ],
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css',
@@ -27,8 +30,9 @@ import { SurveyComponent } from '../../survey/survey/survey.component';
 export class AppointmentsListComponent {
   @Input() appointments: Appointment[] | null = null;
   @Input() keyWord: string | null = null;
+  @Input() healthRecordsMap: Map<string, HealthRecord> = new Map();
+  @Input() reviewsMap: Map<string, string> = new Map();
 
-  // Propiedades existentes
   healthRecord: HealthRecord | null = null;
   review: string | null = null;
   appointmentId: string | null = null;
@@ -36,6 +40,7 @@ export class AppointmentsListComponent {
   specialistId: string | null = null;
   isReviewModalOpen: boolean = false;
   isCreateReviewModalOpen: boolean = false;
+  isHealthRecordModalOpen: boolean = false;
 
   // Propiedades para la encuesta de satisfacción
   showSurveyModal = false;
@@ -44,21 +49,11 @@ export class AppointmentsListComponent {
 
   private appointmentService = inject(AppointmentsService);
   private reviewService = inject(ReviewService);
+  private healthRecordService = inject(HealthRecordService);
 
   get filteredAppointments(): Appointment[] {
-    if (!this.keyWord || this.keyWord.trim() === '') {
-      return this.appointments || [];
-    }
-    const lowerCaseKeyWord = this.keyWord.trim().toLowerCase();
-    return (this.appointments || []).filter(
-      (appointment) =>
-        (appointment.specialistName &&
-          appointment.specialistName
-            .toLowerCase()
-            .includes(lowerCaseKeyWord)) ||
-        (appointment.speciality &&
-          appointment.speciality.toLowerCase().includes(lowerCaseKeyWord))
-    );
+    // El padre ya filtra los appointments, solo retornarlos
+    return this.appointments || [];
   }
 
   async cancelAppointment(appointment: Appointment): Promise<void> {
@@ -140,26 +135,67 @@ export class AppointmentsListComponent {
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#3B82F6',
     });
-
-    // Opcional: Puedes añadir aquí lógica adicional como:
-    // - Actualizar algún estado en la aplicación
-    // - Enviar notificación al administrador
-    // - Redirigir a otra página
   }
 
   // Métodos existentes para el modal de review
   showReviewModal(ReviewdId: string | null) {
     if (ReviewdId) {
+      // Intentar obtener del Map primero
+      const cachedReview = this.reviewsMap.get(ReviewdId);
+      if (cachedReview) {
+        this.review = cachedReview;
+        this.isReviewModalOpen = true;
+        return;
+      }
+
+      // Si no está en cache, hacer request
       this.reviewService.getReviewForPatient(ReviewdId).subscribe({
         next: (review) => {
           this.review = review.review;
+          this.isReviewModalOpen = true;
         },
       });
+    } else {
+      this.isReviewModalOpen = true;
     }
-    this.isReviewModalOpen = true;
   }
 
   closeReviewModal(data: { event: boolean }) {
     this.isReviewModalOpen = data.event;
+  }
+
+  // Métodos para el modal de health record
+  showHealthRecordModal(healthRecordId: string | null) {
+    if (healthRecordId) {
+      // Intentar obtener del Map primero
+      const cachedHealthRecord = this.healthRecordsMap.get(healthRecordId);
+      if (cachedHealthRecord) {
+        this.healthRecord = cachedHealthRecord;
+        this.isHealthRecordModalOpen = true;
+        return;
+      }
+
+      // Si no está en cache, hacer request
+      this.healthRecordService.getHealthRecord(healthRecordId).subscribe({
+        next: (healthRecord) => {
+          this.healthRecord = healthRecord;
+          this.isHealthRecordModalOpen = true;
+        },
+        error: (error) => {
+          console.error('Error al cargar el registro médico:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo cargar el registro médico',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+          });
+        },
+      });
+    }
+  }
+
+  closeHealthRecordModal(data: { event: boolean }) {
+    this.isHealthRecordModalOpen = data.event;
+    this.healthRecord = null;
   }
 }

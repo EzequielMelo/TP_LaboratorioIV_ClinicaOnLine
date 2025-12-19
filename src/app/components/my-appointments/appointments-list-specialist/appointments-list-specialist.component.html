@@ -1,30 +1,22 @@
-<div class="relative max-h-[600px] overflow-auto">
+<div>
   <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-    <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+    <thead
+      class="text-xs uppercase bg-gray-50 text-gray-700 sticky top-0 z-[1]"
+    >
       <tr>
-        <th scope="col" class="px-3 py-2">Fecha de la solicitud</th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Mensaje</th>
         <th scope="col" class="px-3 py-2">Fecha del turno</th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Nombre del Paciente</th>
-        <th scope="col" class="px-3 py-2">Especialidad</th>
-        <th scope="col" class="px-3 py-2 bg-gray-100">Turno</th>
-        <th scope="col" class="px-3 py-2">opciones del turno</th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">Mensaje</th>
+        <th scope="col" class="px-3 py-2">Nombre del Paciente</th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">Especialidad</th>
+        <th scope="col" class="px-3 py-2">Turno</th>
+        <th scope="col" class="px-3 py-2 bg-gray-100">opciones del turno</th>
+        <th scope="col" class="px-3 py-2">Historia Clínica</th>
         <th scope="col" class="px-3 py-2 bg-gray-100">Ver reseña</th>
       </tr>
     </thead>
     <tbody>
       @for (appointment of filteredAppointments; track $index) {
       <tr class="border-b bg-gray-50 border-gray-200 text-gray-900">
-        <td class="px-3 py-2">
-          {{
-            appointment.requestedDate
-              ? (appointment.requestedDate.toDate() | date : "dd/MM/yyyy")
-              : ""
-          }}
-        </td>
-        <td class="px-3 py-2 bg-gray-100">
-          {{ appointment.message }}
-        </td>
         <td class="px-3 py-2">
           @if (appointment.appointmentDate == null) { Sin Asignar }@else {
           {{
@@ -36,14 +28,17 @@
           }
         </td>
         <td class="px-3 py-2 bg-gray-100">
-          {{ appointment.patientName }}
+          {{ appointment.message }}
         </td>
         <td class="px-3 py-2">
+          {{ appointment.patientName }}
+        </td>
+        <td class="px-3 py-2 bg-gray-100">
           @if (appointment.speciality == null) { Sin Asignar }@else {
           {{ appointment.speciality }}
           }
         </td>
-        <td class="px-3 py-2 bg-gray-100">
+        <td class="px-3 py-2">
           <span
             [ngClass]="{
               'bg-green-100 text-green-800':
@@ -60,7 +55,7 @@
             {{ appointment.appointmentStatus }}
           </span>
         </td>
-        <td class="px-3 py-2 flex gap-2">
+        <td class="px-3 py-2 gap-2 bg-gray-100">
           <button
             (click)="acceptAppointment(appointment)"
             [disabled]="!appointment.isCancelable"
@@ -85,6 +80,19 @@
           >
             🛑
           </button>
+        </td>
+        <td class="px-3 py-2 b">
+          @if(appointment.idMedicalReport != null) {
+          <button
+            type="button"
+            (click)="showHealthRecordModal(appointment.idMedicalReport)"
+            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-full text-sm px-3 py-2 transition"
+          >
+            Ver Historia
+          </button>
+          } @else {
+          <span class="text-gray-400 text-sm">No disponible</span>
+          }
         </td>
         <td class="px-3 py-2 bg-gray-100">
           @if(appointment.appointmentStatus == 'Aceptado') {
@@ -132,4 +140,12 @@
   [AppointmentIdSpecialist]="AppointmentIdSpecialist"
   (eventCloseModal)="closeCreateReviewModal($event)"
 ></app-health-record-create>
+}
+
+<!-- Modal de Historia Clínica -->
+@if (isHealthRecordModalOpen) {
+<app-health-record-overview
+  [healthRecord]="healthRecord"
+  (eventCloseModal)="closeHealthRecordModal($event)"
+></app-health-record-overview>
 }

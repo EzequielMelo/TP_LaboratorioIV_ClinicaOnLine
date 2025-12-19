@@ -1,6 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Appointment } from '../../../classes/appointment';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { DatabaseService } from '../../../services/database/database.service';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
@@ -9,6 +14,11 @@ import { CommonModule } from '@angular/common';
 import { AppointmentsListSpecialistComponent } from '../appointments-list-specialist/appointments-list-specialist.component';
 import { AppointmentsListAdminComponent } from '../appointments-list-admin/appointments-list-admin.component';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
+import { HealthRecordService } from '../../../services/health-record/health-record.service';
+import { ReviewService } from '../../../services/review/review.service';
+import { HealthRecord } from '../../../classes/health-record';
+import { forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 interface AppointmentStatus {
   label: string;
@@ -24,7 +34,12 @@ interface AppointmentStatus {
 @Component({
   selector: 'app-appointments-overview-admin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppointmentsListAdminComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    AppointmentsListAdminComponent,
+  ],
   templateUrl: './appointments-overview-admin.component.html',
   styleUrl: './appointments-overview-admin.component.css',
 })
@@ -44,8 +59,17 @@ export class AppointmentsOverviewAdminComponent {
   // Estado seleccionado para mostrar los turnos
   selectedStatus: string = 'all';
 
+  // Orden de fecha seleccionado
+  dateOrder: 'recent' | 'oldest' = 'recent';
+
+  // Maps para datos pre-cargados
+  healthRecordsMap: Map<string, HealthRecord> = new Map();
+  reviewsMap: Map<string, string> = new Map();
+
   protected authService = inject(AuthService);
   private appointmentService = inject(AppointmentsService);
+  private healthRecordService = inject(HealthRecordService);
+  private reviewService = inject(ReviewService);
 
   appointmentStatuses: AppointmentStatus[] = [
     {
@@ -118,12 +142,97 @@ export class AppointmentsOverviewAdminComponent {
       next: (appointments) => {
         this.allAppointments = appointments;
         this.categorizeAppointments();
+        this.loadRelatedData();
         this.filterAndDisplayAppointments();
       },
       error: (err) => {
         console.error('Error al cargar los turnos:', err);
       },
     });
+  }
+
+  private loadRelatedData() {
+    // Extraer IDs únicos de health records y reviews
+    const healthRecordIds = Array.from(
+      new Set(
+        this.allAppointments
+          .map((a) => a.idMedicalReport)
+          .filter((id) => id !== null && id !== undefined && id !== '')
+      )
+    ) as string[];
+
+    const reviewIds = Array.from(
+      new Set(
+        this.allAppointments
+          .map((a) => a.idReviewForPatient)
+          .filter((id) => id !== null && id !== undefined && id !== '')
+      )
+    ) as string[];
+
+    console.log('Health Record IDs:', healthRecordIds);
+    console.log('Review IDs:', reviewIds);
+
+    // Cargar health records y reviews en paralelo
+    forkJoin({
+      healthRecords: this.loadHealthRecords(healthRecordIds),
+      reviews: this.loadReviews(reviewIds),
+    }).subscribe({
+      next: ({ healthRecords, reviews }) => {
+        this.healthRecordsMap = healthRecords;
+        this.reviewsMap = reviews;
+        console.log('Health Records Map:', this.healthRecordsMap);
+        console.log('Reviews Map:', this.reviewsMap);
+        // Actualizar la vista después de cargar los datos
+        this.filterAndDisplayAppointments();
+      },
+      error: (err) => {
+        console.error('Error al cargar datos relacionados:', err);
+      },
+    });
+  }
+
+  private loadHealthRecords(ids: string[]) {
+    if (ids.length === 0) {
+      return of(new Map<string, HealthRecord>());
+    }
+
+    const requests = ids.map((id) =>
+      this.healthRecordService
+        .getHealthRecord(id)
+        .pipe(map((healthRecord) => ({ id, healthRecord })))
+    );
+
+    return forkJoin(requests).pipe(
+      map((results) => {
+        const map = new Map<string, HealthRecord>();
+        results.forEach(({ id, healthRecord }) => {
+          map.set(id, healthRecord);
+        });
+        return map;
+      })
+    );
+  }
+
+  private loadReviews(ids: string[]) {
+    if (ids.length === 0) {
+      return of(new Map<string, string>());
+    }
+
+    const requests = ids.map((id) =>
+      this.reviewService
+        .getReviewForPatient(id)
+        .pipe(map((review) => ({ id, review: review.review })))
+    );
+
+    return forkJoin(requests).pipe(
+      map((results) => {
+        const map = new Map<string, string>();
+        results.forEach(({ id, review }) => {
+          map.set(id, review);
+        });
+        return map;
+      })
+    );
   }
 
   private categorizeAppointments() {
@@ -166,6 +275,12 @@ export class AppointmentsOverviewAdminComponent {
     this.filterAndDisplayAppointments();
   }
 
+  onDateOrderChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.dateOrder = target.value as 'recent' | 'oldest';
+    this.filterAndDisplayAppointments();
+  }
+
   private filterAndDisplayAppointments() {
     let appointmentsToShow: Appointment[] = [];
 
@@ -195,20 +310,64 @@ export class AppointmentsOverviewAdminComponent {
     }
 
     // Luego aplicamos el filtro de búsqueda
-    const keyWord = this.searchForm.get('keyWord')?.value?.toLowerCase() || '';
+    const keyWord = this.searchForm.get('keyWord')?.value || '';
+    const keyWordLower = keyWord.toLowerCase();
 
     if (keyWord) {
-      appointmentsToShow = appointmentsToShow.filter(
-        (appointment) =>
-          appointment.specialistName.toLowerCase().includes(keyWord) ||
-          appointment.speciality.toLowerCase().includes(keyWord) ||
+      appointmentsToShow = appointmentsToShow.filter((appointment) => {
+        // Búsqueda en campos básicos del appointment
+        const basicMatch =
+          appointment.specialistName.toLowerCase().includes(keyWordLower) ||
+          appointment.speciality.toLowerCase().includes(keyWordLower) ||
+          appointment.patientName.toLowerCase().includes(keyWordLower) ||
           appointment.appointmentDate
             ?.toDate()
             .toString()
             .toLowerCase()
-            .includes(keyWord)
-      );
+            .includes(keyWordLower);
+
+        if (basicMatch) return true;
+
+        // Búsqueda en health record si existe
+        if (appointment.idMedicalReport) {
+          const healthRecord = this.healthRecordsMap.get(
+            appointment.idMedicalReport
+          );
+          if (healthRecord) {
+            const healthRecordMatch =
+              healthRecord.height?.toString().includes(keyWord) ||
+              healthRecord.weight?.toString().includes(keyWord) ||
+              healthRecord.temperature?.toString().includes(keyWord) ||
+              healthRecord.bloodPressure?.toString().includes(keyWord) ||
+              healthRecord.painLevel?.toString().includes(keyWord) ||
+              healthRecord.glucoseLevel?.toString().includes(keyWord) ||
+              (healthRecord.dynamicData &&
+                Object.values(healthRecord.dynamicData).some((value) =>
+                  value?.toString().toLowerCase().includes(keyWordLower)
+                ));
+
+            if (healthRecordMatch) return true;
+          }
+        }
+
+        // Búsqueda en review si existe
+        if (appointment.idReviewForPatient) {
+          const review = this.reviewsMap.get(appointment.idReviewForPatient);
+          if (review && review.toLowerCase().includes(keyWordLower)) {
+            return true;
+          }
+        }
+
+        return false;
+      });
     }
+
+    // Ordenar por fecha según la preferencia
+    appointmentsToShow.sort((a, b) => {
+      const dateA = a.appointmentDate?.toDate().getTime() || 0;
+      const dateB = b.appointmentDate?.toDate().getTime() || 0;
+      return this.dateOrder === 'recent' ? dateB - dateA : dateA - dateB;
+    });
 
     this.displayedAppointments = appointmentsToShow;
   }

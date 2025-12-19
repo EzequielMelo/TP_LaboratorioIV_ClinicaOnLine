@@ -1,61 +1,99 @@
 <!--Modal donde creo la review-->
 <div
-  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+  class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4"
 >
   <div
-    class="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-auto"
+    class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-auto"
   >
-    <h3 class="text-2xl font-semibold mb-6 text-center">Crear reseña</h3>
-
-    <div class="mb-6">
-      <label for="review" class="block text-lg font-medium mb-2">Reseña</label>
-      <textarea
-        id="review"
-        [(ngModel)]="reviewText"
-        placeholder="Escribe la reseña sobre la atención del especialista..."
-        class="w-full border border-gray-300 rounded p-3 text-gray-800 resize-none"
-        rows="6"
-      ></textarea>
+    <!-- Header -->
+    <div
+      class="bg-gradient-to-r from-green-600 to-teal-600 text-white p-4 rounded-t-2xl"
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+          />
+        </svg>
+        <h3 class="text-xl font-bold">Crear Reseña</h3>
+      </div>
     </div>
 
-    <!-- Captcha: se renderiza *solo* si captchaEnabled es true -->
-    <div *ngIf="captchaEnabled" class="mb-4">
-      <label class="block text-sm font-medium text-gray-700 mb-2"
-        >Verificación Captcha</label
+    <!-- Content -->
+    <div class="p-4">
+      <div class="mb-4">
+        <label
+          for="review"
+          class="block text-sm font-semibold text-gray-700 mb-2"
+          >Comparta su experiencia</label
+        >
+        <textarea
+          id="review"
+          [(ngModel)]="reviewText"
+          placeholder="Describa la calidad de la atención recibida, el trato del especialista y su experiencia general..."
+          class="w-full border border-gray-300 rounded-lg p-3 text-gray-800 resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+          rows="5"
+        ></textarea>
+      </div>
+
+      <!-- Captcha -->
+      <div *ngIf="captchaEnabled" class="mb-4">
+        <label class="block text-sm font-semibold text-gray-700 mb-2"
+          >Verificación de seguridad</label
+        >
+        <input
+          id="captcha"
+          type="text"
+          placeholder="Ingrese el código mostrado"
+          appCaptcha
+          (captchaResolved)="onCaptchaResult($event)"
+          class="w-full pl-3 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm"
+        />
+        <p
+          *ngIf="!captchaOk && captchaTouched"
+          class="text-sm text-red-600 mt-2 flex items-center gap-1"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          El código ingresado no es correcto
+        </p>
+      </div>
+
+      <p
+        *ngIf="!captchaEnabled"
+        class="text-xs text-gray-500 bg-gray-50 p-2 rounded-lg"
       >
-
-      <input
-        id="captcha"
-        type="text"
-        placeholder="Ingrese el código"
-        appCaptcha
-        (captchaResolved)="onCaptchaResult($event)"
-        class="w-full pl-3 pr-4 py-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
-      />
-
-      <p *ngIf="!captchaOk && captchaTouched" class="text-sm text-red-600 mt-1">
-        El captcha no es correcto
+        ℹ️ Verificación de seguridad deshabilitada
       </p>
     </div>
 
-    <!-- Si el captcha está desactivado por configuración, podés mostrar un pequeño aviso opcional -->
-    <p *ngIf="!captchaEnabled" class="text-sm text-gray-500 mb-4">
-      Captcha deshabilitado en tu configuración — no es necesario verificar.
-    </p>
-
-    <div class="flex justify-center gap-4">
+    <!-- Footer -->
+    <div class="bg-gray-50 px-4 py-3 rounded-b-2xl flex justify-end gap-3">
+      <button
+        (click)="closeModal()"
+        class="px-5 py-2 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+      >
+        Cancelar
+      </button>
       <button
         (click)="saveReview()"
         [disabled]="!captchaOk"
-        class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-5 py-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-300 disabled:to-gray-400"
       >
-        Guardar
-      </button>
-      <button
-        (click)="closeModal()"
-        class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition"
-      >
-        Cancelar
+        Guardar Reseña
       </button>
     </div>
   </div>

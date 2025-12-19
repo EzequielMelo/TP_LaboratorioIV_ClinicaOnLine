@@ -9,9 +9,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '../../services/auth/auth.service';
-import { dniValidator } from '../../shared/validators/custom-validators';
-import { numericValidator } from '../../shared/validators/custom-validators';
+import {
+  dniValidator,
+  passwordMatchValidator,
+  birthDateValidator,
+} from '../../shared/validators/custom-validators';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-register-specialist',
@@ -54,35 +58,38 @@ export class RegisterSpecialistComponent {
   private auth = inject(AuthService);
 
   constructor() {
-    this.registerForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]],
-      name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
+    this.registerForm = this.formBuilder.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        repeat_password: ['', [Validators.required, Validators.minLength(6)]],
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
         ],
-      ],
-      last_name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
+        last_name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
         ],
-      ],
-      age: ['', [Validators.required, Validators.min(18), Validators.max(100)]],
-      dni: ['', [Validators.required, this.dniValidator]],
-      medical_specialty: [
-        '',
-        [Validators.required, this.specialtyValidator.bind(this)],
-      ],
-      user_avatar: ['', [Validators.required]],
-      recaptcha: ['', Validators.required],
-    });
+        birthDate: ['', [Validators.required, birthDateValidator(20, 120)]],
+        dni: ['', [Validators.required, this.dniValidator]],
+        medical_specialty: [
+          '',
+          [Validators.required, this.specialtyValidator.bind(this)],
+        ],
+        user_avatar: ['', [Validators.required]],
+        recaptcha: ['', Validators.required],
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
   handleSuccess($event: string) {
@@ -106,13 +113,18 @@ export class RegisterSpecialistComponent {
       return; // Salir de la función si alguna es nula
     }
 
+    // Convertir fecha de nacimiento string a Timestamp
+    const birthDateTimestamp = Timestamp.fromDate(
+      new Date(formValues.birthDate)
+    );
+
     this.auth
       .registerSpecialist(
         formValues.name,
         formValues.last_name,
         formValues.email,
         formValues.password,
-        formValues.age,
+        birthDateTimestamp,
         formValues.dni,
         formValues.medical_specialty,
         'specialist',

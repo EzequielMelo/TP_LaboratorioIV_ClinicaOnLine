@@ -3,11 +3,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Specialist } from '../../../classes/specialist.class';
 import { AppUser } from '../../../classes/user.model';
 import { Patient } from '../../../classes/patient.class';
+import { FormatDniPipe } from '../../../pipes/format-dni.pipe';
 
 @Component({
   selector: 'app-users-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormatDniPipe],
   templateUrl: './users-table.component.html',
   styleUrl: './users-table.component.css',
 })

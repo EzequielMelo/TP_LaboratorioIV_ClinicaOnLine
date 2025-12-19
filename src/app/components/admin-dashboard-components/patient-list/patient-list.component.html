@@ -2,35 +2,32 @@
   <table class="w-full text-sm text-left rtl:text-right text-gray-500">
     <thead class="text-xs uppercase bg-gray-50 text-gray-700">
       <tr>
-        <th scope="col" class="px-6 py-3 bg-gray-100">
-          Nombre
-        </th>
-        <th scope="col" class="px-6 py-3">
-          Apellido
-        </th>
-        <th scope="col" class="px-6 py-3 bg-gray-100">
-          DNI
-        </th>
-        <th scope="col" class="px-6 py-3">
-          Obra Social
-        </th>
+        <th scope="col" class="px-6 py-3 bg-gray-100">Nombre</th>
+        <th scope="col" class="px-6 py-3">Apellido</th>
+        <th scope="col" class="px-6 py-3 bg-gray-100">DNI</th>
+        <th scope="col" class="px-6 py-3">Obra Social</th>
       </tr>
     </thead>
     <tbody>
       @for (patient of data; track $index) {
-      <tr (click)="selectedPatient(patient)"
-        class="border-b bg-gray-50 border-gray-200 text-gray-900 hover:border-green-600 hover:scale-105 transition duration-500 cursor-pointer">
-        <th scope="row" class="px-6 py-4 bg-gray-100 font-medium whitespace-nowrap">
-          {{patient.name}}
+      <tr
+        (click)="selectedPatient(patient)"
+        class="border-b bg-gray-50 border-gray-200 text-gray-900 hover:border-green-600 hover:scale-105 transition duration-500 cursor-pointer"
+      >
+        <th
+          scope="row"
+          class="px-6 py-4 bg-gray-100 font-medium whitespace-nowrap"
+        >
+          {{ patient.name }}
         </th>
         <td class="px-6 py-4">
-          {{patient.lastName}}
+          {{ patient.lastName }}
         </td>
         <td class="px-6 py-4 bg-gray-100">
-          {{patient.dni}}
+          {{ patient.dni | formatDni }}
         </td>
         <td class="px-6 py-4">
-          {{patient.healthCareSystem}}
+          {{ patient.healthCareSystem }}
         </td>
       </tr>
       }

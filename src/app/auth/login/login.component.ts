@@ -76,4 +76,27 @@ export class LoginComponent {
       password: '123456',
     });
   }
+
+  // Especialistas
+  usuarioPrueba4() {
+    this.loginForm.patchValue({
+      email: 'nogos24666@merotx.com',
+      password: '123456',
+    });
+  }
+
+  usuarioPrueba5() {
+    this.loginForm.patchValue({
+      email: 'varof80546@artvara.com',
+      password: '1234567',
+    });
+  }
+
+  // Admin
+  usuarioPrueba6() {
+    this.loginForm.patchValue({
+      email: 'admin@admin.com',
+      password: '123456',
+    });
+  }
 }

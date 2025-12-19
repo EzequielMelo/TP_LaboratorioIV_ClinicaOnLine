@@ -6,10 +6,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { dniValidator } from '../../shared/validators/custom-validators';
-import { numericValidator } from '../../shared/validators/custom-validators';
+import {
+  dniValidator,
+  passwordMatchValidator,
+  birthDateValidator,
+} from '../../shared/validators/custom-validators';
 import { AuthService } from '../../services/auth/auth.service';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-register',
@@ -30,41 +34,36 @@ export class RegisterComponent {
   private auth = inject(AuthService);
 
   constructor() {
-    this.registerForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]],
-      name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(15),
+    this.registerForm = this.formBuilder.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        repeat_password: ['', [Validators.required, Validators.minLength(6)]],
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(15),
+          ],
         ],
-      ],
-      last_name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(15),
+        last_name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(15),
+          ],
         ],
-      ],
-      age: [
-        '',
-        [
-          Validators.required,
-          Validators.min(2),
-          Validators.max(99),
-          numericValidator,
-        ],
-      ],
-      dni: ['', [Validators.required, dniValidator()]],
-      healthcare_system: ['', Validators.required],
-      user_avatar: ['', [Validators.required]],
-      user_cover: ['', [Validators.required]],
-      recaptcha: ['', Validators.required],
-    });
+        birthDate: ['', [Validators.required, birthDateValidator(0, 120)]],
+        dni: ['', [Validators.required, dniValidator()]],
+        healthcare_system: ['', Validators.required],
+        user_avatar: ['', [Validators.required]],
+        user_cover: ['', [Validators.required]],
+        recaptcha: ['', Validators.required],
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
   handleSuccess($event: string) {
@@ -90,6 +89,11 @@ export class RegisterComponent {
       return; // Salir de la función si alguna es nula
     }
 
+    // Convertir fecha de nacimiento string a Timestamp
+    const birthDateTimestamp = Timestamp.fromDate(
+      new Date(formValues.birthDate)
+    );
+
     // Ejecutar el registro
     this.auth
       .register(
@@ -97,7 +101,7 @@ export class RegisterComponent {
         formValues.last_name,
         formValues.email,
         formValues.password,
-        formValues.age,
+        birthDateTimestamp,
         formValues.dni,
         formValues.healthcare_system,
         'patient',

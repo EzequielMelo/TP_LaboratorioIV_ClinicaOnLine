@@ -9,9 +9,14 @@
     "MY_PROFILE": "Meu perfil",
     "ADMIN_PANEL": "Painel administrativo",
     "MY_APPOINTMENTS": "Meus agendamentos",
+    "MY_MEDICAL_RECORDS": "Meu Histórico Médico",
     "APPOINTMENTS": "Agendamentos",
     "REQUEST_APPOINTMENT": "Solicitar agendamento",
-    "SELECT_LANGUAGE": "Selecionar idioma"
+    "SELECT_LANGUAGE": "Selecionar idioma",
+    "SETTINGS": "Configurações",
+    "USER_MANAGEMENT": "Gestão de usuários",
+    "ADD_ADMIN": "Adicionar administrador",
+    "SYSTEM_LOGS": "Logs do sistema"
   },
   "HOME": {
     "WELCOME_TITLE": "DAMOS AS BOAS-VINDAS",

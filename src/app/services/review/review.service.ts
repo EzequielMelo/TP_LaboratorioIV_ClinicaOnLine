@@ -16,12 +16,12 @@ export class ReviewService {
     return this.firestore
       .collection('reviewsForPatients')
       .doc(healthRecordId)
-      .snapshotChanges()
+      .get()
       .pipe(
         map((snapshot) => {
-          if (snapshot.payload.exists) {
-            const data = snapshot.payload.data() as ReviewForPatient;
-            const id = snapshot.payload.id;
+          if (snapshot.exists) {
+            const data = snapshot.data() as ReviewForPatient;
+            const id = snapshot.id;
             return { ...data, id } as ReviewForPatient;
           }
           throw new Error('No review found for the given ID');
@@ -35,12 +35,12 @@ export class ReviewService {
     return this.firestore
       .collection('reviewsForSpecialists')
       .doc(healthRecordId)
-      .snapshotChanges()
+      .get()
       .pipe(
         map((snapshot) => {
-          if (snapshot.payload.exists) {
-            const data = snapshot.payload.data() as ReviewForSpecialist;
-            const id = snapshot.payload.id;
+          if (snapshot.exists) {
+            const data = snapshot.data() as ReviewForSpecialist;
+            const id = snapshot.id;
             return { ...data, id } as ReviewForSpecialist;
           }
           throw new Error('No review found for the given ID');

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { LoadingService } from '../../../services/loading/loading.service';
 import { UserTypes } from '../../../models/user-types';
@@ -26,6 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   protected authService = inject(AuthService);
   private loadingService = inject(LoadingService);
   private translate = inject(TranslateService);
+  private router = inject(Router);
 
   constructor() {
     // Inicializar el idioma
@@ -121,6 +122,31 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Cerrar ambos menús después del logout
     this.isMobileMenuOpen = false;
     this.isUserMenuOpen = false;
+  }
+
+  navigateToSection(section: 'services' | 'contact'): void {
+    // Cerrar menús
+    this.isMobileMenuOpen = false;
+    this.isUserMenuOpen = false;
+
+    // Navegar a /home si no estamos allí
+    if (this.router.url !== '/home') {
+      this.router.navigate(['/home']).then(() => {
+        // Esperar un poco para que la página cargue
+        setTimeout(() => this.scrollToSection(section), 300);
+      });
+    } else {
+      this.scrollToSection(section);
+    }
+  }
+
+  private scrollToSection(section: 'services' | 'contact'): void {
+    const sectionId =
+      section === 'services' ? 'services-section' : 'contact-section';
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   ngOnDestroy(): void {

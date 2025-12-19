@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Timestamp } from '@angular/fire/firestore';
 
 export class Specialist extends User {
   specialty: string[];
@@ -12,7 +13,7 @@ export class Specialist extends User {
     name: string,
     lastName: string,
     email: string,
-    age: string,
+    age: Timestamp,
     dni: string,
     specialty: string[],
     profilePicture: string,

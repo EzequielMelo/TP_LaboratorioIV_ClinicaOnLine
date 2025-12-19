@@ -1,103 +1,257 @@
-<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-screen lg:py-0">
-  <div class="w-full rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700">
+<div
+  class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen h-screen lg:py-0"
+>
+  <div
+    class="w-full rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0 bg-gray-800 bg-opacity-55 border-gray-700"
+  >
     <div class="p-4 space-y-4 md:space-y-6 sm:p-8">
-      <h1 class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white">
-        Ingreso Pacientes
+      <h1
+        class="text-xl font-bold leading-tight tracking-tight md:text-2xl text-white"
+      >
+        Iniciar Sesión
       </h1>
       <form class="max-w-md mx-auto" [formGroup]="loginForm">
         <div class="mb-5">
-          <label for="email" class="block mb-2 text-sm font-medium text-gray-50">Tu email</label>
-          <input type="email" id="email" formControlName="email"
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-50"
+            >Tu email</label
+          >
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="usuario@email.com" required />
+            placeholder="usuario@email.com"
+            required
+          />
           <div class="h-[10px]">
-            @if (loginForm.controls['email'].errors !== null && loginForm.controls['email'].touched) {
-            @if (loginForm.controls['email'].errors!['required']) {
-            <label class="font-light mt-1 text-xs text-red-700" for="email">Campo requerido</label>
-            }
-            @if (loginForm.controls['email'].errors!['email']) {
-            <label class="font-light mt-1 text-xs text-red-700" for="email">Ingrese email valido</label>
-            }
-            }
+            @if (loginForm.controls['email'].errors !== null &&
+            loginForm.controls['email'].touched) { @if
+            (loginForm.controls['email'].errors!['required']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="email"
+              >Campo requerido</label
+            >
+            } @if (loginForm.controls['email'].errors!['email']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="email"
+              >Ingrese email valido</label
+            >
+            } }
           </div>
         </div>
         <div class="mb-5">
-          <label for="password" class="block mb-2 text-sm font-medium text-gray-50">Tu
-            contraseña</label>
-          <input type="password" id="password" formControlName="password"
+          <label
+            for="password"
+            class="block mb-2 text-sm font-medium text-gray-50"
+            >Tu contraseña</label
+          >
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required />
+            required
+          />
           <div class="h-[10px]">
-            @if (loginForm.controls['password'].errors !== null && loginForm.controls['password'].touched) {
-            @if (loginForm.controls['password'].errors!['required']) {
-            <label class="font-light mt-1 text-xs text-red-700" for="password">Campo requerido</label>
-            }
-            @if (loginForm.controls['password'].errors!['minlength']) {
-            <label class="font-light mt-1 text-xs text-red-700" for="password">Ingrese minimo 6 caracteres</label>
-            }
-            }
+            @if (loginForm.controls['password'].errors !== null &&
+            loginForm.controls['password'].touched) { @if
+            (loginForm.controls['password'].errors!['required']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="password"
+              >Campo requerido</label
+            >
+            } @if (loginForm.controls['password'].errors!['minlength']) {
+            <label class="font-light mt-1 text-xs text-red-700" for="password"
+              >Ingrese minimo 6 caracteres</label
+            >
+            } }
           </div>
         </div>
         <div class="flex items-start mb-5">
-          <p class="text-sm font-light text-gray-50"> ¿Primera vez qué
-            ingresás? <a routerLink="/register"
-              class="font-bold text-primary-600 hover:underline text-primary-500">Registrate acá</a>
+          <p class="text-sm font-light text-gray-50">
+            ¿Primera vez qué ingresás?
+            <a
+              routerLink="/select-register"
+              class="font-bold text-primary-600 hover:underline text-primary-500"
+              >Registrate acá</a
+            >
           </p>
         </div>
-        <button (click)="login()"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Ingresar</button>
+        <button
+          (click)="login()"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Ingresar
+        </button>
       </form>
     </div>
   </div>
 
   <div data-dial-init class="fixed bottom-6 start-6 group">
-    <div id="speed-dial-menu-bottom-left" class="flex-col items-center hidden mb-4 space-y-2">
-      <button (click)="usuarioPrueba1()" type="button" data-tooltip-target="tooltip-user1" data-tooltip-placement="left"
-        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
-          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2F1GTwDBThWkfD1rg9M8hc3KUS2f93%2FprofilePicture.jpg?alt=media&token=a02d229e-6f17-4f9b-8b04-2e75d52c3fb3" />
+    <div
+      id="speed-dial-menu-bottom-left"
+      class="flex-col items-center hidden mb-4 space-y-2"
+    >
+      <button
+        (click)="usuarioPrueba1()"
+        type="button"
+        data-tooltip-target="tooltip-user1"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2F1GTwDBThWkfD1rg9M8hc3KUS2f93%2FprofilePicture.jpg?alt=media&token=a02d229e-6f17-4f9b-8b04-2e75d52c3fb3"
+        />
         <span class="sr-only">Ezequiel Melo</span>
       </button>
-      <div id="tooltip-user1" role="tooltip"
-        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-        Ezequiel Melo
+      <div
+        id="tooltip-user1"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Ezequiel Melo (Paciente)
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
 
-      <button (click)="usuarioPrueba2()" type="button" data-tooltip-target="tooltip-user2" data-tooltip-placement="left"
-        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
-          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FXmpGwnVT2yWKZDQngy62l8evRD53%2FprofilePicture.jpg?alt=media&token=ebd0bedd-21f5-4b7c-a289-e76ee846100a" />
+      <button
+        (click)="usuarioPrueba2()"
+        type="button"
+        data-tooltip-target="tooltip-user2"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FXmpGwnVT2yWKZDQngy62l8evRD53%2FprofilePicture.jpg?alt=media&token=ebd0bedd-21f5-4b7c-a289-e76ee846100a"
+        />
         <span class="sr-only">Amelia Rodriguez</span>
       </button>
-      <div id="tooltip-user2" role="tooltip"
-        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-        Amelia Rodrigez
+      <div
+        id="tooltip-user2"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Amelia Rodrigez (Paciente)
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
 
-      <button (click)="usuarioPrueba3()" type="button" data-tooltip-target="tooltip-user3" data-tooltip-placement="left"
-        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400">
-        <img class="w-full h-full rounded-full border object-cover" aria-hidden="true"
-          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2Facxz2bXR0QOdwJUMfJInlnWApFi2%2FprofilePicture.jpg?alt=media&token=20df241e-a20f-4fd2-8c1e-1aa9c3b25947" />
+      <button
+        (click)="usuarioPrueba3()"
+        type="button"
+        data-tooltip-target="tooltip-user3"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2Facxz2bXR0QOdwJUMfJInlnWApFi2%2FprofilePicture.jpg?alt=media&token=20df241e-a20f-4fd2-8c1e-1aa9c3b25947"
+        />
         <span class="sr-only">Ana Rosa Borrego</span>
       </button>
-      <div id="tooltip-user3" role="tooltip"
-        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-        Ana Rosa Borrego
+      <div
+        id="tooltip-user3"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Ana Rosa Borrego (Paciente)
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+
+      <!-- Especialistas -->
+      <button
+        (click)="usuarioPrueba4()"
+        type="button"
+        data-tooltip-target="tooltip-user4"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FQvFo4zJhAzSGYOuox9kxZN8b7wC2%2FprofilePicture.jpg?alt=media&token=f5742072-61f4-4691-9a77-a903ba4dd032"
+        />
+        <span class="sr-only">Eduardo Rogelio</span>
+      </button>
+      <div
+        id="tooltip-user4"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Eduardo Rogelio (Especialista)
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+
+      <button
+        (click)="usuarioPrueba5()"
+        type="button"
+        data-tooltip-target="tooltip-user5"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FBaMdJeQTn7PXCpqqiBhR4IlaouC3%2FprofilePicture.jpg?alt=media&token=db3125aa-eef0-4c74-b55f-e30ed53c8353"
+        />
+        <span class="sr-only">Lucia Rivera</span>
+      </button>
+      <div
+        id="tooltip-user5"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Lucia Rivera (Especialista)
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
+
+      <!-- Admin -->
+      <button
+        (click)="usuarioPrueba6()"
+        type="button"
+        data-tooltip-target="tooltip-user6"
+        data-tooltip-placement="left"
+        class="flex justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 dark:border-gray-600 shadow-sm dark:hover:text-white dark:text-gray-400 hover:bg-gray-50 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 focus:outline-none dark:focus:ring-gray-400"
+      >
+        <img
+          class="w-full h-full rounded-full border object-cover"
+          aria-hidden="true"
+          src="https://firebasestorage.googleapis.com/v0/b/clinicaonline-ezequiel-melo.appspot.com/o/users%2FsMv9OY7BbLMluq1V1HxYfmyF8Ov1%2FprofilePicture.jpg?alt=media&token=5042a8ad-0036-45a6-8c4e-5a39ec1056bd"
+        />
+        <span class="sr-only">Admin</span>
+      </button>
+      <div
+        id="tooltip-user6"
+        role="tooltip"
+        class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        Admin
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
     </div>
-    <button type="button" data-dial-toggle="speed-dial-menu-bottom-left" aria-controls="speed-dial-menu-bottom-left"
+    <button
+      type="button"
+      data-dial-toggle="speed-dial-menu-bottom-left"
+      aria-controls="speed-dial-menu-bottom-left"
       aria-expanded="false"
-      class="flex items-center justify-center text-white bg-blue-700 rounded-full w-14 h-14 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800">
-      <svg class="w-5 h-5 transition-transform group-hover:rotate-45" aria-hidden="true"
-        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M9 1v16M1 9h16" />
+      class="flex items-center justify-center text-white bg-blue-700 rounded-full w-14 h-14 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800"
+    >
+      <svg
+        class="w-5 h-5 transition-transform group-hover:rotate-45"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 18 18"
+      >
+        <path
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 1v16M1 9h16"
+        />
       </svg>
       <span class="sr-only">Open actions menu</span>
     </button>
   </div>
-
 </div>

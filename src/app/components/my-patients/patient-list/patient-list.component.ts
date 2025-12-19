@@ -10,11 +10,12 @@ import {
 import { Patient } from '../../../classes/patient.class';
 import { HealthRecordService } from '../../../services/health-record/health-record.service';
 import { PatientAppointmentData } from '../../../classes/patient-appointment';
+import { FormatDniPipe } from '../../../pipes/format-dni.pipe';
 
 @Component({
   selector: 'app-patient-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormatDniPipe],
   templateUrl: './patient-list.component.html',
   styleUrl: './patient-list.component.css',
 })
@@ -33,6 +34,47 @@ export class PatientListComponent {
     if (changes['patients'] && changes['patients'].currentValue) {
       this.loadAppointmentsForAllPatients();
     }
+  }
+
+  // Método para obtener pacientes filtrados
+  get filteredPatients(): Patient[] {
+    if (!this.patients) {
+      return [];
+    }
+
+    if (!this.keyWord || this.keyWord.trim() === '') {
+      return this.patients;
+    }
+
+    const keyword = this.keyWord.toLowerCase().trim();
+
+    const filtered = this.patients.filter((patient) => {
+      // Filtrar por nombre
+      const fullName = `${patient.name || ''} ${patient.lastName || ''}`
+        .toLowerCase()
+        .trim();
+
+      if (fullName.includes(keyword)) {
+        return true;
+      }
+
+      // Filtrar por DNI solo si el keyword contiene números
+      if (patient.dni) {
+        const keywordClean = keyword.replace(/\D/g, '');
+
+        // Solo buscar por DNI si el keyword tiene al menos un número
+        if (keywordClean.length > 0) {
+          const dniClean = patient.dni.replace(/\D/g, '');
+          if (dniClean.includes(keywordClean)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    });
+
+    return filtered;
   }
 
   private loadAppointmentsForAllPatients(): void {

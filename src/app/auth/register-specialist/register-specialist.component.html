@@ -102,7 +102,12 @@
             <label class="font-medium mt-1 text-xs text-red-700" for="password"
               >Ingrese mínimo 6 caracteres</label
             >
-            } }
+            } } @if (registerForm.errors?.['passwordMismatch'] &&
+            registerForm.controls['repeat_password'].touched) {
+            <label class="font-medium mt-1 text-xs text-red-700" for="password"
+              >Las contraseñas no coinciden</label
+            >
+            }
           </div>
         </div>
 
@@ -193,45 +198,45 @@
         <div class="grid md:grid-cols-2 md:gap-6">
           <div class="relative z-0 w-full mb-5 group">
             <input
-              formControlName="age"
-              type="text"
-              name="floating_age"
-              id="floating_age"
+              formControlName="birthDate"
+              type="date"
+              name="floating_birthDate"
+              id="floating_birthDate"
               class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
             />
             <label
-              for="floating_age"
+              for="floating_birthDate"
               class="peer-focus:font-medium absolute text-sm text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-              >Edad</label
+              >Fecha de Nacimiento</label
             >
             <div class="h-[10px]">
-              @if (registerForm.controls['age'].errors !== null &&
-              registerForm.controls['age'].touched) { @if
-              (registerForm.controls['age'].errors!['required']) {
+              @if (registerForm.controls['birthDate'].errors !== null &&
+              registerForm.controls['birthDate'].touched) { @if
+              (registerForm.controls['birthDate'].errors!['required']) {
               <label
                 class="font-medium mt-1 text-xs text-red-700"
-                for="floating_age"
+                for="floating_birthDate"
                 >Campo requerido</label
               >
-              } @if (registerForm.controls['age'].errors!['min']) {
+              } @if (registerForm.controls['birthDate'].errors!['minAge']) {
               <label
                 class="font-medium mt-1 text-xs text-red-700"
-                for="floating_age"
-                >Ingrese una edad mínima válida</label
+                for="floating_birthDate"
+                >Edad mínima: 20 años</label
               >
-              } @if (registerForm.controls['age'].errors!['max']) {
+              } @if (registerForm.controls['birthDate'].errors!['maxAge']) {
               <label
                 class="font-medium mt-1 text-xs text-red-700"
-                for="floating_age"
-                >Ingrese una edad máxima válida</label
+                for="floating_birthDate"
+                >Edad máxima: 120 años</label
               >
-              } @if (registerForm.controls['age'].errors!['nonNumeric']) {
+              } @if (registerForm.controls['birthDate'].errors!['futureDate']) {
               <label
                 class="font-medium mt-1 text-xs text-red-700"
-                for="floating_age"
-                >Ingrese solo números</label
+                for="floating_birthDate"
+                >La fecha no puede ser futura</label
               >
               } }
             </div>

@@ -144,7 +144,7 @@
         <!-- No autenticado -->
         <a
           *ngIf="!auth && !(isLoading$ | async)"
-          routerLink="/select-login"
+          routerLink="/login"
           class="text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:ring-4 focus:outline-none focus:ring-green-300/50 font-semibold rounded-lg text-sm px-4 py-2 transition-all duration-300 transform hover:scale-105 shadow-lg"
         >
           {{ "NAV.LOGIN" | translate }}
@@ -245,6 +245,43 @@
                 {{ "NAV.MY_APPOINTMENTS" | translate }}
               </a>
               <a
+                *ngIf="user?.userType === 'patient'"
+                routerLink="/my-medical-records"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                {{ "NAV.MY_MEDICAL_RECORDS" | translate }}
+              </a>
+              <a
+                *ngIf="user?.userType === 'patient'"
+                routerLink="/user-configuration"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                {{ "NAV.SETTINGS" | translate }}
+              </a>
+              <a
                 *ngIf="user?.userType === 'specialist'"
                 routerLink="/appointments"
                 class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
@@ -261,6 +298,24 @@
                   ></path>
                 </svg>
                 {{ "NAV.MY_APPOINTMENTS" | translate }}
+              </a>
+              <a
+                *ngIf="user?.userType === 'specialist'"
+                routerLink="/specialist-configuration"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                {{ "NAV.SETTINGS" | translate }}
               </a>
               <a
                 *ngIf="user?.userType === 'admin'"
@@ -298,6 +353,57 @@
                   ></path>
                 </svg>
                 {{ "NAV.REQUEST_APPOINTMENT" | translate }}
+              </a>
+            </li>
+            <li *ngIf="user?.userType === 'admin'">
+              <a
+                routerLink="/admin-my-users"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"
+                  ></path>
+                </svg>
+                {{ "NAV.USER_MANAGEMENT" | translate }}
+              </a>
+            </li>
+            <li *ngIf="user?.userType === 'admin'">
+              <a
+                routerLink="/admin-add-admin"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"
+                  ></path>
+                </svg>
+                {{ "NAV.ADD_ADMIN" | translate }}
+              </a>
+            </li>
+            <li *ngIf="user?.userType === 'admin'">
+              <a
+                routerLink="/admin-charts"
+                class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors duration-200"
+              >
+                <svg
+                  class="w-4 h-4 mr-3 text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"
+                  ></path>
+                </svg>
+                {{ "NAV.SYSTEM_LOGS" | translate }}
               </a>
             </li>
             <li class="border-t border-gray-100">
@@ -361,6 +467,7 @@
       >
         <li>
           <a
+            (click)="navigateToSection('services')"
             class="block py-2 px-4 text-gray-900 rounded-md hover:bg-gray-100 md:hover:bg-white/10 md:p-2 md:text-white md:hover:text-blue-100 transition-all duration-300 cursor-pointer"
           >
             {{ "NAV.SERVICES" | translate }}
@@ -368,23 +475,10 @@
         </li>
         <li>
           <a
-            class="block py-2 px-4 text-gray-900 rounded-md hover:bg-gray-100 md:hover:bg-white/10 md:p-2 md:text-white md:hover:text-blue-100 transition-all duration-300 cursor-pointer"
-          >
-            {{ "NAV.ABOUT" | translate }}
-          </a>
-        </li>
-        <li>
-          <a
+            (click)="navigateToSection('contact')"
             class="block py-2 px-4 text-gray-900 rounded-md hover:bg-gray-100 md:hover:bg-white/10 md:p-2 md:text-white md:hover:text-blue-100 transition-all duration-300 cursor-pointer"
           >
             {{ "NAV.CONTACT" | translate }}
-          </a>
-        </li>
-        <li>
-          <a
-            class="block py-2 px-4 text-gray-900 rounded-md hover:bg-gray-100 md:hover:bg-white/10 md:p-2 md:text-white md:hover:text-blue-100 transition-all duration-300 cursor-pointer"
-          >
-            {{ "NAV.FAQ" | translate }}
           </a>
         </li>
       </ul>
@@ -400,24 +494,16 @@
         <!-- Menú de navegación móvil -->
         <div class="space-y-2">
           <a
+            (click)="navigateToSection('services')"
             class="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
           >
             {{ "NAV.SERVICES" | translate }}
           </a>
           <a
-            class="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
-          >
-            {{ "NAV.ABOUT" | translate }}
-          </a>
-          <a
+            (click)="navigateToSection('contact')"
             class="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
           >
             {{ "NAV.CONTACT" | translate }}
-          </a>
-          <a
-            class="block py-3 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-colors duration-200 cursor-pointer"
-          >
-            {{ "NAV.FAQ" | translate }}
           </a>
         </div>
 

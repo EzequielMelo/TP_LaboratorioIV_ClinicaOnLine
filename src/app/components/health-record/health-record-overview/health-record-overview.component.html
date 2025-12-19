@@ -1,34 +1,134 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-    <h3 class="text-2xl font-semibold mb-4">Registro de la cita</h3>
-
-    <div class="mb-4 flex flex-col">
-      <div class="grid grid-cols-2 gap-4">
-        <label for="height">Altura:</label>
-        <input type="text" [value]="healthRecord?.height" class="mr-2" id="height" readonly />
-
-        <label for="weight">Peso:</label>
-        <input type="text" [value]="healthRecord?.weight" class="mr-2" id="weight" readonly />
-
-        <label for="temperature">Temperatura:</label>
-        <input type="text" [value]="healthRecord?.temperature" class="mr-2" id="temperature" readonly />
-
-        <label for="bloodPressure">Presion Arterial:</label>
-        <input type="text" [value]="healthRecord?.bloodPressure" class="mr-2" id="bloodPressure" readonly />
-
-        @if(healthRecord?.dynamicData){
-        <ng-container *ngFor=" let key of healthRecord?.dynamicData | keyvalue">
-          <label [for]="key.key">{{ key.key }}:</label>
-          <input type="text" [value]="key.value" class="mr-2" [id]="key.key" readonly />
-        </ng-container>
-        }
-
+<div
+  class="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center p-4"
+>
+  <div
+    class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-auto"
+  >
+    <!-- Header -->
+    <div
+      class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl"
+    >
+      <div class="flex items-center gap-2">
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        <h3 class="text-xl font-bold">Historia Clínica</h3>
       </div>
     </div>
 
+    <!-- Content -->
+    <div class="p-4">
+      <!-- Datos Vitales -->
+      <div class="mb-4">
+        <h4
+          class="text-base font-semibold text-gray-800 mb-2 pb-1 border-b-2 border-blue-500"
+        >
+          Signos Vitales
+        </h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Altura</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.height || "N/R" }} cm
+            </p>
+          </div>
 
-    <div class="flex justify-around mt-4">
-      <button (click)="closeModal()" class="px-4 py-2 bg-gray-400 text-white rounded">Cerrar</button>
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Peso</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.weight || "N/R" }} kg
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Temperatura</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.temperature || "N/R" }} °C
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Presión Arterial</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.bloodPressure || "N/R" }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos Adicionales -->
+      <div class="mb-4">
+        <h4
+          class="text-base font-semibold text-gray-800 mb-2 pb-1 border-b-2 border-indigo-500"
+        >
+          Información Adicional
+        </h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Nivel de Dolor</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.painLevel || "N/R" }}/10
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Nivel de Glucosa</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.glucoseLevel || "N/R" }} mg/dL
+            </p>
+          </div>
+
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <p class="text-xs text-gray-600 mb-0.5">Fumador</p>
+            <p class="text-base font-semibold text-gray-900">
+              {{ healthRecord?.smoker ? "Sí" : "No" }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos Dinámicos -->
+      @if(healthRecord?.dynamicData) {
+      <div class="mb-4">
+        <h4
+          class="text-base font-semibold text-gray-800 mb-2 pb-1 border-b-2 border-purple-500"
+        >
+          Datos Específicos
+        </h4>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <ng-container
+            *ngFor="let key of healthRecord?.dynamicData | keyvalue"
+          >
+            <div class="bg-gray-50 p-3 rounded-lg">
+              <p class="text-xs text-gray-600 mb-0.5">{{ key.key }}</p>
+              <p class="text-base font-semibold text-gray-900">
+                {{ key.value }}
+              </p>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-gray-50 px-4 py-3 rounded-b-2xl flex justify-end">
+      <button
+        (click)="closeModal()"
+        class="px-5 py-2 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+      >
+        Cerrar
+      </button>
     </div>
   </div>
 </div>

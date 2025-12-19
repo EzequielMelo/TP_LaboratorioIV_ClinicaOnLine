@@ -176,19 +176,18 @@
             "APPOINTMENTS_OVERVIEW.SORT_BY" | translate
           }}</label>
           <select
+            appSortSelect
+            (sortChange)="onSortChange($event)"
             class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
-            <option>
+            <option value="date-desc">
               {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.DATE_ASC" | translate }}
             </option>
-            <option>
+            <option value="date-asc">
               {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.DATE_DESC" | translate }}
             </option>
-            <option>
+            <option value="specialty">
               {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.SPECIALTY" | translate }}
-            </option>
-            <option>
-              {{ "APPOINTMENTS_OVERVIEW.SORT_OPTIONS.STATUS" | translate }}
             </option>
           </select>
         </div>
@@ -198,20 +197,22 @@
             "APPOINTMENTS_OVERVIEW.SHOW" | translate
           }}</label>
           <select
+            appTimeFilter
+            (filterChange)="onTimeFilterChange($event)"
             class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500"
           >
-            <option>
+            <option value="next-30-days">
               {{
                 "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.NEXT_30_DAYS" | translate
               }}
             </option>
-            <option>
+            <option value="all" selected>
               {{ "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.ALL" | translate }}
             </option>
-            <option>
+            <option value="this-month">
               {{ "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.THIS_MONTH" | translate }}
             </option>
-            <option>
+            <option value="last-3-months">
               {{
                 "APPOINTMENTS_OVERVIEW.SHOW_OPTIONS.LAST_3_MONTHS" | translate
               }}
@@ -222,9 +223,7 @@
     </div>
 
     <!-- Lista de turnos -->
-    <div
-      class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
-    >
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100">
       <!-- Header de la lista -->
       <div
         class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200"
@@ -304,6 +303,8 @@
           *ngIf="displayedAppointments && displayedAppointments.length > 0"
           [appointments]="displayedAppointments"
           [keyWord]="searchForm.get('keyWord')?.value"
+          [healthRecordsMap]="healthRecordsMap"
+          [reviewsMap]="reviewsMap"
           class="block"
         ></app-appointments-list>
       </div>

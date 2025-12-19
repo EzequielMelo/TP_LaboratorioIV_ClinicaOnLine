@@ -1,11 +1,16 @@
-<div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
-  <h1 class="text-center mt-[20px] text-5xl font-semibold text-white">Turnos</h1>
-
-  <div
-    class="w-full flex flex-row my-12 mt-[10px] justify-center rounded-lg shadow sm:max-w-6xl xl:p-0 bg-white bg-opacity-55 border-gray-700">
-    <div class="p-4 w-full space-y-4 md:space-y-6 sm:p-8 min-h-[30rem] rounded-lg">
-
-      <app-appointments-overview-admin />
+<!-- Contenedor principal con gradiente de fondo -->
+<div class="min-h-screen">
+  <div class="flex flex-col items-center px-6 py-8 mx-auto lg:py-12">
+    <!-- Contenedor principal con animación -->
+    <div class="w-full max-w-7xl transition-all duration-500 transform">
+      <div
+        class="bg-white bg-opacity-95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white border-opacity-50"
+      >
+        <!-- Header del contenido -->
+        <div class="w-full md:space-y-6 sm:p-8">
+          <app-appointments-overview-admin />
+        </div>
+      </div>
     </div>
   </div>
 </div>

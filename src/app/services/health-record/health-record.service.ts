@@ -51,12 +51,12 @@ export class HealthRecordService {
     return this.firestore
       .collection<HealthRecord>('healthRecords')
       .doc(healthRecordId)
-      .snapshotChanges()
+      .get()
       .pipe(
         map((snapshot) => {
-          if (snapshot.payload.exists) {
-            const data = snapshot.payload.data() as HealthRecord;
-            const id = snapshot.payload.id;
+          if (snapshot.exists) {
+            const data = snapshot.data() as HealthRecord;
+            const id = snapshot.id;
             return { ...data, id };
           }
           throw new Error('No HealthRecord found for the given ID');

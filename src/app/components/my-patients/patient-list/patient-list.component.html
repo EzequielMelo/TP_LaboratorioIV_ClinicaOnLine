@@ -2,7 +2,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
   <!-- Card por cada paciente -->
   <div
-    *ngFor="let patient of patients; trackBy: trackByPatient"
+    *ngFor="let patient of filteredPatients; trackBy: trackByPatient"
     class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden cursor-pointer"
     (click)="viewPatientHistory(patient)"
   >
@@ -18,7 +18,9 @@
           <h3 class="font-semibold text-white text-lg">
             {{ patient.name }} {{ patient.lastName }}
           </h3>
-          <p class="text-blue-100 text-sm">DNI: {{ patient.dni }}</p>
+          <p class="text-blue-100 text-sm">
+            DNI: {{ patient.dni | formatDni }}
+          </p>
         </div>
       </div>
     </div>
@@ -116,7 +118,7 @@
   </div>
 
   <!-- Estado vacío -->
-  <div *ngIf="!patients || patients.length === 0" class="col-span-full">
+  <div *ngIf="filteredPatients.length === 0" class="col-span-full">
     <div
       class="bg-white rounded-xl shadow-sm border-2 border-dashed border-gray-200 p-12 text-center"
     >
@@ -131,20 +133,39 @@
             viewBox="0 0 24 24"
           >
             <path
+              *ngIf="!keyWord || keyWord.trim() === ''"
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
             ></path>
+            <path
+              *ngIf="keyWord && keyWord.trim() !== ''"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
           </svg>
         </div>
         <div class="text-center">
           <h3 class="text-lg font-semibold text-gray-900 mb-2">
-            No hay pacientes atendidos
+            <span *ngIf="!keyWord || keyWord.trim() === ''"
+              >No hay pacientes atendidos</span
+            >
+            <span *ngIf="keyWord && keyWord.trim() !== ''"
+              >No se encontraron resultados</span
+            >
           </h3>
           <p class="text-gray-500 max-w-md">
-            Cuando completes consultas con pacientes, aparecerán listados aquí
-            para poder acceder a su historial médico.
+            <span *ngIf="!keyWord || keyWord.trim() === ''">
+              Cuando completes consultas con pacientes, aparecerán listados aquí
+              para poder acceder a su historial médico.
+            </span>
+            <span *ngIf="keyWord && keyWord.trim() !== ''">
+              No se encontraron pacientes que coincidan con "{{ keyWord }}".
+              Intenta buscar por otro nombre o DNI.
+            </span>
           </p>
         </div>
       </div>

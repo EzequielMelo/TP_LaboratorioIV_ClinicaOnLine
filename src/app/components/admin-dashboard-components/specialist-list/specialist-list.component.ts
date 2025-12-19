@@ -2,11 +2,12 @@ import { Component, inject, Input } from '@angular/core';
 import { Specialist } from '../../../classes/specialist.class';
 import { DatabaseService } from '../../../services/database/database.service';
 import { FirebaseError } from 'firebase/app';
+import { FormatDniPipe } from '../../../pipes/format-dni.pipe';
 
 @Component({
   selector: 'app-specialist-list',
   standalone: true,
-  imports: [],
+  imports: [FormatDniPipe],
   templateUrl: './specialist-list.component.html',
   styleUrl: './specialist-list.component.css',
 })

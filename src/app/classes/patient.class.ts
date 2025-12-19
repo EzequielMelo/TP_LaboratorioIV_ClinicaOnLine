@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Timestamp } from '@angular/fire/firestore';
 
 export class Patient extends User {
   healthCareSystem: string;
@@ -10,7 +11,7 @@ export class Patient extends User {
     name: string,
     lastName: string,
     email: string,
-    age: string,
+    age: Timestamp,
     dni: string,
     healthCareSystem: string,
     profilePicture: string,

@@ -9,9 +9,14 @@
     "MY_PROFILE": "Mi perfil",
     "ADMIN_PANEL": "Panel de control",
     "MY_APPOINTMENTS": "Mis Turnos",
+    "MY_MEDICAL_RECORDS": "Mi Historia Clínica",
     "APPOINTMENTS": "Turnos",
     "REQUEST_APPOINTMENT": "Solicitar turno",
-    "SELECT_LANGUAGE": "Seleccionar idioma"
+    "SELECT_LANGUAGE": "Seleccionar idioma",
+    "SETTINGS": "Configuración",
+    "USER_MANAGEMENT": "Gestión de usuarios",
+    "ADD_ADMIN": "Añadir administrador",
+    "SYSTEM_LOGS": "Logs del sistema"
   },
   "HOME": {
     "WELCOME_TITLE": "TE DAMOS LA BIENVENIDA",

@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { Admin } from '../../../classes/admin.class';
+import { FormatDniPipe } from '../../../pipes/format-dni.pipe';
 
 @Component({
   selector: 'app-admin-list',
   standalone: true,
-  imports: [],
+  imports: [FormatDniPipe],
   templateUrl: './admin-list.component.html',
   styleUrl: './admin-list.component.css',
 })

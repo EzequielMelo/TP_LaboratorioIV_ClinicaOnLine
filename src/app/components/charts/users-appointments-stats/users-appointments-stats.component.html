@@ -51,7 +51,7 @@
         <tbody>
           <tr *ngFor="let p of patients" class="specialty-row">
             <td>{{ p.lastName }}, {{ p.name }}</td>
-            <td>{{ p.dni }}</td>
+            <td>{{ p.dni | formatDni }}</td>
             <td>{{ p.healthCareSystem }}</td>
             <td>
               <button class="btn btn-test" (click)="selectPatient(p)">

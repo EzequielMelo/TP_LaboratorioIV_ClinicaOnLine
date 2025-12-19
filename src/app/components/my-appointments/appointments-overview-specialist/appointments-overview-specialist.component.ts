@@ -7,6 +7,19 @@ import { User } from '../../../classes/user';
 import { AppointmentsService } from '../../../services/appointments/appointments.service';
 import { AppointmentsListSpecialistComponent } from '../appointments-list-specialist/appointments-list-specialist.component';
 import { CommonModule } from '@angular/common';
+import { HealthRecordService } from '../../../services/health-record/health-record.service';
+import { ReviewService } from '../../../services/review/review.service';
+import { HealthRecord } from '../../../classes/health-record';
+import { forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import {
+  SortSelectDirective,
+  SortCriteria,
+} from '../../../directives/sort-select.directive';
+import {
+  TimeFilterDirective,
+  TimeFilterCriteria,
+} from '../../../directives/time-filter.directive';
 
 interface AppointmentStatus {
   label: string;
@@ -26,6 +39,8 @@ interface AppointmentStatus {
     CommonModule,
     ReactiveFormsModule,
     AppointmentsListSpecialistComponent,
+    SortSelectDirective,
+    TimeFilterDirective,
   ],
   templateUrl: './appointments-overview-specialist.component.html',
   styleUrl: './appointments-overview-specialist.component.css',
@@ -42,9 +57,15 @@ export class AppointmentsOverviewSpecialistComponent {
   selectedStatus: string = 'pending'; // Estado seleccionado para mostrar los turnos
   totalAppointments: number = 0;
 
+  // Maps para datos pre-cargados
+  healthRecordsMap: Map<string, HealthRecord> = new Map();
+  reviewsMap: Map<string, string> = new Map();
+
   protected authService = inject(AuthService);
   private db = inject(DatabaseService);
   private appointmentService = inject(AppointmentsService);
+  private healthRecordService = inject(HealthRecordService);
+  private reviewService = inject(ReviewService);
 
   appointmentStatuses: AppointmentStatus[] = [
     {
@@ -131,11 +152,99 @@ export class AppointmentsOverviewSpecialistComponent {
 
         // Mostrar todos los turnos por defecto
         this.displayedAppointments = this.appointmentsPending;
+
+        // Cargar health records y reviews
+        this.loadRelatedData(appointments);
       },
       error: (err) => {
         console.error('Error al cargar los turnos:', err);
       },
     });
+  }
+
+  private loadRelatedData(appointments: Appointment[]) {
+    // Extraer IDs únicos de health records y reviews (para especialista usa idReviewForSpecialist)
+    const healthRecordIds = [
+      ...new Set(
+        appointments
+          .map((a) => a.idMedicalReport)
+          .filter((id): id is string => !!id)
+      ),
+    ];
+
+    const reviewIds = [
+      ...new Set(
+        appointments
+          .map((a) => a.idReviewForSpecialist)
+          .filter((id): id is string => !!id)
+      ),
+    ];
+
+    console.log('Health Record IDs:', healthRecordIds);
+    console.log('Review IDs:', reviewIds);
+
+    if (healthRecordIds.length === 0 && reviewIds.length === 0) {
+      return;
+    }
+
+    forkJoin({
+      healthRecords:
+        healthRecordIds.length > 0
+          ? this.loadHealthRecords(healthRecordIds)
+          : of(new Map<string, HealthRecord>()),
+      reviews:
+        reviewIds.length > 0
+          ? this.loadReviewsForSpecialist(reviewIds)
+          : of(new Map<string, string>()),
+    }).subscribe({
+      next: (data) => {
+        this.healthRecordsMap = data.healthRecords;
+        this.reviewsMap = data.reviews;
+        console.log('Health Records Map:', this.healthRecordsMap);
+        console.log('Reviews Map:', this.reviewsMap);
+        // Re-aplicar el filtro después de cargar los datos
+        this.filterAppointments();
+      },
+      error: (err) => {
+        console.error('Error al cargar datos relacionados:', err);
+      },
+    });
+  }
+
+  private loadHealthRecords(ids: string[]) {
+    const requests = ids.map((id) =>
+      this.healthRecordService.getHealthRecord(id)
+    );
+
+    return forkJoin(requests).pipe(
+      map((records: (HealthRecord | null)[]) => {
+        const recordsMap = new Map<string, HealthRecord>();
+        records.forEach((record, index) => {
+          if (record) {
+            recordsMap.set(ids[index], record);
+          }
+        });
+        return recordsMap;
+      })
+    );
+  }
+
+  private loadReviewsForSpecialist(ids: string[]) {
+    const requests = ids.map((id) =>
+      this.reviewService.getReviewForSpecialists(id)
+    );
+
+    return forkJoin(requests).pipe(
+      map((reviews) => {
+        const reviewsMap = new Map<string, string>();
+        reviews.forEach((reviewObj, index) => {
+          if (reviewObj && reviewObj.review) {
+            reviewsMap.set(ids[index], reviewObj.review);
+          }
+        });
+        return reviewsMap;
+      })
+    );
   }
 
   showAppointments(status: string) {
@@ -161,8 +270,11 @@ export class AppointmentsOverviewSpecialistComponent {
         this.displayedAppointments = this.allAppointments;
     }
 
-    // Aplicar filtro de búsqueda si hay texto
-    this.filterAppointments();
+    // Aplicar filtro de búsqueda si hay texto (sin recursión)
+    const keyWord = this.searchForm.get('keyWord')?.value || '';
+    if (keyWord) {
+      this.filterAppointments();
+    }
   }
 
   onSearch() {
@@ -170,11 +282,35 @@ export class AppointmentsOverviewSpecialistComponent {
   }
 
   private filterAppointments() {
-    const keyWord = this.searchForm.get('keyWord')?.value?.toLowerCase() || '';
+    const keyWord = this.searchForm.get('keyWord')?.value || '';
+    const keyWordLower = keyWord.toLowerCase();
+
+    console.log('=== FILTRO DE BÚSQUEDA ===');
+    console.log('Palabra clave:', keyWord);
+    console.log('Health Records Map size:', this.healthRecordsMap.size);
+    console.log('Reviews Map size:', this.reviewsMap.size);
 
     if (!keyWord) {
-      // Si no hay búsqueda, mostrar según el filtro de estado seleccionado
-      this.showAppointments(this.selectedStatus);
+      // Si no hay búsqueda, mostrar según el filtro de estado seleccionado sin recursión
+      switch (this.selectedStatus) {
+        case 'all':
+          this.displayedAppointments = this.allAppointments;
+          break;
+        case 'pending':
+          this.displayedAppointments = this.appointmentsPending;
+          break;
+        case 'confirmed':
+          this.displayedAppointments = this.appointmentsConfirmed;
+          break;
+        case 'completed':
+          this.displayedAppointments = this.appointmentsCompleted;
+          break;
+        case 'cancelled':
+          this.displayedAppointments = this.appointmentsCancelled;
+          break;
+        default:
+          this.displayedAppointments = this.allAppointments;
+      }
       return;
     }
 
@@ -200,13 +336,61 @@ export class AppointmentsOverviewSpecialistComponent {
         baseAppointments = this.allAppointments;
     }
 
+    console.log('Base appointments:', baseAppointments.length);
+
     // Filtrar por palabra clave
-    this.displayedAppointments = baseAppointments.filter(
-      (appointment) =>
-        appointment.specialistName?.toLowerCase().includes(keyWord) ||
-        appointment.speciality?.toLowerCase().includes(keyWord) ||
-        appointment.patientName?.toLowerCase().includes(keyWord)
-    );
+    this.displayedAppointments = baseAppointments.filter((appointment) => {
+      // Búsqueda en datos del appointment
+      const matchesAppointment =
+        appointment.specialistName?.toLowerCase().includes(keyWordLower) ||
+        appointment.speciality?.toLowerCase().includes(keyWordLower) ||
+        appointment.patientName?.toLowerCase().includes(keyWordLower);
+
+      // Búsqueda en health record
+      let matchesHealthRecord = false;
+      if (appointment.idMedicalReport) {
+        const healthRecord = this.healthRecordsMap.get(
+          appointment.idMedicalReport
+        );
+        console.log(
+          'Checking health record for appointment:',
+          appointment.idMedicalReport,
+          healthRecord
+        );
+        if (healthRecord) {
+          matchesHealthRecord =
+            healthRecord.height?.toString().includes(keyWord) ||
+            healthRecord.weight?.toString().includes(keyWord) ||
+            healthRecord.temperature?.toString().includes(keyWord) ||
+            healthRecord.bloodPressure?.toString().includes(keyWord) ||
+            healthRecord.painLevel?.toString().includes(keyWord) ||
+            healthRecord.glucoseLevel?.toString().includes(keyWord) ||
+            (healthRecord.dynamicData &&
+              Object.entries(healthRecord.dynamicData).some(
+                ([key, value]) =>
+                  key.toLowerCase().includes(keyWordLower) ||
+                  value.toString().toLowerCase().includes(keyWordLower)
+              ));
+
+          if (matchesHealthRecord) {
+            console.log('MATCH encontrado en health record!', healthRecord);
+          }
+        }
+      }
+
+      // Búsqueda en review
+      let matchesReview = false;
+      if (appointment.idReviewForSpecialist) {
+        const review = this.reviewsMap.get(appointment.idReviewForSpecialist);
+        if (review) {
+          matchesReview = review.toLowerCase().includes(keyWordLower);
+        }
+      }
+
+      return matchesAppointment || matchesHealthRecord || matchesReview;
+    });
+
+    console.log('Resultados filtrados:', this.displayedAppointments.length);
   }
 
   clearSearch() {
@@ -257,6 +441,115 @@ export class AppointmentsOverviewSpecialistComponent {
         return 'Turnos cancelados';
       default:
         return 'Turnos';
+    }
+  }
+
+  onSortChange(criteria: SortCriteria): void {
+    this.displayedAppointments = this.sortAppointments(
+      this.displayedAppointments,
+      criteria
+    );
+  }
+
+  onTimeFilterChange(criteria: TimeFilterCriteria): void {
+    let sourceAppointments: Appointment[] = [];
+
+    switch (this.selectedStatus) {
+      case 'all':
+        sourceAppointments = [...this.allAppointments];
+        break;
+      case 'pending':
+        sourceAppointments = [...this.appointmentsPending];
+        break;
+      case 'confirmed':
+        sourceAppointments = [...this.appointmentsConfirmed];
+        break;
+      case 'completed':
+        sourceAppointments = [...this.appointmentsCompleted];
+        break;
+      case 'cancelled':
+        sourceAppointments = [...this.appointmentsCancelled];
+        break;
+      default:
+        sourceAppointments = [...this.allAppointments];
+    }
+
+    this.displayedAppointments = this.filterAppointmentsByTime(
+      sourceAppointments,
+      criteria
+    );
+  }
+
+  private sortAppointments(
+    appointments: Appointment[],
+    criteria: SortCriteria
+  ): Appointment[] {
+    const sorted = [...appointments];
+
+    sorted.sort((a, b) => {
+      let comparison = 0;
+
+      switch (criteria.field) {
+        case 'date':
+          const dateA = a.appointmentDate?.toDate().getTime() || 0;
+          const dateB = b.appointmentDate?.toDate().getTime() || 0;
+          comparison = dateA - dateB;
+          break;
+
+        case 'specialty':
+          comparison = (a.speciality || '').localeCompare(b.speciality || '');
+          break;
+
+        case 'patient':
+          const patientA = (a.patientName || '').toLowerCase();
+          const patientB = (b.patientName || '').toLowerCase();
+          comparison = patientA.localeCompare(patientB);
+          break;
+      }
+
+      return criteria.direction === 'asc' ? comparison : -comparison;
+    });
+
+    return sorted;
+  }
+
+  private filterAppointmentsByTime(
+    appointments: Appointment[],
+    criteria: TimeFilterCriteria
+  ): Appointment[] {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    switch (criteria.type) {
+      case 'all':
+        return appointments;
+
+      case 'next-30-days':
+        const next30Days = new Date(today);
+        next30Days.setDate(next30Days.getDate() + 30);
+        return appointments.filter((app) => {
+          const appDate = app.appointmentDate?.toDate();
+          return appDate && appDate >= today && appDate <= next30Days;
+        });
+
+      case 'this-month':
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        return appointments.filter((app) => {
+          const appDate = app.appointmentDate?.toDate();
+          return appDate && appDate >= startOfMonth && appDate <= endOfMonth;
+        });
+
+      case 'last-3-months':
+        const threeMonthsAgo = new Date(today);
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        return appointments.filter((app) => {
+          const appDate = app.appointmentDate?.toDate();
+          return appDate && appDate >= threeMonthsAgo && appDate <= today;
+        });
+
+      default:
+        return appointments;
     }
   }
 

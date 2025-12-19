@@ -19,13 +19,13 @@ export const routes: Routes = [
       import('./pages/home/home.component').then((c) => c.HomeComponent),
   },
   {
-    path: 'select-login',
+    path: 'login',
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
     canActivate: [authRedirectGuard],
   },
   {
-    path: 'login',
+    path: 'select-register',
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
     canActivate: [authRedirectGuard],
@@ -37,19 +37,7 @@ export const routes: Routes = [
     canActivate: [authRedirectGuard],
   },
   {
-    path: 'login-specialist',
-    loadComponent: () =>
-      import('./auth/auth.component').then((c) => c.AuthComponent),
-    canActivate: [authRedirectGuard],
-  },
-  {
     path: 'register-specialist',
-    loadComponent: () =>
-      import('./auth/auth.component').then((c) => c.AuthComponent),
-    canActivate: [authRedirectGuard],
-  },
-  {
-    path: 'login-admin',
     loadComponent: () =>
       import('./auth/auth.component').then((c) => c.AuthComponent),
     canActivate: [authRedirectGuard],

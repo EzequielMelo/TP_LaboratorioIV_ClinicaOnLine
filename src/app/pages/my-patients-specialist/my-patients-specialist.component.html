@@ -192,7 +192,7 @@
                 <input
                   type="search"
                   formControlName="keyWord"
-                  placeholder="Buscar paciente por nombre, email o ID..."
+                  placeholder="Buscar por nombre o DNI..."
                   class="w-full pl-12 pr-12 py-4 text-sm border border-gray-300 rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                 />
                 <svg
@@ -288,7 +288,7 @@
           <app-patient-list
             *ngIf="!showMedicalRecords"
             [patients]="patients"
-            [keyWord]="searchForm.get('keyWord')?.value"
+            [keyWord]="currentSearchKeyword"
             (patientSelected)="onPatientSelected($event)"
             class="block"
           ></app-patient-list>

@@ -88,24 +88,6 @@
                   </span>
                   }
                 </div>
-
-                <!-- Stats profesionales -->
-                <div class="flex items-center justify-center gap-8 text-sm">
-                  <div class="text-center">
-                    <div class="font-bold text-blue-600 text-2xl">150+</div>
-                    <div class="text-gray-500">Pacientes</div>
-                  </div>
-                  <div class="w-px h-8 bg-gray-300"></div>
-                  <div class="text-center">
-                    <div class="font-bold text-green-600 text-2xl">8</div>
-                    <div class="text-gray-500">Años experiencia</div>
-                  </div>
-                  <div class="w-px h-8 bg-gray-300"></div>
-                  <div class="text-center">
-                    <div class="font-bold text-purple-600 text-2xl">4.9</div>
-                    <div class="text-gray-500">Valoración</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -317,39 +299,6 @@
               </button>
 
               <button
-                class="group bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <div class="flex items-center justify-between mb-3">
-                  <div
-                    class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors"
-                  >
-                    <svg
-                      class="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zM14 6a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h6zM4 8a2 2 0 00-2 2v4a2 2 0 002 2h6a2 2 0 002-2v-4a2 2 0 00-2-2H4z"
-                      />
-                    </svg>
-                  </div>
-                  <svg
-                    class="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold mb-1">Facturación</h3>
-                <p class="text-purple-100 text-sm">Ingresos y reportes</p>
-              </button>
-
-              <button
                 routerLink="/specialist-configuration"
                 class="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
@@ -390,10 +339,10 @@
       </div>
 
       <!-- Dashboard Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Próximas citas -->
         <div
-          class="lg:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+          class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
         >
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
@@ -422,255 +371,118 @@
             </button>
           </div>
 
-          <div class="space-y-4">
-            <!-- Cita 1 -->
+          <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            <!-- Appointments del día -->
             <div
-              class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+              *ngFor="let appointment of todayAppointments"
+              class="bg-gradient-to-r {{
+                getStatusColorClass(appointment.appointmentStatus)
+              }} border rounded-xl p-4 hover:shadow-md transition-shadow"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                   <div
-                    class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold"
+                    class="w-12 h-12 {{
+                      getStatusIconColorClass(appointment.appointmentStatus)
+                    }} rounded-xl flex items-center justify-center text-white font-bold text-sm"
                   >
-                    14:00
+                    {{ getAppointmentTime(appointment) }}
                   </div>
                   <div>
                     <h3 class="font-semibold text-gray-900">
-                      María García - Control Cardiológico
+                      {{ appointment.patientName }} -
+                      {{ appointment.speciality }}
                     </h3>
-                    <p class="text-gray-600">
-                      Paciente de 45 años - Seguimiento hipertensión
+                    <p class="text-gray-600 text-sm">
+                      {{ appointment.message }}
                     </p>
                     <div class="flex items-center gap-2 mt-1">
                       <span
-                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800"
+                        class="inline-flex items-center px-2 py-1 rounded-full text-xs {{
+                          getStatusClass(appointment.appointmentStatus)
+                        }}"
                       >
-                        Confirmada
+                        {{ appointment.appointmentStatus }}
                       </span>
                     </div>
                   </div>
                 </div>
-                <button class="text-gray-400 hover:text-gray-600">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-                    />
-                  </svg>
-                </button>
               </div>
             </div>
 
-            <!-- Cita 2 -->
+            <!-- Mensaje cuando no hay appointments -->
             <div
-              class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+              *ngIf="todayAppointments.length === 0"
+              class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center"
             >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <div
-                    class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center text-white font-bold"
-                  >
-                    15:30
-                  </div>
-                  <div>
-                    <h3 class="font-semibold text-gray-900">
-                      Juan Rodríguez - Primera Consulta
-                    </h3>
-                    <p class="text-gray-600">
-                      Paciente nuevo - Dolor en el pecho
-                    </p>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span
-                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800"
-                      >
-                        Pendiente
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <button class="text-gray-400 hover:text-gray-600">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <!-- Espacio libre -->
-            <div
-              class="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-colors cursor-pointer group"
-            >
-              <div
-                class="flex items-center justify-center gap-3 text-gray-600 group-hover:text-blue-600"
+              <svg
+                class="w-12 h-12 text-gray-400 mx-auto mb-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <span class="font-medium">Espacio libre - 17:00</span>
-              </div>
+                <path
+                  fill-rule="evenodd"
+                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <p class="text-gray-600 font-medium">
+                No tienes consultas programadas para hoy
+              </p>
+              <p class="text-gray-500 text-sm mt-1">
+                Tu agenda está libre para recibir nuevas solicitudes
+              </p>
             </div>
           </div>
         </div>
 
-        <!-- Panel lateral -->
-        <div class="space-y-6">
-          <!-- Estadísticas del día -->
-          <div
-            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"
+        <!-- Estadísticas del día -->
+        <div
+          class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center"
+            >
+              <svg
+                class="w-5 h-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
               >
-                <svg
-                  class="w-5 h-5 text-green-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold text-gray-900">Hoy</h3>
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
             </div>
-
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">Consultas programadas</span>
-                <span class="text-gray-900 font-bold text-lg">8</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">Consultas completadas</span>
-                <span class="text-green-600 font-bold text-lg">5</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">Pacientes nuevos</span>
-                <span class="text-blue-600 font-bold text-lg">2</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600">Tiempo disponible</span>
-                <span class="text-orange-600 font-bold text-lg">3h</span>
-              </div>
-            </div>
+            <h2 class="text-2xl font-bold text-gray-900">Hoy</h2>
           </div>
 
-          <!-- Notificaciones importantes -->
-          <div
-            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center"
-              >
-                <svg
-                  class="w-5 h-5 text-orange-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"
-                  />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold text-gray-900">Notificaciones</h3>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Consultas programadas</span>
+              <span class="text-gray-900 font-bold text-lg">{{
+                scheduledAppointments
+              }}</span>
             </div>
-
-            <div class="space-y-3">
-              <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                <div class="flex items-start gap-3">
-                  <div
-                    class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"
-                  ></div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      Paciente urgente
-                    </p>
-                    <p class="text-xs text-gray-600">
-                      María García requiere atención prioritaria
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <div class="flex items-start gap-3">
-                  <div
-                    class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"
-                  ></div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      Resultado de estudios
-                    </p>
-                    <p class="text-xs text-gray-600">
-                      3 estudios médicos listos para revisar
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <div class="flex items-start gap-3">
-                  <div
-                    class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"
-                  ></div>
-                  <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      Recordatorio
-                    </p>
-                    <p class="text-xs text-gray-600">
-                      Actualizar disponibilidad horaria
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Consultas completadas</span>
+              <span class="text-green-600 font-bold text-lg">{{
+                completedAppointments
+              }}</span>
             </div>
-          </div>
-
-          <!-- Estadísticas rápidas -->
-          <div
-            class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 p-6"
-          >
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center"
-              >
-                <svg
-                  class="w-5 h-5 text-purple-600"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
-                  <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
-                </svg>
-              </div>
-              <h3 class="text-lg font-bold text-gray-900">Esta Semana</h3>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Turnos pendientes</span>
+              <span class="text-blue-600 font-bold text-lg">{{
+                pendingAppointments
+              }}</span>
             </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="text-center p-3 bg-blue-50 rounded-lg">
-                <div class="text-2xl font-bold text-blue-600">42</div>
-                <div class="text-xs text-gray-600">Consultas</div>
-              </div>
-              <div class="text-center p-3 bg-green-50 rounded-lg">
-                <div class="text-2xl font-bold text-green-600">38</div>
-                <div class="text-xs text-gray-600">Completadas</div>
-              </div>
-              <div class="text-center p-3 bg-purple-50 rounded-lg">
-                <div class="text-2xl font-bold text-purple-600">12</div>
-                <div class="text-xs text-gray-600">Nuevos</div>
-              </div>
-              <div class="text-center p-3 bg-orange-50 rounded-lg">
-                <div class="text-2xl font-bold text-orange-600">4.8</div>
-                <div class="text-xs text-gray-600">Rating</div>
-              </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Tiempo disponible</span>
+              <span class="text-orange-600 font-bold text-lg">{{
+                availableTime
+              }}</span>
             </div>
           </div>
         </div>

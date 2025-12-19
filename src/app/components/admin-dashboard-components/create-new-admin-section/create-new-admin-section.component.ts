@@ -9,9 +9,11 @@ import {
 import { AuthService } from '../../../services/auth/auth.service';
 import {
   dniValidator,
-  numericValidator,
+  passwordMatchValidator,
+  birthDateValidator,
 } from '../../../shared/validators/custom-validators';
 import Swal from 'sweetalert2';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-create-new-admin-section',
@@ -29,38 +31,33 @@ export class CreateNewAdminSectionComponent {
   private auth = inject(AuthService);
 
   constructor() {
-    this.registerForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      repeat_password: ['', [Validators.required, Validators.minLength(6)]],
-      name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(15),
+    this.registerForm = this.formBuilder.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(6)]],
+        repeat_password: ['', [Validators.required, Validators.minLength(6)]],
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(15),
+          ],
         ],
-      ],
-      last_name: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(15),
+        last_name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(15),
+          ],
         ],
-      ],
-      age: [
-        '',
-        [
-          Validators.required,
-          Validators.min(2),
-          Validators.max(99),
-          numericValidator,
-        ],
-      ],
-      dni: ['', [Validators.required, dniValidator()]],
-      user_avatar: ['', [Validators.required]],
-    });
+        birthDate: ['', [Validators.required, birthDateValidator(18, 120)]],
+        dni: ['', [Validators.required, dniValidator()]],
+        user_avatar: ['', [Validators.required]],
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
   register() {
@@ -90,13 +87,18 @@ export class CreateNewAdminSectionComponent {
       },
     });
 
+    // Convertir fecha de nacimiento string a Timestamp
+    const birthDateTimestamp = Timestamp.fromDate(
+      new Date(formValues.birthDate)
+    );
+
     this.auth
       .registerAdmin(
         formValues.name,
         formValues.last_name,
         formValues.email,
         formValues.password,
-        formValues.age,
+        birthDateTimestamp,
         formValues.dni,
         'admin',
         profilePicture
