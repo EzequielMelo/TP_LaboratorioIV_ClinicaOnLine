@@ -27,7 +27,7 @@
     "echarts": "^6.0.0",
     "flowbite": "^2.5.2",
     "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.3",
+    "jspdf": "^4.0.0",
     "ngx-captcha": "^13.0.0",
     "ngx-echarts": "^18.0.0",
     "pdfmake": "^0.2.7",
