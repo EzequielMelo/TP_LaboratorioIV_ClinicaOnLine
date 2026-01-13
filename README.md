@@ -1,8 +1,81 @@
 # Clínica OnLine
 
-Proyecto final de Laboratorio IV, este consiste en un sitio web que simula el funcionamiento real de una clínica, donde cada tipo de usuario podrá acceder a distintas funcionalidades según su rol (Administrador, Paciente y Especialista). Las tecnologías utilizadas son Angular, Firebase y Tailwind CSS.
+Aplicación web que simula la gestión integral de una clínica médica online, desarrollada como proyecto final de la materia **Laboratorio IV**.  
+El sistema permite administrar usuarios con distintos roles, turnos médicos, historiales clínicos y métricas del sistema, aplicando reglas de negocio reales y utilizando servicios en la nube.
 
-## 📑 Accesos Rápidos
+El proyecto fue desarrollado con **Angular** y una arquitectura completamente orientada a **Firebase**, integrando autenticación, base de datos NoSQL y hosting.
+
+## Overview del Proyecto
+
+Clínica OnLine está diseñada para representar el funcionamiento real de una clínica médica, contemplando distintos tipos de usuarios y flujos de trabajo.
+
+El sistema implementa:
+
+- Gestión de turnos con validaciones temporales
+- Control de acceso según roles
+- Registro de historial clínico
+- Evaluaciones post atención
+- Panel administrativo con métricas y exportación de datos
+
+El foco del proyecto estuvo en la correcta aplicación de lógica de negocio, escalabilidad y organización del código.
+
+## Tecnologías Utilizadas
+
+- **Angular** — Framework principal para el desarrollo frontend
+- **TypeScript** — Tipado estático y mejor mantenibilidad
+- **Firebase Authentication** — Gestión de usuarios y roles
+- **Firebase Firestore** — Base de datos NoSQL en tiempo real
+- **Firebase Hosting** — Despliegue de la aplicación
+- **Tailwind CSS** — Estilos y diseño responsive
+
+## Tipos de Usuarios
+
+La aplicación contempla tres roles principales, cada uno con funcionalidades específicas:
+
+### 🧑‍⚕️ Pacientes
+
+- Solicitud y cancelación de turnos
+- Visualización de historial clínico
+- Descarga de documentación médica
+- Reseñas sobre la atención recibida
+
+### 👨‍⚕️ Especialistas
+
+- Gestión de turnos asignados
+- Carga de reseñas médicas
+- Definición de horarios laborales
+- Visualización de pacientes atendidos
+
+### 🛡️ Administradores
+
+- Gestión completa de usuarios
+- Administración de turnos
+- Visualización de logs del sistema
+- Exportación de datos (PDF / CSV)
+- Métricas y gráficos del sistema
+- Opciones sobre los usuarios
+
+## Reglas de Negocio Implementadas
+
+- No se pueden solicitar turnos en fechas pasadas
+- No se permiten turnos con más de 15 días de anticipación
+- Los turnos pasan por distintos estados (pendiente, aceptado, rechazado, cancelado)
+- Solo especialistas habilitados pueden recibir turnos
+- Los pacientes solo pueden ver su propia información
+- Los administradores tienen acceso total al sistema
+
+## Aprendizajes Clave
+
+- Desarrollo de aplicaciones Angular a mediana escala
+- Trabajo con bases de datos NoSQL y modelado de datos en Firestore
+- Implementación de autenticación y control de acceso por roles
+- Aplicación de reglas de negocio complejas
+- Organización del proyecto en módulos, componentes y servicios
+- Uso de pipes y directivas personalizadas para reutilización de lógica
+- Internacionalización (ES / EN / PT)
+- Exportación de datos y generación de reportes
+
+## Accesos Rápidos
 
 - [Funcionalidades Generales](#pagina-principal)
 - [Funcionalidades para Pacientes](#opciones-del-menu-desplegable-para-pacientes)
